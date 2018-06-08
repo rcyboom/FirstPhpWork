@@ -1,0 +1,19 @@
+{
+  "name": "工作任务管理",
+  "version": "0.0.0",
+  "description": "工作任务管理后台接口文档说明",
+  "title": "API接口说明",
+  "url" : "http://baseURL",
+  "header": {
+    "title": "文档开始",
+    "filename": "header.md"
+  },
+  "footer": {
+    "title": "文档结尾",
+    "filename": "footer.md"
+  },
+  "order": [
+    "用户管理",
+    "PostUser"
+  ]
+}

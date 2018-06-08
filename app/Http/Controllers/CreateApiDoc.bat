@@ -1,0 +1,3 @@
+@echo off
+echo 开始创建API文档...
+cd /d D:\laragon\www\backend\app\Http\Controllers && apidoc -i ./ -o ../../../public/apidoc/ && echo API文档创建完毕！ &&pause
