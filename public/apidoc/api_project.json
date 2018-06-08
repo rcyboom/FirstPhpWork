@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "工作任务管理后台接口文档说明",
   "title": "API接口说明",
-  "url": "http://baseURL",
+  "url": "http://111.230.111.148",
   "header": {
     "title": "文档开始",
     "content": "<hr>\n<p>就是稀罕你</p>\n"
@@ -21,7 +21,7 @@
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2018-06-08T05:11:50.157Z",
+    "time": "2018-06-08T06:23:18.886Z",
     "url": "http://apidocjs.com",
     "version": "0.17.6"
   }

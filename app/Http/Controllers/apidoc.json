@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "工作任务管理后台接口文档说明",
   "title": "API接口说明",
-  "url" : "http://baseURL",
+  "url" : "http://111.230.111.148",
   "header": {
     "title": "文档开始",
     "filename": "header.md"
