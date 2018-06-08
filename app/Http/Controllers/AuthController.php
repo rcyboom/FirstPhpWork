@@ -12,7 +12,7 @@ class AuthController extends Controller
 {
     /**
      * Redirect the user to the GitHub authentication page.
-     *
+     * 这是一个测试
      * @return Response
      */
 
