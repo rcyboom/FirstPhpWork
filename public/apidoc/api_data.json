@@ -760,7 +760,7 @@
     "success": {
       "examples": [
         {
-          "title": "返回密码设置成功的结果",
+          "title": "密码设置成功后的返回结果",
           "content": "HTTP/1.1 200 OK\n{\n\"status\": \"success\",\n\"status_code\": 200\n}",
           "type": "json"
         }

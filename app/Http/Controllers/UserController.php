@@ -285,7 +285,7 @@ class UserController extends Controller
      *
      * @apiParam {string} password 用户密码
      *
-     * @apiSuccessExample 返回密码设置成功的结果
+     * @apiSuccessExample 密码设置成功后的返回结果
      * HTTP/1.1 200 OK
      * {
      * "status": "success",
