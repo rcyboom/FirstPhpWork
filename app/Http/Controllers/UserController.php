@@ -443,8 +443,24 @@ class UserController extends Controller
             'id' => $user['id'],
             'name' => $user['name'],
             'email' => $user['email'],
-            'role' => $roles,
-            'avatar' => $user['avatar']
+            'avatar' => $user['avatar'],
+            'phone_number'=>$user['phone_number'],
+            'sex'=>$user['sex'],
+            'state'=>$user['state'],
+            'birthday'=>$user['birthday'],
+            'work_time'=>$user['work_time'],
+            'card_type'=>$user['card_type'],
+            'card_number'=>$user['card_number'],
+            'duty'=>$user['duty'],
+            'level'=>$user['level'],
+            'from'=>$user['from'],
+            'fix_salary'=>$user['fix_salary'],
+            'work_salary'=>$user['work_salary'],
+            'extra_salary'=>$user['extra_salary'],
+            'family_address'=>$user['family_address'],
+            'personal_address'=>$user['personal_address'],
+            'remark'=>$user['remark'],
+            'role' => $roles
         ];
         // 用户权限
         $feature = \App\Models\Role::whereIn('name',$roles)->pluck('permission');
@@ -454,11 +470,7 @@ class UserController extends Controller
         $feature = Permission::select(['route_name', 'method', 'route_match', 'id'])->whereIn('id',$permissions)->get();
         $feature = $feature->toArray();
         $data['permission'] = $feature;
-        return response()->json([
-            'data' => $data,
-            'status' => 'success',
-            'status_code' => 200,
-        ],200);
+        return $this->myResult(1,'信息获取成功！',$data);
     }
 
     public function upload(UserImport $import)

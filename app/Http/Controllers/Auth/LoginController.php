@@ -56,11 +56,11 @@ class LoginController extends Controller
      * }
      *
      * @apiErrorExample 用户身份验证失败
-     * HTTP/1.1 421 用户名或者密码输入错误
+     * HTTP/1.1 200 OK
      * {
      * "status": "login error",
-     * "status_code": 421,
-     * "message": "Credentials not match"
+     * "status_code": 0,
+     * "message": "用户名或者密码输入错误"
      * }
      */
 

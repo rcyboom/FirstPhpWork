@@ -13,6 +13,15 @@ use Illuminate\Support\Facades\Validator;
 
 trait Result
 {
+    public function myResult($successCode,$info,$data)
+    {
+        return response()->json([
+            'code' => $successCode,
+            'info' => $info,
+            'data' => $data
+        ], 200);
+    }
+
     public function success()
     {
          return response()->json([

@@ -36,7 +36,7 @@ class TokenProxy
             'status' => 'login error',
             'status_code' => 421,
             'message' => 'Credentials not match'
-        ],421);
+        ],200);
     }
     public function loginWithThree($email, $password, $id, $provider)
     {
@@ -51,9 +51,9 @@ class TokenProxy
         }
         return response()->json([
             'status' => 'login error',
-            'status_code' => 421,
+            'status_code' => 0,
             'message' => 'Credentials not match'
-        ],421);
+        ],200);
     }
 
     public function proxy($grantType, array $data = [])
@@ -69,7 +69,8 @@ class TokenProxy
         return response()->json(['token'      => $token['access_token'],
                                  'expires_in' => $token['expires_in'],
                                  'status' => 'success',
-                                 'status_code' => 200
+                                 'status_code' => 200,
+            //'usr'=>auth()->guard('api')->user()
         ])->cookie('refreshToken', $token['refresh_token'], 14400, null, null, false, true);
     }
 
