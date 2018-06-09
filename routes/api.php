@@ -12,6 +12,9 @@ use \Illuminate\Http\Response;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('testapi', function (Request $request){
+    return 'api服务正常！';
+})->name('soft.testapi');
 
 Route::middleware('auth:api')->get('/user', 'UserController@getUserInfo')->name('admin.userInfo');
 Route::post('/login', 'Auth\LoginController@login')->name('login.login');
