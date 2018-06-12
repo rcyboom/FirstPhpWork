@@ -846,7 +846,7 @@
       "examples": [
         {
           "title": "用户身份验证失败",
-          "content": "HTTP/1.1 421 用户名或者密码输入错误\n{\n\"status\": \"login error\",\n\"status_code\": 421,\n\"message\": \"Credentials not match\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n\"status\": \"login error\",\n\"status_code\": 0,\n\"message\": \"用户名或者密码输入错误\"\n}",
           "type": "json"
         }
       ]
@@ -978,5 +978,80 @@
     "filename": "./UserController.php",
     "groupTitle": "用户管理",
     "name": "PutApiAdminId"
+  },
+  {
+    "type": "get",
+    "url": "/api/cars/{id}",
+    "title": "2.获取指定车俩信息",
+    "group": "车辆管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 cars.getCar\n2、必须传递ID，正整数,",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "成功返回:",
+          "content": "{\n\"code\": 1,\n\"info\": \"获取信息成功！\",\n\"data\": {\n\"id\": 1,\n\"car_type\": \"SUV\",\n\"car_number\": \"苏A88888\",\n\"state\": \"在位\",\n\"linkman\": \"张三\",\n\"phone\": \"12345678\",\n\"work_price\": 100,\n\"from\": \"员工\",\n\"remark\": \"备注\",\n\"created_at\": \"2018-06-11 23:40:24\",\n\"updated_at\": \"2018-06-11 23:40:25\"\n}\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./CarController.php",
+    "groupTitle": "车辆管理",
+    "name": "GetApiCarsId"
+  },
+  {
+    "type": "get",
+    "url": "/api/cars/index",
+    "title": "1.车辆列表",
+    "group": "车辆管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 cars.index\n2、可选参数\npageSize 分页数量，默认为15\ncar_type 车辆型号,默认为空,模糊匹配 like %car_type%\nstate    状态，默认为空,精确匹配 =state",
+          "type": "json"
+        }
+      ]
+    },
+    "parameter": {
+      "examples": [
+        {
+          "title": "数据库表结构",
+          "content": "integer('id')->comment('车辆编号');\n$string('car_type', 20)->nullable(false)->comment('车辆型号');\n$string('car_number', 20)->nullable(false)->unique()->comment('车牌号');\n$string('state',20)->comment('状态')->nullable();\n$string('linkman', 20)->nullable(false)->comment('联系人');\n$string('phone', 20)->nullable()->comment('联系电话');\n$integer('work_price')->default(0)->comment('租车价格');\n$string('from',20)->comment('来源')->nullable();\n$string('remark',100)->comment('备注')->nullable();",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./CarController.php",
+    "groupTitle": "车辆管理",
+    "name": "GetApiCarsIndex"
+  },
+  {
+    "type": "post",
+    "url": "/api/cars/{id?}",
+    "title": "3.新增或更新车俩信息",
+    "group": "车辆管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 cars.saveCar\n2、可选参数\nID，车辆编号，大于0表示更新，否则新增\n3、必选参数：\ncar_type，车辆型号，字符串不能为空\ncar_number，车牌号，字符串不能为空\nlinkman，联系人，字符串不能为空",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./CarController.php",
+    "groupTitle": "车辆管理",
+    "name": "PostApiCarsId"
   }
 ]

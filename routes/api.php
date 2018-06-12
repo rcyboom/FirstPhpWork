@@ -65,4 +65,11 @@ Route::middleware('auth:api')->group(function() {
     Route::post('students/export', 'StudentController@export')->name('students.export');
     Route::post('students/exportAll', 'StudentController@exportAll')->name('students.exportAll');
 
+    // 车辆信息管理
+    Route::get('cars/index', 'CarController@index')->name('cars.index');
+    Route::get('cars/{id}', 'CarController@getCar')->name('cars.getCar');
+    Route::post('cars/{id?}', 'CarController@saveCar')->name('cars.saveCar');
+
+
+
 });

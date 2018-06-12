@@ -19,3 +19,5 @@ php artisan passport:install --force
 生成passport所需要的相关key并更新数据库
 当使用迁移回滚后，一定要再次生成
 
+php artisan make:migration create_cars_table
+生成迁移表
