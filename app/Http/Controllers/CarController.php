@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Validation\Rule;
 
 class CarController extends Controller
 {
@@ -30,12 +32,12 @@ class CarController extends Controller
      * $string('remark',100)->comment('备注')->nullable();
      */
     //Route::get('cars/index', 'CarController@index')->name('cars.index');
-    public function index(Request $request)
+    public function index()
     {
-        $pageSize = (int)$request->input('pageSize');
+        $pageSize = (int)Request::input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:15;
-        $car_type=$request->input('car_type');
-        $state=$request->input('state');
+        $car_type=Request::input('car_type');
+        $state=Request::input('state');
 
         $cars = Car::where('id','>',0);
         if($state){
@@ -86,20 +88,58 @@ class CarController extends Controller
      * @apiGroup 车辆管理
      *@apiHeaderExample 简要说明
      * 1、路由名称 cars.saveCar
-     * 2、可选参数
-     * ID，车辆编号，大于0表示更新，否则新增
      * 3、必选参数：
+     * ID，车辆编号，作为URL必填,大于0表示更新，否则新增
      * car_type，车辆型号，字符串不能为空
-     * car_number，车牌号，字符串不能为空
+     * car_number，车牌号，字符串不能为空,数据库唯一
      * linkman，联系人，字符串不能为空
+     * work_price，租车价格,整数，最小值0
      */
     //Route::post('cars/{id?}', 'CarController@saveCar')->name('cars.saveCar');
     public function saveCar($id=0)
     {
-          $car= Car::find($id);
-          if(!$car){
-              return $this->myResult(0,'更新失败，未找到该编号的车辆！',$car);
-          }
-        return $this->myResult(1,'更新成功！',$car);
+        $isNew=false;
+        if($id>0){
+            $car= Car::find($id);
+            if(!$car){
+                return $this->myResult(0,'更新失败，未找到该编号的车辆！',$car);
+            }
+        }else{
+            $car=new Car();
+            $isNew=true;
+        }
+
+
+        $validator = Validator::make( Request::all(), [
+            'car_type' => 'required',
+            'car_number' => 'required',
+            'linkman' => 'required',
+            'work_price'=>'required | integer | min:0'
+        ]);
+        if($isNew || (!$isNew && Request::input('car_number')!=$car->car_number)){
+            $validator->sometimes('car_number', 'unique:cars',
+                function(){
+                    return true;
+                });
+        }
+
+
+        if ($validator->fails()) {
+            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
+        }
+
+
+        $car->car_type = Request::input('car_type');
+        $car->car_number = Request::input('car_number');
+        $car->state = Request::input('state');
+        $car->linkman = Request::input('linkman');
+        $car->phone = Request::input('phone');
+        $car->work_price = Request::input('work_price');
+        $car->from = Request::input('from');
+        $car->remark = Request::input('remark');
+        if($car->save()){
+            return $this->myResult(1,'更新成功！',$car);
+        }
+        return $this->myResult(0,'操作失败，未知错误！',null);
     }
 }

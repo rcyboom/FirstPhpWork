@@ -1044,7 +1044,7 @@
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、路由名称 cars.saveCar\n2、可选参数\nID，车辆编号，大于0表示更新，否则新增\n3、必选参数：\ncar_type，车辆型号，字符串不能为空\ncar_number，车牌号，字符串不能为空\nlinkman，联系人，字符串不能为空",
+          "content": "1、路由名称 cars.saveCar\n3、必选参数：\nID，车辆编号，作为URL必填,大于0表示更新，否则新增\ncar_type，车辆型号，字符串不能为空\ncar_number，车牌号，字符串不能为空,数据库唯一\nlinkman，联系人，字符串不能为空\nwork_price，租车价格,整数，最小值0",
           "type": "json"
         }
       ]
