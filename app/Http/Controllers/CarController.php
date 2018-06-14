@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Car;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Validation\Rule;
 
 class CarController extends Controller
 {

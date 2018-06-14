@@ -576,7 +576,7 @@ define({ "api": [
   {
     "type": "delete",
     "url": "/api/admin/:id",
-    "title": "删除指定的管理员",
+    "title": "8.删除指定的管理员",
     "group": "用户管理",
     "success": {
       "examples": [
@@ -604,13 +604,13 @@ define({ "api": [
   {
     "type": "get",
     "url": "/api/admin",
-    "title": "显示管理员列表",
+    "title": "4.显示管理员列表",
     "group": "用户管理",
     "success": {
       "examples": [
         {
-          "title": "返回管理员信息列表",
-          "content": "HTTP/1.1 200 OK\n{\n \"data\": [\n    {\n      \"id\": 2 // 整数型  用户标识\n      \"name\": \"test\"  //字符型 用户昵称\n      \"email\": \"test@qq.com\"  // 字符型 用户email，管理员登录时的email\n      \"role\": \"admin\" // 字符型 角色  可以取得值为admin或editor\n      \"avatar\": \"\" // 字符型 用户的头像图片\n    }\n  ],\n\"status\": \"success\",\n\"status_code\": 200,\n\"links\": {\n\"first\": \"http://manger.test/api/admin?page=1\",\n\"last\": \"http://manger.test/api/admin?page=19\",\n\"prev\": null,\n\"next\": \"http://manger.test/api/admin?page=2\"\n},\n\"meta\": {\n\"current_page\": 1, // 当前页\n\"from\": 1, //当前页开始的记录\n\"last_page\": 19, //总页数\n\"path\": \"http://manger.test/api/admin\",\n\"per_page\": 15,\n\"to\": 15, //当前页结束的记录\n\"total\": 271  // 总条数\n}\n}",
+          "title": "简要说明",
+          "content": "1、默认返回全部数据的分页显示\n2、可选参数：\nname 值不为空时表示 like方式过滤\nphone_number 值不为空时表示 like方式过滤\nemail 值不为空时表示 like方式过滤",
           "type": "json"
         }
       ]
@@ -623,7 +623,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/api/admin/:id",
-    "title": "显示指定的管理员",
+    "title": "6.显示指定的管理员",
     "group": "用户管理",
     "success": {
       "examples": [
@@ -642,7 +642,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/api/user",
-    "title": "获取当前登录的用户信息",
+    "title": "91.获取当前登录的用户信息",
     "group": "用户管理",
     "success": {
       "examples": [
@@ -661,7 +661,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/api/admin",
-    "title": "建立新的管理员",
+    "title": "5.建立新的管理员",
     "group": "用户管理",
     "parameter": {
       "fields": {
@@ -671,7 +671,7 @@ define({ "api": [
             "type": "string",
             "optional": false,
             "field": "name",
-            "description": "<p>用户昵称</p>"
+            "description": "<p>用户昵称 必须唯一</p>"
           },
           {
             "group": "Parameter",
@@ -690,6 +690,13 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "string",
+            "optional": false,
+            "field": "password_confirmation",
+            "description": "<p>用户登录密码</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
             "allowedValues": [
               "\"admin\"",
               "\"editor\""
@@ -703,33 +710,125 @@ define({ "api": [
             "group": "Parameter",
             "type": "string",
             "optional": true,
-            "field": "avatar",
-            "description": "<p>用户头像地址</p>"
+            "field": "phone_number",
+            "description": "<p>联系电话</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "allowedValues": [
+              "\"男\"",
+              "\"女\""
+            ],
+            "optional": true,
+            "field": "sex",
+            "defaultValue": "男",
+            "description": "<p>性别</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "state",
+            "description": "<p>状态</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "date",
+            "optional": true,
+            "field": "birthday",
+            "description": "<p>出生日期</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "date",
+            "optional": true,
+            "field": "work_time",
+            "description": "<p>入职日期</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "card_type",
+            "description": "<p>证件类型</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "card_number",
+            "description": "<p>证件号码</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "duty",
+            "description": "<p>职务</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "level",
+            "description": "<p>等级</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "from",
+            "description": "<p>来源</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "integer",
+            "optional": true,
+            "field": "fix_salary",
+            "description": "<p>固定工资</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "integer",
+            "optional": true,
+            "field": "work_salary",
+            "description": "<p>出班工资</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "integer",
+            "optional": true,
+            "field": "extra_salary",
+            "description": "<p>加班工资</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "family_address",
+            "description": "<p>家庭地址</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "personal_address",
+            "description": "<p>现住址</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "remark",
+            "description": "<p>备注</p>"
           }
         ]
       },
       "examples": [
         {
-          "title": "请求的参数例子:",
-          "content": "{\n  name: 'test',\n  email: '1111@qq.com',\n  password: '123456',\n  role: 'editor',\n  avatar: 'uploads/20178989.png'\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "success": {
-      "examples": [
-        {
-          "title": "新建用户成功",
-          "content": "HTTP/1.1 201 OK\n{\n\"status\": \"success\",\n\"status_code\": 201\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "error": {
-      "examples": [
-        {
-          "title": "数据验证出错",
-          "content": "HTTP/1.1 404 Not Found\n{\n\"status\": \"error\",\n\"status_code\": 404,\n\"message\": \"信息提交不完全或者不规范，校验不通过，请重新提交\"\n}",
+          "title": "简要说明:",
+          "content": "1、除了必选参数，其余的参数可以为空或者不传\n2、出生日期和入职日期必须为日期型\n3、工资必须为不小于0的整数\n4、role 必须要以数组形式传递 [\"editor\",\"admin\"]",
           "type": "json"
         }
       ]
@@ -741,40 +840,8 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/api/admin/:id/reset",
-    "title": "重置指定管理员的密码",
-    "group": "用户管理",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "password",
-            "description": "<p>用户密码</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "examples": [
-        {
-          "title": "密码设置成功后的返回结果",
-          "content": "HTTP/1.1 200 OK\n{\n\"status\": \"success\",\n\"status_code\": 200\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "./UserController.php",
-    "groupTitle": "用户管理",
-    "name": "PostApiAdminIdReset"
-  },
-  {
-    "type": "post",
     "url": "/api/admin/upload",
-    "title": "头像图片上传",
+    "title": "9.头像图片上传",
     "group": "用户管理",
     "header": {
       "examples": [
@@ -906,70 +973,13 @@ define({ "api": [
   {
     "type": "put",
     "url": "/api/admin/:id",
-    "title": "更新指定的管理员",
+    "title": "7.更新指定的管理员",
     "group": "用户管理",
     "header": {
       "examples": [
         {
-          "title": "http头部请求:",
-          "content": "{\n  \"content-type\": \"application/x-www-form-urlencoded\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "name",
-            "description": "<p>用户昵称</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "allowedValues": [
-              "\"admin\"",
-              "\"editor\""
-            ],
-            "optional": true,
-            "field": "role",
-            "defaultValue": "editor",
-            "description": "<p>角色 内容为空或者其他的都设置为editor</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": true,
-            "field": "avatar",
-            "description": "<p>用户头像地址</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "请求参数例子",
-          "content": "{\n     name: 'test',\n     role: 'editor',\n     avatar: 'uploads/20174356.png'\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "success": {
-      "examples": [
-        {
-          "title": "返回密码设置成功的结果",
-          "content": "HTTP/1.1 200 OK\n{\n\"status\": \"success\",\n\"status_code\": 200\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "error": {
-      "examples": [
-        {
-          "title": "数据验证出错",
-          "content": "HTTP/1.1 404 Not Found\n{\n\"status\": \"error\",\n\"status_code\": 404,\n\"message\": \"信息提交不完全或者不规范，校验不通过，请重新提交\"\n}",
+          "title": "简要说明:",
+          "content": "具体参数情况请参考创建用户的参数",
           "type": "json"
         }
       ]

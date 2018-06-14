@@ -20,48 +20,23 @@ class UserController extends Controller
    use Result;
 
     /**
-     * @api {get} /api/admin 显示管理员列表
+     * @api {get} /api/admin 4.显示管理员列表
      * @apiGroup 用户管理
      *
      *
-     * @apiSuccessExample 返回管理员信息列表
-     * HTTP/1.1 200 OK
-     * {
-     *  "data": [
-     *     {
-     *       "id": 2 // 整数型  用户标识
-     *       "name": "test"  //字符型 用户昵称
-     *       "email": "test@qq.com"  // 字符型 用户email，管理员登录时的email
-     *       "role": "admin" // 字符型 角色  可以取得值为admin或editor
-     *       "avatar": "" // 字符型 用户的头像图片
-     *     }
-     *   ],
-     * "status": "success",
-     * "status_code": 200,
-     * "links": {
-     * "first": "http://manger.test/api/admin?page=1",
-     * "last": "http://manger.test/api/admin?page=19",
-     * "prev": null,
-     * "next": "http://manger.test/api/admin?page=2"
-     * },
-     * "meta": {
-     * "current_page": 1, // 当前页
-     * "from": 1, //当前页开始的记录
-     * "last_page": 19, //总页数
-     * "path": "http://manger.test/api/admin",
-     * "per_page": 15,
-     * "to": 15, //当前页结束的记录
-     * "total": 271  // 总条数
-     * }
-     * }
-     *
+     * @apiSuccessExample 简要说明
+     * 1、默认返回全部数据的分页显示
+     * 2、可选参数：
+     * name 值不为空时表示 like方式过滤
+     * phone_number 值不为空时表示 like方式过滤
+     * email 值不为空时表示 like方式过滤
      */
     public function index(Request $request)
     {
         //
         $pageSize = (int)$request->input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:10;
-        $users = User::name()->email()->paginate($pageSize);
+        $users = User::name()->email()->Phone()->paginate($pageSize);
         return new UserCollection($users);
     }
 
@@ -72,60 +47,69 @@ class UserController extends Controller
     }
 
     /**
-     * @api {post} /api/admin  建立新的管理员
+     * @api {post} /api/admin  5.建立新的管理员
      * @apiGroup 用户管理
-     * @apiParam {string} name 用户昵称
+     * @apiParam {string} name 用户昵称 必须唯一
      * @apiParam {string} email 用户登录名　email格式 必须唯一
      * @apiParam {string} password 用户登录密码
+     * @apiParam {string} password_confirmation 用户登录密码
      * @apiParam {string="admin","editor"} [role="editor"] 角色 内容为空或者其他的都设置为editor
-     * @apiParam {string} [avatar] 用户头像地址
-     * @apiParamExample {json} 请求的参数例子:
-     *     {
-     *       name: 'test',
-     *       email: '1111@qq.com',
-     *       password: '123456',
-     *       role: 'editor',
-     *       avatar: 'uploads/20178989.png'
-     *     }
-     *
-     * @apiSuccessExample 新建用户成功
-     * HTTP/1.1 201 OK
-     * {
-     * "status": "success",
-     * "status_code": 201
-     * }
-     * @apiErrorExample 数据验证出错
-     * HTTP/1.1 404 Not Found
-     * {
-     * "status": "error",
-     * "status_code": 404,
-     * "message": "信息提交不完全或者不规范，校验不通过，请重新提交"
-     * }
+     * @apiParam {string} [phone_number] 联系电话
+     * @apiParam {string="男","女"} [sex="男"] 性别
+     * @apiParam {string} [state] 状态
+     * @apiParam {date} [birthday] 出生日期
+     * @apiParam {date} [work_time] 入职日期
+     * @apiParam {string} [card_type] 证件类型
+     * @apiParam {string} [card_number] 证件号码
+     * @apiParam {string} [duty] 职务
+     * @apiParam {string} [level] 等级
+     * @apiParam {string} [from] 来源
+     * @apiParam {integer} [fix_salary] 固定工资
+     * @apiParam {integer} [work_salary] 出班工资
+     * @apiParam {integer} [extra_salary] 加班工资
+     * @apiParam {string} [family_address] 家庭地址
+     * @apiParam {string} [personal_address] 现住址
+     * @apiParam {string} [remark]  备注
+     * @apiParamExample 简要说明:
+     * 1、除了必选参数，其余的参数可以为空或者不传
+     * 2、出生日期和入职日期必须为日期型
+     * 3、工资必须为不小于0的整数
+     * 4、role 必须要以数组形式传递 ["editor","admin"]
      */
     public function store(Request $request)
     {
         //  新建管理员信息
-        $data = $request->only(['name', 'role', 'password','password_confirmation', 'email', 'avatar']);
+        $data = $request->only(['name', 'role', 'password','password_confirmation', 'email', 'avatar',
+            'phone_number' ,'sex' ,'state' ,'birthday' ,'work_time' ,'card_type' ,'card_number' ,'duty' ,
+            'level' ,'from' ,'fix_salary' ,'work_salary' ,'extra_salary' ,'family_address' ,
+            'personal_address' ,'remark' ]);
         $rules = [
-            'name'=>'required',
+            'name'=>'required|unique:users',
             'role' =>'nullable',
             'password' => 'required|confirmed',
             'email' => 'required|unique:users',
-            'avatar' => 'nullable|string'
+            'avatar' => 'nullable|string',
+            'birthday' => 'nullable|date',
+            'work_time' => 'nullable|date',
+            'fix_salary' => 'nullable|integer',
+            'work_salary' => 'nullable|integer',
+            'extra_salary' => 'nullable|integer',
         ];
         $message = [
             'name.required' => '用户名是必填项',
+            'name.unique' => '用户名必须唯一',
             'password.required' => '用户密码是必填项',
             'password.confirmed' => '两次输入的密码不匹配',
-            'email.required' => '登录名是必填项',
-            'email.unique' => '登录名已经存在，请重新填写',
+            'email.required' => '邮箱地址是必填项',
+            'email.unique' => '邮箱地址已经存在，请重新填写',
         ];
         $validator = Validator::make($data, $rules, $message);
         if ($validator->fails()) {
-            $errors = $validator->errors($validator);
-            return $this->errorWithCodeAndInfo(422, $errors);
+            //$validator->errors($validator)
+            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
         }
         $data['password'] = bcrypt($data['password']);
+
         $role = $request->input('role', ['user']);
         if ($role === null || $role == [])
         {
@@ -138,14 +122,18 @@ class UserController extends Controller
             $data['role'] = implode(',', $role);
         }
 
-        if (User::create($data)) {
-            return $this->success();
+        $us= User::create($data);
+
+        if ($us) {
+            return $this->myResult(1,'创建成功！',$us);
+        }else{
+            return $this->myResult(0,'创建失败！',null);
         }
     }
 
 
     /**
-     * @api {get} /api/admin/:id 显示指定的管理员
+     * @api {get} /api/admin/:id 6.显示指定的管理员
      * @apiGroup 用户管理
      *
      *
@@ -178,51 +166,35 @@ class UserController extends Controller
 
 
     /**
-     * @api {put} /api/admin/:id  更新指定的管理员
+     * @api {put} /api/admin/:id  7.更新指定的管理员
      * @apiGroup 用户管理
-     * @apiHeaderExample {json} http头部请求:
-     *     {
-     *       "content-type": "application/x-www-form-urlencoded"
-     *     }
-     * @apiParam {string} name 用户昵称
-     * @apiParam {string="admin","editor"} [role=editor] 角色 内容为空或者其他的都设置为editor
-     * @apiParam {string} [avatar] 用户头像地址
-     * @apiParamExample {json} 请求参数例子
-     *{
-     *      name: 'test',
-     *      role: 'editor',
-     *      avatar: 'uploads/20174356.png'
-     * }
-     * @apiSuccessExample 返回密码设置成功的结果
-     * HTTP/1.1 200 OK
-     * {
-     * "status": "success",
-     * "status_code": 200
-     * }
-     * @apiErrorExample 数据验证出错
-     * HTTP/1.1 404 Not Found
-     * {
-     * "status": "error",
-     * "status_code": 404,
-     * "message": "信息提交不完全或者不规范，校验不通过，请重新提交"
-     * }
+     * @apiHeaderExample 简要说明:
+     * 具体参数情况请参考创建用户的参数
      */
 
     public function update(Request $request, $id)
     {
-        $data = $request->only(['name', 'role', 'avatar']);
+        $data = $request->only(['name', 'role', 'avatar','email',
+            'phone_number' ,'sex' ,'state' ,'birthday' ,'work_time' ,'card_type' ,'card_number' ,'duty' ,
+            'level' ,'from' ,'fix_salary' ,'work_salary' ,'extra_salary' ,'family_address' ,
+            'personal_address' ,'remark' ]);
         $rules = [
-            'name' => 'required|string',
-            'role' => 'nullable|array',
-            'avatar' =>'nullable|string'
+            'name'=>'required',
+            'email' => 'required',
+            'avatar' => 'nullable|string',
+            'birthday' => 'nullable|date',
+            'work_time' => 'nullable|date',
+            'fix_salary' => 'nullable|integer',
+            'work_salary' => 'nullable|integer',
+            'extra_salary' => 'nullable|integer',
         ];
         $message = [
             'name.required' => '用户名是必填项',
+            'email.required' => '邮箱地址是必填项',
         ];
         $validator = Validator::make($data, $rules, $message);
         if ($validator->fails()) {
-            $errors = $validator->errors($validator);
-            return $this->errorWithCodeAndInfo(422, $errors);
+            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
         }
 
         $role = $request->input('role', ['user']);
@@ -238,13 +210,15 @@ class UserController extends Controller
         }
         $bool = User::where('id', $id)->update($data);
         if ($bool) {
-            return $this->success();
+            return $this->myResult(1,'更新成功！',null);
+        }else{
+            return $this->myResult(0,'更新失败，可能的原因是用户名和邮件与其他人重复！',null);
         }
 
     }
 
     /**
-     * @api {delete} /api/admin/:id  删除指定的管理员
+     * @api {delete} /api/admin/:id  8.删除指定的管理员
      * @apiGroup 用户管理
      *
      * @apiSuccessExample 用户删除成功
@@ -264,28 +238,29 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        //
-        return response()->json([
-          'status' => 'success',
-          'status_code' => 200,
-          'message' => '演示功能，暂时不提供用户删除功能'
-        ], 200);
+        if($id==1){
+            return $this->myResult(0,'不允许删除管理员帐户！',null);
+        }
         $user = User::find($id);
+        if(!$user)
+        {
+            return $this->myResult(0,'删除失败,未找到该用户！',null);
+        }
         if ($user->delete()) {
-            return $this->success();
+            return $this->myResult(1,'删除成功！',null);
         } else {
-            return $this->error();
+            return $this->myResult(0,'删除失败！',null);
         }
 
     }
 
     /**
-     * @api {post} /api/admin/:id/reset  重置指定管理员的密码
-     * @apiGroup 用户管理
+     * @1api {post} /api/admin/:id/reset  重置指定管理员的密码
+     * @1apiGroup 用户管理
      *
-     * @apiParam {string} password 用户密码
+     * @1apiParam {string} password 用户密码
      *
-     * @apiSuccessExample 密码设置成功后的返回结果
+     * @1apiSuccessExample 密码设置成功后的返回结果
      * HTTP/1.1 200 OK
      * {
      * "status": "success",
@@ -308,7 +283,7 @@ class UserController extends Controller
     }
 
     /**
-     * @api {post} /api/admin/upload  头像图片上传
+     * @api {post} /api/admin/upload  9.头像图片上传
      * @apiGroup 用户管理
      * @apiHeaderExample {json} http头部请求:
      *     {
@@ -415,7 +390,7 @@ class UserController extends Controller
     }
 
     /**
-     * @api {get} /api/user 获取当前登录的用户信息
+     * @api {get} /api/user 91.获取当前登录的用户信息
      * @apiGroup 用户管理
      *
      *

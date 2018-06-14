@@ -53,4 +53,14 @@ class User extends Authenticatable
             return $query;
         }
     }
+
+    public function scopePhone($query)
+    {
+        $phone = request()->input('phone_number');
+        if (isset($phone)) {
+            return $query = $query->where('phone_number', 'like', '%'.$phone.'%');
+        } else {
+            return $query;
+        }
+    }
 }
