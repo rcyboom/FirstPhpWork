@@ -581,17 +581,8 @@ define({ "api": [
     "success": {
       "examples": [
         {
-          "title": "用户删除成功",
-          "content": "HTTP/1.1 200 OK\n{\n\"status\": \"success\",\n\"status_code\": 200\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "error": {
-      "examples": [
-        {
-          "title": "用户删除失败",
-          "content": "HTTP/1.1 404 ERROR\n{\n\"status\": \"error\",\n\"status_code\": 404\n}",
+          "title": "简要说明",
+          "content": "HTTP/1.1 200 OK\n作为URL的ID参数必填，成功code为1，否则为0",
           "type": "json"
         }
       ]
@@ -840,32 +831,14 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/api/admin/upload",
-    "title": "9.头像图片上传",
+    "url": "/api/admin/:id/reset",
+    "title": "93.设置指定的管理员的密码",
     "group": "用户管理",
-    "header": {
-      "examples": [
-        {
-          "title": "http头部请求:",
-          "content": "{\n  \"content-type\": \"application/form-data\"\n}",
-          "type": "json"
-        }
-      ]
-    },
     "success": {
       "examples": [
         {
-          "title": "上传成功",
-          "content": "HTTP/1.1 200 OK\n{\n\"status\": \"success\",\n\"status_code\": 200，\n\"data\": {\n  \"url\" : 'uploads/3201278123689.png'\n }\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "error": {
-      "examples": [
-        {
-          "title": "上传失败",
-          "content": "HTTP/1.1 400 ERROR\n{\n\"status\": \"error\",\n\"status_code\": 400\n}",
+          "title": "简要说明",
+          "content": "1、必填参数 password 用户新密码\n2、必填参数 password_confirmation 重复新密码\n3、作为URL部分的ID必填",
           "type": "json"
         }
       ]
@@ -873,7 +846,45 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "./UserController.php",
     "groupTitle": "用户管理",
-    "name": "PostApiAdminUpload"
+    "name": "PostApiAdminIdReset"
+  },
+  {
+    "type": "post",
+    "url": "/api/admin/modify",
+    "title": "92.登录用户修改密码",
+    "group": "用户管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、必选参数\noldPassword  原来密码\npassword 新密码\npassword_confirmation 重复新密码\n2、只有登录后才能修改自己的密码，系统自动判断当前登录用户",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./UserController.php",
+    "groupTitle": "用户管理",
+    "name": "PostApiAdminModify"
+  },
+  {
+    "type": "post",
+    "url": "/api/admin/uploadAvatar",
+    "title": "9.头像图片上传",
+    "group": "用户管理",
+    "header": {
+      "examples": [
+        {
+          "title": "http头部请求:",
+          "content": "    {\n      \"content-type\": \"application/form-data\"\n    }\n返回情况请看postman调试结果",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./UserController.php",
+    "groupTitle": "用户管理",
+    "name": "PostApiAdminUploadavatar"
   },
   {
     "type": "post",
@@ -979,7 +990,7 @@ define({ "api": [
       "examples": [
         {
           "title": "简要说明:",
-          "content": "具体参数情况请参考创建用户的参数",
+          "content": "具体参数情况请参考创建用户的参数\n作为URL部分的ID必填",
           "type": "json"
         }
       ]

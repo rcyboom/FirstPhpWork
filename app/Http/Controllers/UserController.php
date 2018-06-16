@@ -170,6 +170,7 @@ class UserController extends Controller
      * @apiGroup 用户管理
      * @apiHeaderExample 简要说明:
      * 具体参数情况请参考创建用户的参数
+     * 作为URL部分的ID必填
      */
 
     public function update(Request $request, $id)
@@ -212,7 +213,7 @@ class UserController extends Controller
         if ($bool) {
             return $this->myResult(1,'更新成功！',null);
         }else{
-            return $this->myResult(0,'更新失败，可能的原因是用户名和邮件与其他人重复！',null);
+            return $this->myResult(0,'更新失败！','可能的原因是用户名和邮件与其他人重复或者该ID不存在！');
         }
 
     }
@@ -221,19 +222,9 @@ class UserController extends Controller
      * @api {delete} /api/admin/:id  8.删除指定的管理员
      * @apiGroup 用户管理
      *
-     * @apiSuccessExample 用户删除成功
+     * @apiSuccessExample 简要说明
      * HTTP/1.1 200 OK
-     * {
-     * "status": "success",
-     * "status_code": 200
-     * }
-     *
-     * @apiErrorExample 用户删除失败
-     * HTTP/1.1 404 ERROR
-     * {
-     * "status": "error",
-     * "status_code": 404
-     * }
+     * 作为URL的ID参数必填，成功code为1，否则为0
      */
 
     public function destroy($id)
@@ -255,57 +246,45 @@ class UserController extends Controller
     }
 
     /**
-     * @1api {post} /api/admin/:id/reset  重置指定管理员的密码
-     * @1apiGroup 用户管理
-     *
-     * @1apiParam {string} password 用户密码
-     *
-     * @1apiSuccessExample 密码设置成功后的返回结果
-     * HTTP/1.1 200 OK
-     * {
-     * "status": "success",
-     * "status_code": 200
-     * }
-     *
+     * @api {post} /api/admin/:id/reset  93.设置指定的管理员的密码
+     * @apiGroup 用户管理
+     * @apiSuccessExample 简要说明
+     * 1、必填参数 password 用户新密码
+     * 2、必填参数 password_confirmation 重复新密码
+     * 3、作为URL部分的ID必填
      */
     public function reset(Request $request, $id)
     {
-        return response()->json([
-            'status' => 'success',
-            'status_code' => 200,
-            'message' => '系统演示，暂时不提供用户修改密码功能'
-        ], 200);
         $password = $request->input('password');
+        $rules = [
+            'password'=>'required|between:5,20|confirmed',
+        ];
+        $messages = [
+            'required' => '密码不能为空',
+            'between' => '密码必须是6~20位之间',
+            'confirmed' => '新密码和确认密码不匹配'
+        ];
+        $validator = Validator::make($request->input(), $rules, $messages);
+        if ($validator->fails()) {
+            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
+        }
         $user = User::find($id);
-        $user->password = bcrypt($password);
-        $user->save();
-        return $this->success();
+        if($user){
+            $user->password = bcrypt($password);
+            $user->save();
+            return $this->myResult(1,'密码修改成功！',null);
+        }
+        return $this->myResult(0,'操作失败！','可能的原因是ID没找到！');
     }
 
     /**
-     * @api {post} /api/admin/upload  9.头像图片上传
+     * @api {post} /api/admin/uploadAvatar  9.头像图片上传
      * @apiGroup 用户管理
      * @apiHeaderExample {json} http头部请求:
      *     {
      *       "content-type": "application/form-data"
      *     }
-     *
-     * @apiSuccessExample 上传成功
-     * HTTP/1.1 200 OK
-     * {
-     * "status": "success",
-     * "status_code": 200，
-     * "data": {
-     *   "url" : 'uploads/3201278123689.png'
-     *  }
-     * }
-     *
-     * @apiErrorExample 上传失败
-     * HTTP/1.1 400 ERROR
-     * {
-     * "status": "error",
-     * "status_code": 400
-     * }
+     * 返回情况请看postman调试结果
      */
 
     public function uploadAvatar(Request $request)
@@ -329,40 +308,32 @@ class UserController extends Controller
                 $bool = Storage::disk('uploads')->put($filename, file_get_contents($realPath));
                 if ($bool) {
                     $filename = 'uploads/' . $filename;
-                    return response()->json([
-                        'status' => 'success',
-                        'status_code' => 200,
-                        'data' => [
-                            'url' => $filename,
-                        ]
-                    ], 200);
+                    return $this->myResult(1,'上传成功！',['url' => $filename]);
                 } else {
-                    return $this->error();
+                    return $this->myResult(0,'上传失败！',null);
                 }
             }
         }
     }
 
     /**
-     * 修改个人密码
-     * 获取三个字段，oldPassword => 原来密码  password=>新密码 password_confirmation
-     * 原密码相同才能修改密码为新密码
+     *  @api {post} /api/admin/modify 92.登录用户修改密码
+     * @apiGroup 用户管理
+     * @apiHeaderExample 简要说明
+     * 1、必选参数
+     * oldPassword  原来密码
+     * password 新密码
+     * password_confirmation 重复新密码
+     * 2、只有登录后才能修改自己的密码，系统自动判断当前登录用户
      */
     public function modify(Request $request)
     {
-
-        return response()->json([
-            'status' => 'success',
-            'status_code' => 200,
-            'message' => '系统演示，暂时不提供用户修改密码功能'
-        ], 200);
-
         $oldPassword = $request->input('oldPassword');
         $password = $request->input('password');
         $data = $request->all();
         $rules = [
-            'oldPassword'=>'required|between:6,20',
-            'password'=>'required|between:6,20|confirmed',
+            'oldPassword'=>'required|between:5,20',
+            'password'=>'required|between:5,20|confirmed',
         ];
         $messages = [
             'required' => '密码不能为空',
@@ -377,14 +348,13 @@ class UserController extends Controller
             }
         });
         if ($validator->fails()) {
-            $errors = $validator->errors($validator); //返回一次性错误
-            return $this->errorWithCodeAndInfo(422,$errors);
+            return $this->myResult(0,'密码修改失败！',$validator->errors()->all());
         }
         $user->password = bcrypt($password);
         if ($user->save()) {
-            return $this->success();
+            return $this->myResult(0,'密码修改成功！',null);
         } else {
-            return $this->error();
+            return $this->myResult(0,'密码修改失败！','系统未知错误');
         }
         
     }

@@ -31,7 +31,7 @@ Route::middleware('auth:api')->group(function() {
     Route::post('/admin/upload', 'UserController@upload')->name('admin.upload');
     Route::post('/admin/export', 'UserController@export')->name('admin.export');
     Route::post('/admin/exportAll', 'UserController@exportAll')->name('admin.exportAll');
-    Route::post('/admin/deleteAll', 'UserController@deleteAll')->name('admin.deleteAll');
+   // Route::post('/admin/deleteAll', 'UserController@deleteAll')->name('admin.deleteAll');
 
     // 角色管理
     Route::Resource('role', 'RoleController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
