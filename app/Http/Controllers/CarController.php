@@ -78,8 +78,10 @@ class CarController extends Controller
     public function getCar($id)
     {
         $car=Car::find($id);
-        if($car)
+        if($car){
             return $this->myResult(1,'获取信息成功！',$car);
+        }
+        return $this->myResult(0,'未找到对应的ID！',null);
     }
 
     /**

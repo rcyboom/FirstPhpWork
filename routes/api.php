@@ -70,6 +70,9 @@ Route::middleware('auth:api')->group(function() {
     Route::get('cars/{id}', 'CarController@getCar')->name('cars.getCar');
     Route::post('cars/{id?}', 'CarController@saveCar')->name('cars.saveCar');
 
-
+    // 客户信息管理
+    Route::get('customers/index', 'CustomerController@index')->name('customers.index');
+    Route::get('customers/{id}', 'CustomerController@getone')->name('customers.getOne');
+    Route::post('customers/{id?}', 'CustomerController@saveone')->name('customers.saveOne');
 
 });

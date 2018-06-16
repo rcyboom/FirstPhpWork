@@ -574,6 +574,72 @@
     "name": "PostApiSession"
   },
   {
+    "type": "get",
+    "url": "/api/customers/{id}",
+    "title": "2.获取指定客户信息",
+    "group": "客户管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 customer.getOne\n2、必须传递ID，正整数,\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./CustomerController.php",
+    "groupTitle": "客户管理",
+    "name": "GetApiCustomersId"
+  },
+  {
+    "type": "get",
+    "url": "/api/customers/index",
+    "title": "1.客户列表",
+    "group": "客户管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 customer.index\n2、可选参数\npageSize 分页数量，默认为15\nname 客户名称,默认为空,模糊匹配 like %name%",
+          "type": "json"
+        }
+      ]
+    },
+    "parameter": {
+      "examples": [
+        {
+          "title": "数据库表结构",
+          "content": "increments('id')->comment('客户编号');\nstring('name', 20)->unique()->comment('客户名称');\nstring('from', 20)->nullable()->comment('客户来源');\nstring('linkman',20)->nullable()->comment('联系人');\nstring('phone', 20)->nullable()->comment('联系电话');\nstring('email', 50)->nullable()->comment('电子邮件');\nstring('card_type',20)->nullable()->comment('证件类型');\nstring('card_number', 30)->nullable()->comment('证件号码');\nstring('fax', 20)->nullable()->comment('传真号码');\nstring('remark')->nullable()->comment('备注');",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./CustomerController.php",
+    "groupTitle": "客户管理",
+    "name": "GetApiCustomersIndex"
+  },
+  {
+    "type": "post",
+    "url": "/api/customers/{id?}",
+    "title": "3.新增或更新客户信息",
+    "group": "客户管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 customers.saveOne\n2、必选参数：\nID，客户编号，作为URL必填,大于0表示更新，否则新增\nname，客户名称，字符串不能为空\n3、可选参数参照客户列表中的数据库结构",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./CustomerController.php",
+    "groupTitle": "客户管理",
+    "name": "PostApiCustomersId"
+  },
+  {
     "type": "delete",
     "url": "/api/admin/:id",
     "title": "8.删除指定的管理员",
