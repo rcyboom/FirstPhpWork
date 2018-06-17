@@ -143,4 +143,18 @@ class CarController extends Controller
         }
         return $this->myResult(0,'操作失败，未知错误！',null);
     }
+
+    /**
+     * @api {get} /api/cars/carNumberList 4.返回已有车牌号列表
+     * @apiGroup 车辆管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 cars.carNumberList
+     * 2、无需参数
+     * 3、返回对应的ID和车牌号，ID可用于编辑的时候判断是否是当前记录进行校验
+     */
+    public function carNumberList()
+    {
+        $car=Car::select('id','car_number')->get();
+        return $this->myResult(1,'获取信息成功！',$car);
+    }
 }

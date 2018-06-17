@@ -67,11 +67,14 @@ Route::middleware('auth:api')->group(function() {
 
     // 车辆信息管理
     Route::get('cars/index', 'CarController@index')->name('cars.index');
+    Route::get('cars/carNumberList', 'CarController@carNumberList')->name('cars.carNumberList');
     Route::get('cars/{id}', 'CarController@getCar')->name('cars.getCar');
     Route::post('cars/{id?}', 'CarController@saveCar')->name('cars.saveCar');
 
+
     // 客户信息管理
     Route::get('customers/index', 'CustomerController@index')->name('customers.index');
+    Route::get('customers/customersList', 'CustomerController@customersList')->name('customers.customersList');
     Route::get('customers/{id}', 'CustomerController@getone')->name('customers.getOne');
     Route::post('customers/{id?}', 'CustomerController@saveone')->name('customers.saveOne');
 

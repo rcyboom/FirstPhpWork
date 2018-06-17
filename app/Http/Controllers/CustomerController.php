@@ -115,4 +115,18 @@ class CustomerController extends Controller
         }
         return $this->myResult(0,'操作失败，未知错误！',null);
     }
+
+    /**
+     * @api {get} /api/customers/customersList 4.返回已有客户名称
+     * @apiGroup 客户管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 customers.customersList
+     * 2、无需参数
+     * 3、返回对应的ID和名称，ID可用于编辑的时候判断是否是当前记录进行校验
+     */
+    public function customersList()
+    {
+        $car=Customer::select('id','name')->get();
+        return $this->myResult(1,'获取信息成功！',$car);
+    }
 }
