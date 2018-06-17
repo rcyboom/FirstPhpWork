@@ -78,4 +78,8 @@ Route::middleware('auth:api')->group(function() {
     Route::get('customers/{id}', 'CustomerController@getone')->name('customers.getOne');
     Route::post('customers/{id?}', 'CustomerController@saveone')->name('customers.saveOne');
 
+    //任务管理
+    Route::get('tasks/index', 'TaskController@index')->name('tasks.index');
+    Route::post('tasks/create', 'TaskController@create')->name('tasks.create');
+
 });

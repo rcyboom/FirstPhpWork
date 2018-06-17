@@ -575,6 +575,110 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/api/tasks/index",
+    "title": "1.任务列表",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.index\n2、可选参数\npageSize 分页数量，默认为15\ncustomer_name 客户名称,默认为空,模糊匹配\ntask_title    任务名称，默认为空,模糊匹配\nlinkman       联系人，默认为空,模糊匹配",
+          "type": "json"
+        }
+      ]
+    },
+    "parameter": {
+      "examples": [
+        {
+          "title": "数据库表结构",
+          "content": "increments('id')->comment('任务编号');\ndateTime('check_time')->nullable(false)->default(now())->comment('登记时间');\ninteger('customer_id')->nullable(false)->comment('客户编号');\nstring('title', 30)->nullable(false)->comment('任务名称');\nstring('type', 20)->default('默认类型')->comment('类型');\nstring('state', 20)->default('已登记')->comment('状态');\nstring('linkman',20)->nullable()->comment('联系人');\nstring('phone', 20)->nullable()->comment('联系电话');\nstring('station', 60)->nullable()->comment('工作地点');\ndateTime('start_time')->nullable()->default(now())->comment('开始时间');\ndateTime('end_time')->nullable()->comment('结束时间');\ndecimal('work_hours', 8, 2)->default(1.0)->comment('任务工时');\ndecimal('equipment_cost', 8, 2)->default(0)->comment('设备费用');\ndecimal('other_cost', 8, 2)->default(0)->comment('其他费用');\ndecimal('receivables', 8, 2)->default(0)->comment('结算金额');\ndecimal('tax', 8, 2)->default(0)->comment('税费');\ninteger('account_id')->default(0)->comment('结算编号');\nstring('remark')->nullable()->comment('任务备注');",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "GetApiTasksIndex"
+  },
+  {
+    "type": "post",
+    "url": "/api/tasks/allotCar",
+    "title": "4.新增或更新指派出勤车辆",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.allotCar\n2、还没写呢，这里主要是指派车辆出勤，同时要对出勤记录进行编辑或者更新单一状态比如手工",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "PostApiTasksAllotcar"
+  },
+  {
+    "type": "post",
+    "url": "/api/tasks/allotMan",
+    "title": "5.新增或更新指派出勤人员",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.allotMan\n2、还没写呢，这里主要是对人员的出勤、手工、考核，不知道是单独写api还是集中到这里一起合适\n一会我把流程图发给你你看看",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "PostApiTasksAllotman"
+  },
+  {
+    "type": "post",
+    "url": "/api/tasks/create",
+    "title": "2.新增任务",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.create\n2、必选参数：\ncheck_time 登记时间  datetime\ncustomer_id 客户编号 integer\ntitle 任务名称  string 30\n3、可选参数\ntype 任务类型 string 20  默认值\"默认类型\"\nlinkman 联系人 string 20\nphone 联系电话 string 20\nstation 工作地点 string 60\nstart_time 开始时间 datetime\nremark 任务备注 string",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "PostApiTasksCreate"
+  },
+  {
+    "type": "post",
+    "url": "/api/tasks/update",
+    "title": "3.更新任务",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.update\n2、还没写呢,这里主要还涉及更新一些任务的状态这种单一属性的操作",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "PostApiTasksUpdate"
+  },
+  {
+    "type": "get",
     "url": "/api/customers/customersList",
     "title": "4.返回已有客户名称",
     "group": "客户管理",
