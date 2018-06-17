@@ -575,6 +575,25 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/api/customers/customersList",
+    "title": "4.返回已有客户名称",
+    "group": "客户管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 customers.customersList\n2、无需参数\n3、返回对应的ID和名称，ID可用于编辑的时候判断是否是当前记录进行校验",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./CustomerController.php",
+    "groupTitle": "客户管理",
+    "name": "GetApiCustomersCustomerslist"
+  },
+  {
+    "type": "get",
     "url": "/api/customers/{id}",
     "title": "2.获取指定客户信息",
     "group": "客户管理",
@@ -1065,6 +1084,25 @@ define({ "api": [
     "filename": "./UserController.php",
     "groupTitle": "用户管理",
     "name": "PutApiAdminId"
+  },
+  {
+    "type": "get",
+    "url": "/api/cars/carNumberList",
+    "title": "4.返回已有车牌号列表",
+    "group": "车辆管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 cars.carNumberList\n2、无需参数\n3、返回对应的ID和车牌号，ID可用于编辑的时候判断是否是当前记录进行校验",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./CarController.php",
+    "groupTitle": "车辆管理",
+    "name": "GetApiCarsCarnumberlist"
   },
   {
     "type": "get",
