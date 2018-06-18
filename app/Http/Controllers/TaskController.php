@@ -8,6 +8,7 @@ use App\Models\Task;
 use App\Models\Userpay;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
