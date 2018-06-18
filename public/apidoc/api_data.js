@@ -603,14 +603,14 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/api/tasks/allotCar",
-    "title": "4.新增或更新指派出勤车辆",
+    "url": "/api/tasks/addTaskCar",
+    "title": "7.新增或编辑出勤车辆",
     "group": "任务管理",
     "header": {
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、路由名称 tasks.allotCar\n2、还没写呢，这里主要是指派车辆出勤，同时要对出勤记录进行编辑或者更新单一状态比如手工",
+          "content": "1、路由名称 tasks.addTaskCar\n2、必选参数\nid  车辆出勤编号    大于0表示编辑，否则为新增\ntask_id 任务编号   必须大于0，且为真实存在的任务编号\ncar_id 出勤车辆编号 必须大于0，且为存在的车辆\nstart_time 开始时间 datetime\n3、可选参数\nend_time 结束时间 datetime\nrent_cost 车费 2位小数\noil_cost 油费 2位小数\ntoll_cost 路费 2位小数\npark_cost 停车费 2位小数\naward_salary 奖惩工资 2位小数\nscore 任务评分 2位小数\nremark 出勤备注 string",
           "type": "json"
         }
       ]
@@ -618,18 +618,18 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "./TaskController.php",
     "groupTitle": "任务管理",
-    "name": "PostApiTasksAllotcar"
+    "name": "PostApiTasksAddtaskcar"
   },
   {
     "type": "post",
-    "url": "/api/tasks/allotMan",
-    "title": "5.新增或更新指派出勤人员",
+    "url": "/api/tasks/addTaskMan",
+    "title": "5.新增或编辑出勤人员",
     "group": "任务管理",
     "header": {
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、路由名称 tasks.allotMan\n2、还没写呢，这里主要是对人员的出勤、手工、考核，不知道是单独写api还是集中到这里一起合适\n一会我把流程图发给你你看看",
+          "content": "1、路由名称 tasks.addTaskMan\n2、必选参数\nid  人员出勤编号    大于0表示编辑，否则为新增\ntask_id 任务编号   必须大于0，且为真实存在的任务编号\nuser_id 出勤人员编号 必须大于0，且为存在的人员\nstart_time 开始时间 datetime\npost 岗位 string 20\n3、可选参数\nend_time 结束时间 datetime\nwork_hours 任务工时 2位小数\nwork_salary 岗位工资 2位小数\nextra_hours 加班工时 2位小数\nextra_salary 加班工资 2位小数\naward_salary 奖惩工资 2位小数\nscore 任务评分 2位小数\nremark 出勤备注 string",
           "type": "json"
         }
       ]
@@ -637,7 +637,7 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "./TaskController.php",
     "groupTitle": "任务管理",
-    "name": "PostApiTasksAllotman"
+    "name": "PostApiTasksAddtaskman"
   },
   {
     "type": "post",
@@ -660,6 +660,63 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/api/tasks/delete",
+    "title": "4.删除任务",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.delete\n必填参数：\nID 任务编号 正整数\n2、code为1正常删除，为0请读取info显示原因",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "PostApiTasksDelete"
+  },
+  {
+    "type": "post",
+    "url": "/api/tasks/delTaskCar",
+    "title": "8.删除出勤车辆",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.delTaskCar\n2、必选参数\nid 车辆出勤编号",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "PostApiTasksDeltaskcar"
+  },
+  {
+    "type": "post",
+    "url": "/api/tasks/delTaskMan",
+    "title": "6.删除出勤人员",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.delTaskMan\n2、必选参数\nid  人员出勤编号",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "PostApiTasksDeltaskman"
+  },
+  {
+    "type": "post",
     "url": "/api/tasks/update",
     "title": "3.更新任务",
     "group": "任务管理",
@@ -667,7 +724,7 @@ define({ "api": [
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、路由名称 tasks.update\n2、还没写呢,这里主要还涉及更新一些任务的状态这种单一属性的操作",
+          "content": "1、路由名称 tasks.update\n2、必填参数：\nID 任务编号 正整数\n3、可选参数\nstart_time 开始时间 日期时间型\nend_time 结束时间 日期时间型\nwork_hours 工时 2位小数\nequipment_cost 设备费用 2位小数\nother_cost 其他费用 2位小数\nreceivables 结算费用 2位小数\ntax 税费 2位小数\ntype 任务类型 字符串\nlinkman 联系人 字符串\nphone 联系电话 字符串\nstation 工作地点 字符串\nremark 任务备注 字符串\n4、特别说明：\ncheck_time 登记时间,customer_id客户ID,title任务标题",
           "type": "json"
         }
       ]
