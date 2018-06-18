@@ -122,7 +122,7 @@ class TaskController extends Controller
          * station 工作地点 字符串
          * remark 任务备注 字符串
          * 4、特别说明：
-         * check_time 登记时间,customer_id客户ID,title任务标题
+         * 这些字段不可修改：check_time 登记时间,customer_id客户ID,title任务标题
          */
     public function update()
     {
@@ -146,13 +146,13 @@ class TaskController extends Controller
             return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
         }
 
-        $rs->check_time = Request::input('start_time');
-        $rs->customer_id = Request::input('end_time');
-        $rs->title = Request::input('work_hours',0);
-        $rs->type = Request::input('equipment_cost',0);
-        $rs->linkman = Request::input('other_cost',0);
-        $rs->phone = Request::input('receivables',0);
-        $rs->station = Request::input('tax',0);
+        $rs->start_time = Request::input('start_time');
+        $rs->end_time = Request::input('end_time');
+        $rs->work_hours = Request::input('work_hours',0);
+        $rs->equipment_cost = Request::input('equipment_cost',0);
+        $rs->other_cost = Request::input('other_cost',0);
+        $rs->receivables = Request::input('receivables',0);
+        $rs->tax = Request::input('tax',0);
         $rs->type = Request::input('type');
         $rs->linkman = Request::input('linkman');
         $rs->phone = Request::input('phone');
