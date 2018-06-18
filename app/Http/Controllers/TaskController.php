@@ -428,7 +428,7 @@ class TaskController extends Controller
     public function TaskCars()
     {
         $rs=DB::table('cartasks')
-            ->where('task_id','=',Request::input(task_id,0))->get();
+            ->where('task_id','=',Request::input('task_id',0))->get();
         return $this->myResult(1,'信息获取成功！',$rs);
     }
 
@@ -446,7 +446,7 @@ class TaskController extends Controller
     public function TaskMans()
     {
         $rs=DB::table('usertasks')
-            ->where('task_id','=',Request::input(task_id,0))->get();
+            ->where('task_id','=',Request::input('task_id',0))->get();
         return $this->myResult(1,'信息获取成功！',$rs);
     }
 }

@@ -602,6 +602,44 @@
     "name": "GetApiTasksIndex"
   },
   {
+    "type": "get",
+    "url": "/api/tasks/TaskCars",
+    "title": "9.获取出勤车辆列表",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.TaskCars\n2、必选参数\ntask_id 必选参数，正整数\n特殊说明：\n1、只返回单个任务的出勤车辆，无需分页\n2、后期再增加返回相应关联字段",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "GetApiTasksTaskcars"
+  },
+  {
+    "type": "get",
+    "url": "/api/tasks/TaskMans",
+    "title": "91.获取出勤人员列表",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.TaskMans\n2、必选参数\ntask_id 必选参数，正整数\n特殊说明：\n1、只返回单个任务的出勤人员，无需分页\n2、后期再增加返回相应关联字段",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "GetApiTasksTaskmans"
+  },
+  {
     "type": "post",
     "url": "/api/tasks/addTaskCar",
     "title": "7.新增或编辑出勤车辆",
@@ -724,7 +762,7 @@
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、路由名称 tasks.update\n2、必填参数：\nID 任务编号 正整数\n3、可选参数\nstart_time 开始时间 日期时间型\nend_time 结束时间 日期时间型\nwork_hours 工时 2位小数\nequipment_cost 设备费用 2位小数\nother_cost 其他费用 2位小数\nreceivables 结算费用 2位小数\ntax 税费 2位小数\ntype 任务类型 字符串\nlinkman 联系人 字符串\nphone 联系电话 字符串\nstation 工作地点 字符串\nremark 任务备注 字符串\n4、特别说明：\ncheck_time 登记时间,customer_id客户ID,title任务标题",
+          "content": "1、路由名称 tasks.update\n2、必填参数：\nID 任务编号 正整数\n3、可选参数\nstart_time 开始时间 日期时间型\nend_time 结束时间 日期时间型\nwork_hours 工时 2位小数\nequipment_cost 设备费用 2位小数\nother_cost 其他费用 2位小数\nreceivables 结算费用 2位小数\ntax 税费 2位小数\ntype 任务类型 字符串\nlinkman 联系人 字符串\nphone 联系电话 字符串\nstation 工作地点 字符串\nremark 任务备注 字符串\n4、特别说明：\n这些字段不可修改：check_time 登记时间,customer_id客户ID,title任务标题",
           "type": "json"
         }
       ]
