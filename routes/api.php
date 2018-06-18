@@ -84,8 +84,10 @@ Route::middleware('auth:api')->group(function() {
     Route::post('tasks/update', 'TaskController@update')->name('tasks.update');
     Route::post('tasks/delete', 'TaskController@delete')->name('tasks.delete');
     Route::post('tasks/addTaskCar', 'TaskController@addTaskCar')->name('tasks.addTaskCar');
+    Route::get('tasks/TaskCars', 'TaskController@TaskCars')->name('tasks.TaskCars');
     Route::post('tasks/delTaskCar', 'TaskController@delTaskCar')->name('tasks.delTaskCar');
     Route::post('tasks/addTaskMan', 'TaskController@addTaskMan')->name('tasks.addTaskMan');
+    Route::get('tasks/TaskMans', 'TaskController@TaskMans')->name('tasks.TaskMans');
     Route::post('tasks/delTaskMan', 'TaskController@delTaskMan')->name('tasks.delTaskMan');
 
 });
