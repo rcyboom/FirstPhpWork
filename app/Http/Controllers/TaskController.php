@@ -413,4 +413,40 @@ class TaskController extends Controller
         }
         return $this->myResult(0,'操作失败，未知错误！',null);
     }
+
+    /**
+     * @api {get} /api/tasks/TaskCars 9.获取出勤车辆列表
+     * @apiGroup 任务管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 tasks.TaskCars
+     * 2、必选参数
+     * task_id 必选参数，正整数
+     * 特殊说明：
+     * 1、只返回单个任务的出勤车辆，无需分页
+     * 2、后期再增加返回相应关联字段
+     */
+    public function TaskCars()
+    {
+        $rs=DB::table('cartasks')
+            ->where('task_id','=',Request::input(task_id,0))->get();
+        return $this->myResult(1,'信息获取成功！',$rs);
+    }
+
+    /**
+     * @api {get} /api/tasks/TaskMans 91.获取出勤人员列表
+     * @apiGroup 任务管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 tasks.TaskMans
+     * 2、必选参数
+     * task_id 必选参数，正整数
+     * 特殊说明：
+     * 1、只返回单个任务的出勤人员，无需分页
+     * 2、后期再增加返回相应关联字段
+     */
+    public function TaskMans()
+    {
+        $rs=DB::table('usertasks')
+            ->where('task_id','=',Request::input(task_id,0))->get();
+        return $this->myResult(1,'信息获取成功！',$rs);
+    }
 }
