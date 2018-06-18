@@ -81,5 +81,11 @@ Route::middleware('auth:api')->group(function() {
     //任务管理
     Route::get('tasks/index', 'TaskController@index')->name('tasks.index');
     Route::post('tasks/create', 'TaskController@create')->name('tasks.create');
+    Route::post('tasks/update', 'TaskController@update')->name('tasks.update');
+    Route::post('tasks/delete', 'TaskController@delete')->name('tasks.delete');
+    Route::post('tasks/addTaskCar', 'TaskController@addTaskCar')->name('tasks.addTaskCar');
+    Route::post('tasks/delTaskCar', 'TaskController@delTaskCar')->name('tasks.delTaskCar');
+    Route::post('tasks/addTaskMan', 'TaskController@addTaskMan')->name('tasks.addTaskMan');
+    Route::post('tasks/delTaskMan', 'TaskController@delTaskMan')->name('tasks.delTaskMan');
 
 });
