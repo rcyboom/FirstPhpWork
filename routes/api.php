@@ -83,9 +83,13 @@ Route::middleware('auth:api')->group(function() {
     Route::post('tasks/create', 'TaskController@create')->name('tasks.create');
     Route::post('tasks/update', 'TaskController@update')->name('tasks.update');
     Route::post('tasks/delete', 'TaskController@delete')->name('tasks.delete');
+
+    Route::get('tasks/FreeCars', 'TaskController@FreeCars')->name('tasks.FreeCars');
     Route::post('tasks/addTaskCar', 'TaskController@addTaskCar')->name('tasks.addTaskCar');
     Route::get('tasks/TaskCars', 'TaskController@TaskCars')->name('tasks.TaskCars');
     Route::post('tasks/delTaskCar', 'TaskController@delTaskCar')->name('tasks.delTaskCar');
+
+    Route::get('tasks/FreeMans', 'TaskController@FreeMans')->name('tasks.FreeMans');
     Route::post('tasks/addTaskMan', 'TaskController@addTaskMan')->name('tasks.addTaskMan');
     Route::get('tasks/TaskMans', 'TaskController@TaskMans')->name('tasks.TaskMans');
     Route::post('tasks/delTaskMan', 'TaskController@delTaskMan')->name('tasks.delTaskMan');

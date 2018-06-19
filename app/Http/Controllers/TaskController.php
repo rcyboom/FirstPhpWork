@@ -449,4 +449,40 @@ class TaskController extends Controller
             ->where('task_id','=',Request::input('task_id',0))->get();
         return $this->myResult(1,'信息获取成功！',$rs);
     }
+
+    /**
+     * @api {get} /api/tasks/FreeMans 92.获取在位空闲人员列表
+     * @apiGroup 任务管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 tasks.FreeMans
+     * 2、无需参数，无需分页
+     * 特殊说明：
+     * 1、只返回state状态为在位的人员
+     * 2、排除出勤任务中end_time为空也就是未收工的人员
+     */
+    public function FreeMans()
+    {
+        $rs=DB::select('select id,name,phone_number from users where state=? AND id not in '.
+                '(select user_id from usertasks where end_time is null)',["在位"]);
+
+        return $this->myResult(1,'信息获取成功！',$rs);
+    }
+
+    /**
+     * @api {get} /api/tasks/FreeCars 93.获取在位空闲车辆列表
+     * @apiGroup 任务管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 tasks.FreeCars
+     * 2、无需参数，无需分页
+     * 特殊说明：
+     * 1、只返回state状态为在位的车辆
+     * 2、排除出勤任务中end_time为空也就是未收工的车辆
+     */
+    public function FreeCars()
+    {
+        $rs=DB::select("select id,car_type,car_number,linkman,phone from cars where state=? ".
+            " and id not in (select car_id from cartasks where end_time is null)",['在位']);
+
+        return $this->myResult(1,'信息获取成功！',$rs);
+    }
 }

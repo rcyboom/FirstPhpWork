@@ -575,6 +575,44 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/api/tasks/FreeCars",
+    "title": "93.获取在位空闲车辆列表",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.FreeCars\n2、无需参数，无需分页\n特殊说明：\n1、只返回state状态为在位的车辆\n2、排除出勤任务中end_time为空也就是未收工的车辆",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "GetApiTasksFreecars"
+  },
+  {
+    "type": "get",
+    "url": "/api/tasks/FreeMans",
+    "title": "92.获取在位空闲人员列表",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.FreeMans\n2、无需参数，无需分页\n特殊说明：\n1、只返回state状态为在位的人员\n2、排除出勤任务中end_time为空也就是未收工的人员",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "GetApiTasksFreemans"
+  },
+  {
+    "type": "get",
     "url": "/api/tasks/index",
     "title": "1.任务列表",
     "group": "任务管理",
