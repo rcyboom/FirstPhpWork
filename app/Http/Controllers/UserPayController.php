@@ -35,7 +35,7 @@ class UserPayController extends Controller
         $pageSize = (int)Request::input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:15;
 
-        $user_id=(Request::input('user_id');
+        $user_id=Request::input('user_id');
         $pay_type=Request::input('pay_type');
 
         $rs = Userpay::where('id','>',0);
