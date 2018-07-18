@@ -575,6 +575,100 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/api/userpays/{id}",
+    "title": "2.获取指定编号的奖惩信息",
+    "group": "人员奖惩",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 userpays.getOne\n2、必须传递ID，正整数",
+          "type": "json"
+        }
+      ]
+    },
+    "parameter": {
+      "examples": [
+        {
+          "title": "关于奖惩的其他说明",
+          "content": "1、account_id为工资结算单的id，不允许修改的\n2、返回的数据多一个account_id，为0显示为未结算，大于0显示为已结算\n3、此模块的user_id也就是员工编号，且必须是员工表中真实存在的员工编号",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./UserPayController.php",
+    "groupTitle": "人员奖惩",
+    "name": "GetApiUserpaysId"
+  },
+  {
+    "type": "get",
+    "url": "/api/userpays/index",
+    "title": "1.人员奖惩列表",
+    "group": "人员奖惩",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 userpays.index\n2、可选参数\npageSize 分页数量，默认为15\npay_type 奖惩类型,默认为空表示全部,模糊匹配 like %pay_type%\nuser_id  人员ID，默认为空表示全部,精确匹配 =user_id",
+          "type": "json"
+        }
+      ]
+    },
+    "parameter": {
+      "examples": [
+        {
+          "title": "数据库表结构",
+          "content": "increments('id')->comment('奖惩编号');\ninteger('user_id')->nullable(false)->comment('人员编号');\ninteger('account_id')->default(0)->comment('结算编号'); //最终发工资时一起合计后的结算编号\ndateTime('time')->nullable(false)->comment('奖惩时间');\nstring('type',20)->nullable(false)->comment('奖惩类型');\ndecimal('money', 8, 2)->default(0)->comment('奖惩金额');\ndecimal('score', 8, 2)->default(0)->comment('奖惩评分');\nstring('reason')->nullable()->comment('奖惩原因');",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./UserPayController.php",
+    "groupTitle": "人员奖惩",
+    "name": "GetApiUserpaysIndex"
+  },
+  {
+    "type": "post",
+    "url": "/api/userpays/delete",
+    "title": "4.删除指定编号的奖惩信息",
+    "group": "人员奖惩",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 userpays.delete\n2、必选参数\nid，正整数,需要删除的记录编号\n注意，此处id默认为0，如果没获取到id将返回错误消息：未找到对应的编号奖惩信息",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./UserPayController.php",
+    "groupTitle": "人员奖惩",
+    "name": "PostApiUserpaysDelete"
+  },
+  {
+    "type": "post",
+    "url": "/api/userpays/{id?}",
+    "title": "3.新增或更新一条奖惩信息",
+    "group": "人员奖惩",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 userpays.saveOne\n2、必选参数：\n id，奖惩编号，作为url必填,大于0表示更新，否则新增\n\tuser_id 正整数，人员编号，且必须真实存在\n\ttime 日期时间型，奖惩时间\n\ttype 字符串20，奖惩类型\n\tmoney 数字类型，两位小数，奖惩金额\n\tscore 数字类型，两位小数，奖惩评分\n\treason 字符串，奖惩原因",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./UserPayController.php",
+    "groupTitle": "人员奖惩",
+    "name": "PostApiUserpaysId"
+  },
+  {
+    "type": "get",
     "url": "/api/tasks/FreeCars",
     "title": "93.获取在位空闲车辆列表",
     "group": "任务管理",
