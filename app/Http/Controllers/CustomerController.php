@@ -84,7 +84,7 @@ class CustomerController extends Controller
             $rs=new Customer();
             $isNew=true;
         }
-
+       // return Request::all();
 
         $validator = Validator::make( Request::all(), [
             'name' => 'required',
@@ -130,3 +130,4 @@ class CustomerController extends Controller
         return $this->myResult(1,'获取信息成功！',$car);
     }
 }
+

@@ -94,4 +94,10 @@ Route::middleware('auth:api')->group(function() {
     Route::get('tasks/TaskMans', 'TaskController@TaskMans')->name('tasks.TaskMans');
     Route::post('tasks/delTaskMan', 'TaskController@delTaskMan')->name('tasks.delTaskMan');
 
+    // 员工奖惩
+    Route::get('userpays/index', 'UserPayController@index')->name('userpays.index');
+    Route::get('userpays/{id}', 'UserPayController@getOne')->name('userpays.getOne');
+    Route::post('userpays/delete', 'UserPayController@delete')->name('userpays.delete');
+    Route::post('userpays/{id?}', 'UserPayController@saveOne')->name('userpays.saveOne');
+
 });
