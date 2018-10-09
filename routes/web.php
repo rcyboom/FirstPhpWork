@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-
+    return json_encode(['Info'=>'This only API interface']);
 });
-Route::get('/oauth/github', 'AuthController@redirectToProvider');
-Route::get('/oauth/github/callback', 'AuthController@handleProviderCallback');
+//Route::get('/oauth/github', 'AuthController@redirectToProvider');
+//Route::get('/oauth/github/callback', 'AuthController@handleProviderCallback');

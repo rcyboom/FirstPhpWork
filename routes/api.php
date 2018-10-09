@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use \Illuminate\Http\Response;
+use App\Models\User;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,7 +14,7 @@ use \Illuminate\Http\Response;
 |
 */
 Route::get('testapi', function (Request $request){
-    return 'api服务正常！';
+    return User::all();
 })->name('soft.testapi');
 
 Route::middleware('auth:api')->get('/user', 'UserController@getUserInfo')->name('admin.userInfo');
