@@ -13,9 +13,7 @@ use App\Models\User;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('testapi', function (Request $request){
-    return User::all();
-})->name('soft.testapi');
+Route::any('/testapi', 'AccountController@accountcar')->name('api.test');
 
 Route::middleware('auth:api')->get('/user', 'UserController@getUserInfo')->name('admin.userInfo');
 Route::post('/login', 'Auth\LoginController@login')->name('login.login');

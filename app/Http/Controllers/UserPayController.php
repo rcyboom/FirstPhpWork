@@ -86,7 +86,7 @@ class UserPayController extends Controller
     public function saveOne($id=0)
     {
         $validator = Validator::make( Request::all(), [
-            'user_id' => 'required | integer | min:1',
+            'user_id' => 'required | integer | min:0',
             'time' => 'required | date',
             'type' => 'required',
             'reason' => 'required',

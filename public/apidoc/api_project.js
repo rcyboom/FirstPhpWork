@@ -4,6 +4,7 @@ define({
   "description": "工作任务管理后台接口文档说明",
   "title": "API接口说明",
   "url": "http://101.132.126.34",
+  "server_URL": "http://101.132.126.34",
   "header": {
     "title": "文档开始",
     "content": "<hr>\n<p>就是稀罕你</p>\n"
@@ -21,7 +22,7 @@ define({
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2018-09-08T14:17:08.060Z",
+    "time": "2018-10-14T15:19:32.904Z",
     "url": "http://apidocjs.com",
     "version": "0.17.6"
   }

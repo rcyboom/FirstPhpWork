@@ -1047,6 +1047,40 @@ define({ "api": [
     "name": "GetApiAdminId"
   },
   {
+    "group": "用户管理",
+    "type": "get",
+    "url": "/api/testapi",
+    "title": "0.测试api",
+    "description": "<p>测试api工作情况，直接返回用户输入</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "id",
+            "defaultValue": "1",
+            "description": "<p>参数说明</p>"
+          }
+        ]
+      }
+    },
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、服务器工作正常的时候，用浏览器等访问可返回传入的任何信息",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "用户管理",
+    "name": "GetApiTestapi"
+  },
+  {
     "type": "get",
     "url": "/api/user",
     "title": "91.获取当前登录的用户信息",
@@ -1415,6 +1449,360 @@ define({ "api": [
     "filename": "./UserController.php",
     "groupTitle": "用户管理",
     "name": "PutApiAdminId"
+  },
+  {
+    "type": "get",
+    "url": "/api/accounts/getone",
+    "title": "2.获取某条收支记录",
+    "group": "财务管理",
+    "description": "<p>路由名称 accounts.getone</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "account_id",
+            "description": "<p>收支编号</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "财务管理",
+    "name": "GetApiAccountsGetone"
+  },
+  {
+    "type": "get",
+    "url": "/api/accounts/index",
+    "title": "1.财务收支列表",
+    "group": "财务管理",
+    "description": "<p>路由名称 accounts.index</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "start_time",
+            "description": "<p>开始日期，格式：2018-01-01</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "end_time",
+            "description": "<p>截至日期</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": true,
+            "field": "account_type",
+            "description": "<p>收支类型，精准匹配，范围：-1，0，1，分别表示支出、全部、收入，默认值0</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "object_type",
+            "description": "<p>收支对象类型，精准匹配，范围：员工结算、车辆结算、客户结算及自定义字符串，默认值空表示全部</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": true,
+            "field": "object_id",
+            "description": "<p>收支对象ID，精准匹配，只有在object_type为员工结算或车辆结算时有意义，默认值空表示全部</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "trade_type",
+            "description": "<p>交易类型，精准匹配，默认值空，表示全部</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "object_name",
+            "description": "<p>收支对象名称，模糊匹配，默认值空表示全部</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "handler",
+            "description": "<p>经办人，模糊匹配，默认值空表示全部</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "remark",
+            "description": "<p>备注，模糊匹配，默认值空，表示全部</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "pageSize",
+            "description": "<p>分页大小，默认值15</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "财务管理",
+    "name": "GetApiAccountsIndex"
+  },
+  {
+    "type": "post",
+    "url": "/api/accounts/accountcar",
+    "title": "6.与车辆结算某个时间段的工资",
+    "group": "财务管理",
+    "description": "<p>路由名称 accounts.accountcar 注意，此接口只用于与车辆结算某个时间段的工资，结算后不可删除结算记录，所有参与结算的任务和奖惩记录的结算状态均不可再更改 结算金额自动为该时间段出勤任务及奖惩记录的合计金额，如果以后修改任务情况和奖惩记录后，需手动修改对应的收支记录 时间节点以出勤任务创建时间为准</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "start_time",
+            "description": "<p>开始日期</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "end_time",
+            "description": "<p>截至日期</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "account_time",
+            "description": "<p>结算日期</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "car_id",
+            "description": "<p>车辆ID编号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "handler",
+            "description": "<p>经办人，默认登录用户</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "trade_type",
+            "description": "<p>交易类型，如：现金、支付宝、微信、银行卡、对公账户等</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "trade_account",
+            "description": "<p>交易账户号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "remark",
+            "description": "<p>备注</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "财务管理",
+    "name": "PostApiAccountsAccountcar"
+  },
+  {
+    "type": "post",
+    "url": "/api/accounts/accounttask",
+    "title": "5.与客户结算某个任务",
+    "group": "财务管理",
+    "description": "<p>路由名称 accounts.accounttask 注意，此接口只用于与客户结算某个任务，结算后不可删除结算记录，任务结算状态不可再更改 结算金额自动为该任务的结算金额，如果以后修改任务后，需手动修改对应的收支记录</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "account_time",
+            "description": "<p>结算日期</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "task_id",
+            "description": "<p>任务ID编号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "handler",
+            "description": "<p>经办人，默认登录用户</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "trade_type",
+            "description": "<p>交易类型，如：现金、支付宝、微信、银行卡、对公账户等</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "trade_account",
+            "description": "<p>交易账户号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "remark",
+            "description": "<p>备注</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "财务管理",
+    "name": "PostApiAccountsAccounttask"
+  },
+  {
+    "type": "post",
+    "url": "/api/accounts/delete",
+    "title": "4.删除指定的手动收支信息",
+    "group": "财务管理",
+    "description": "<p>路由名称 accounts.delete 注意，此处id默认为0，如果没获取到id将返回错误消息：未找到对应编号0的收支信息 只能删除收支对象object_type不为 客户结算、员工结算、车辆结算 的信息</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "id",
+            "description": "<p>收支编号，正整数</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "财务管理",
+    "name": "PostApiAccountsDelete"
+  },
+  {
+    "type": "post",
+    "url": "/api/accounts/saveone",
+    "title": "3.新增或更新一条手动收支信息",
+    "group": "财务管理",
+    "description": "<p>路由名称 accounts.saveone</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "id",
+            "description": "<p>收支编号，整数，小于1表示新增</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "account_time",
+            "description": "<p>收支时间,日期，格式2018-01-01</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "object_type",
+            "description": "<p>收支对象，可选项：客户结算、员工结算、车辆结算、自定义字符串</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "object_id",
+            "description": "<p>收支对象ID，当object_type为客户结算、员工结算、车辆结算的时候，表示客户、员工、车辆的ID，其余为null</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "object_name",
+            "description": "<p>对象名称，当object_type为客户结算、员工结算、车辆结算的时候，表示客户、员工、车辆的名称，其余为自定义字符串</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "handler",
+            "description": "<p>经办人，默认登录用户</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "money",
+            "description": "<p>金额，2位小数</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "trade_type",
+            "description": "<p>交易账户类型，如支付宝、现金等</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "trade_account",
+            "description": "<p>交易账户号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "remark",
+            "description": "<p>备注</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "财务管理",
+    "name": "PostApiAccountsSaveone"
   },
   {
     "type": "get",
