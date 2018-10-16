@@ -332,6 +332,76 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/api/employees/index",
+    "title": "1.登录员工个人信息",
+    "group": "员工登录后模块",
+    "description": "<p>该模块说明：1、当用户登录后role属性中没有admin时，只允许访问该模块的路由， 配合到前端界面也就是只显示员工查询的对应功能和菜单</p> <p>1、登录后可以显示员工自身信息 2、可以查询自己的任务情况 3、可以查询自己的奖惩和预支情况 4、可以查询自己的工资发放情况 5、其余功能均不可见</p> <p>路由名称 employees.index</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "pageSize",
+            "description": "<p>分页大小，默认值15</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./EmployeeController.php",
+    "groupTitle": "员工登录后模块",
+    "name": "GetApiEmployeesIndex"
+  },
+  {
+    "type": "get",
+    "url": "/api/employees/tasks",
+    "title": "2.登录员工任务查询",
+    "group": "员工登录后模块",
+    "description": "<p>暂未实现 路由名称 employees.tasks</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "account_id",
+            "description": "<p>收支编号</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./EmployeeController.php",
+    "groupTitle": "员工登录后模块",
+    "name": "GetApiEmployeesTasks"
+  },
+  {
+    "type": "post",
+    "url": "/api/employees/accounts",
+    "title": "4.删除指定的手动收支信息",
+    "group": "员工登录后模块",
+    "description": "<p>暂未实现 路由名称 employees.accounts</p>",
+    "version": "0.0.0",
+    "filename": "./EmployeeController.php",
+    "groupTitle": "员工登录后模块",
+    "name": "PostApiEmployeesAccounts"
+  },
+  {
+    "type": "post",
+    "url": "/api/employees/pays",
+    "title": "3.登录员工预支奖惩查询",
+    "group": "员工登录后模块",
+    "description": "<p>暂未实现 路由名称 employees.pays</p>",
+    "version": "0.0.0",
+    "filename": "./EmployeeController.php",
+    "groupTitle": "员工登录后模块",
+    "name": "PostApiEmployeesPays"
+  },
+  {
+    "type": "get",
     "url": "/api/customers/customersList",
     "title": "4.返回已有客户名称",
     "group": "客户管理",

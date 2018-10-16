@@ -13,15 +13,16 @@ use App\Models\User;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::any('/testapi', 'AccountController@accountcar')->name('api.test');
+Route::any('/testapi', 'AccountController@test')->name('api.test');
 
 Route::middleware('auth:api')->get('/user', 'UserController@getUserInfo')->name('admin.userInfo');
 Route::post('/login', 'Auth\LoginController@login')->name('login.login');
-Route::post('/loginWithThree', 'Auth\LoginController@loginWithThree')->name('login.loginWithThree');
+//Route::post('/loginWithThree', 'Auth\LoginController@loginWithThree')->name('login.loginWithThree');
 Route::post('/token/refresh', 'Auth\LoginController@refresh')->name('login.refresh');
 Route::post('/logout', 'Auth\LoginController@logout')->name('login.logout');
-Route::post('/test', 'UserController@destroy')->name('soft.test');
-Route::middleware('auth:api')->group(function() {
+
+//管理员路由
+Route::middleware('auth:api','checkAdmin')->group(function() {
     // 用户管理
     Route::Resource('admin', 'UserController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
     Route::post('/admin/modify', 'UserController@modify' )->name('admin.modify');
@@ -44,8 +45,8 @@ Route::middleware('auth:api')->group(function() {
     Route::post('/permissions/getPermissionByTree', 'PermissionController@getPermissionByTree')->name('Permission.getPermissionByTree');
 
     // 手机信息管理
-    Route::post('/sms/send', 'SmsController@send')->name('sms.send');
-    Route::post('/sms/verify', 'SmsController@verify')->name('sms.verify');
+    //Route::post('/sms/send', 'SmsController@send')->name('sms.send');
+    //Route::post('/sms/verify', 'SmsController@verify')->name('sms.verify');
 
     // 车辆信息管理
     Route::get('cars/index', 'CarController@index')->name('cars.index');
@@ -90,4 +91,11 @@ Route::middleware('auth:api')->group(function() {
     Route::post('accounts/accountcar', 'AccountController@accountcar')->name('accounts.accountcar');
     Route::post('accounts/accountuser', 'AccountController@accountuser')->name('accounts.accountuser');
 
+});
+// 员工路由
+Route::middleware('auth:api')->group(function() {
+    Route::get('employees/index', 'EmployeeController@index')->name('employees.index');
+    Route::get('employees/tasks', 'EmployeeController@tasks')->name('employees.tasks');
+    Route::get('employees/pays', 'EmployeeController@pays')->name('employees.pays');
+    Route::get('employees/accounts', 'EmployeeController@accounts')->name('employees.accounts');
 });
