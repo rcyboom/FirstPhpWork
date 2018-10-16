@@ -11,8 +11,8 @@ class RoleController extends Controller
 {
      use Result;
     /**
-     * @api {get} /api/role 显示学期列表
-     * @apiGroup role
+     * @api {get} /api/role 显示角色列表
+     * @apiGroup 用户角色管理
      *
      *
      * @apiSuccessExample 返回所有的角色
@@ -66,7 +66,7 @@ class RoleController extends Controller
 
     /**
      * @api {post}/api/role 新建一条角色信息
-     * @apiGroup role
+     * @apiGroup 用户角色管理
      * @apiParam {string} name 角色名称
      * @apiParam {string} explain 角色说明
      * @apiParam {string} [remark] 角色备注 可选
@@ -104,7 +104,7 @@ class RoleController extends Controller
 
     /**
      * @api {get} /api/role/:id 获取一条角色
-     * @apiGroup role
+     * @apiGroup 用户角色管理
      * @apiParam {number} id 角色标识
      * @apiSuccessExample {json} 信息获取成功:
      * HTTP/1.1 200 OK
@@ -143,7 +143,7 @@ class RoleController extends Controller
 
     /**
      * @api {patch}/api/role/:id 更新角色信息
-     * @apiGroup role
+     * @apiGroup 用户角色管理
      * @apiParam {number} id 角色标识 路由上使用
      * @apiParam {string} name 角色名称
      * @apiParam {string} explain 角色描述
@@ -192,7 +192,7 @@ class RoleController extends Controller
      */
     /**
      * @api {delete} /api/role/:id 删除指定的角色信息
-     * @apiGroup role
+     * @apiGroup 用户角色管理
      * @apiParam {number} id 角色标识
      * @apiSuccessExample {json} 信息获取成功:
      * HTTP/1.1 200 OK
