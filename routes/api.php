@@ -36,16 +36,6 @@ Route::middleware('auth:api')->group(function() {
     Route::Resource('role', 'RoleController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
     Route::get('getRoles', 'RoleController@getRoles')->name('role.get');
 
-    // 其他支持API
-    Route::get('/getSession', 'SessionController@getSession')->name('session.get'); // 获取所有学期
-    Route::get('/getDefaultSession', 'SessionController@getDefaultSession')->name('session.getDefault'); //获得当前学期
-    Route::get('/getClassNumByGrade', 'SessionController@getClassNumByGrade')->name('session.getClassNum'); // 根据年级获取最大班级数
-
-
-    // 学期管理
-    Route::Resource('session', 'SessionController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
-    Route::post('/session/upload', 'SessionController@upload')->name('session.upload');
-
     // 程序功能管理
     Route::Resource('permissions', 'PermissionController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
     Route::post('/permissions/addGroup', 'PermissionController@addGroup')->name('permissions.addGroup');
@@ -56,13 +46,6 @@ Route::middleware('auth:api')->group(function() {
     // 手机信息管理
     Route::post('/sms/send', 'SmsController@send')->name('sms.send');
     Route::post('/sms/verify', 'SmsController@verify')->name('sms.verify');
-
-    // 学生信息管理
-    Route::resource('students', 'StudentController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
-    Route::post('students/deleteAll', 'StudentController@deleteAll')->name('students.deleteAll');
-    Route::post('students/upload', 'StudentController@upload')->name('students.upload');
-    Route::post('students/export', 'StudentController@export')->name('students.export');
-    Route::post('students/exportAll', 'StudentController@exportAll')->name('students.exportAll');
 
     // 车辆信息管理
     Route::get('cars/index', 'CarController@index')->name('cars.index');
