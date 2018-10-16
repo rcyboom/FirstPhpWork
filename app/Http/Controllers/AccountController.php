@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Models\Car;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Request;
@@ -35,7 +36,7 @@ class AccountController extends Controller
      * @apiParam {String} end_time 截至日期
      * @apiParam {Integer} [account_type] 收支类型，精准匹配，范围：-1，0，1，分别表示支出、全部、收入，默认值0
      * @apiParam {String} [object_type] 收支对象类型，精准匹配，范围：员工结算、车辆结算、客户结算及自定义字符串，默认值空表示全部
-     * @apiParam {Integer} [object_id] 收支对象ID，精准匹配，只有在object_type为员工结算或车辆结算时有意义，默认值空表示全部
+     * @apiParam {Integer} [object_id] 收支对象ID，精准匹配，只有在object_type为员工结算或车辆结算或者客户结算时有意义，默认值空表示全部
      * @apiParam {String} [trade_type] 交易类型，精准匹配，默认值空，表示全部
      * @apiParam {String} [object_name] 收支对象名称，模糊匹配，默认值空表示全部
      * @apiParam {String} [handler] 经办人，模糊匹配，默认值空表示全部
@@ -104,7 +105,7 @@ class AccountController extends Controller
      * 路由名称 accounts.getone
      * @apiParam {Integer} account_id 收支编号
      */
-    public function getOne()
+    public function getone()
     {
         $account_id=Request::input('account_id',0);
         $rs=Account::find($account_id);
@@ -119,10 +120,12 @@ class AccountController extends Controller
      * @apiGroup 财务管理
      * @apiDescription
      * 路由名称 accounts.saveone
+     *
+     * 注意，当object_type为客户结算、员工结算、车辆结算时，object_type不允许更改且改记录不允许删除
      * @apiParam {Integer} id 收支编号，整数，小于1表示新增
      * @apiParam {String} account_time 收支时间,日期，格式2018-01-01
      * @apiParam {String} object_type 收支对象，可选项：客户结算、员工结算、车辆结算、自定义字符串
-     * @apiParam {String} [object_id] 收支对象ID，当object_type为客户结算、员工结算、车辆结算的时候，表示客户、员工、车辆的ID，其余为null
+     * @apiParam {Integer} object_id 收支对象ID，当object_type为客户结算、员工结算、车辆结算的时候，表示客户、员工、车辆的ID，其余必须为0
      * @apiParam {String} object_name 对象名称，当object_type为客户结算、员工结算、车辆结算的时候，表示客户、员工、车辆的名称，其余为自定义字符串
      * @apiParam {String} handler 经办人，默认登录用户
      * @apiParam {Number} money 金额，2位小数
@@ -130,12 +133,13 @@ class AccountController extends Controller
      * @apiParam {String} [trade_account] 交易账户号
      * @apiParam {String} [remark] 备注
      */
-    public function saveOne()
+    public function saveone()
     {
         $validator = Validator::make( Request::all(), [
             'id' => 'required | integer | min:0',
             'account_time' => 'required | date',
             'object_type' => 'required',
+            'object_id' => 'required | integer | min:0',
             'object_name' => 'required',
             'handler' => 'required',
             'trade_type' => 'required',
@@ -231,6 +235,7 @@ class AccountController extends Controller
             $acc->account_time=Request::input('account_time');
             $acc->object_type='客户结算';
             $acc->object_id=$task->id;
+            $acc->object_name=$task->customer_name;
             $acc->handler=Request::input('handler');
             $acc->trade_type=Request::input('trade_type');
             $acc->trade_account=Request::input('trade_account');
@@ -245,14 +250,13 @@ class AccountController extends Controller
     }
 
     /**
-     * @api {post} /api/accounts/accountcar 6.与车辆结算某个时间段的工资
+     * @api {post} /api/accounts/accountcar 6.与车辆结算某个时间点之前的工资
      * @apiGroup 财务管理
      * @apiDescription
      * 路由名称 accounts.accountcar
-     * 注意，此接口只用于与车辆结算某个时间段的工资，结算后不可删除结算记录，所有参与结算的任务和奖惩记录的结算状态均不可再更改
-     * 结算金额自动为该时间段出勤任务及奖惩记录的合计金额，如果以后修改任务情况和奖惩记录后，需手动修改对应的收支记录
+     * 注意，此接口只用于与车辆结算某个时间点之前创建的任务的工资，结算后不可删除结算记录，所有参与结算的任务和奖惩记录的结算状态均不可再更改
+     * 结算金额自动为该时间点之前创建的出勤任务及奖惩记录的合计金额，如果以后修改任务情况和奖惩记录后，需手动修改对应的收支记录
      * 时间节点以出勤任务创建时间为准
-     * @apiParam {String} start_time 开始日期
      * @apiParam {String} end_time 截至日期
      * @apiParam {String} account_time 结算日期
      * @apiParam {Integer} car_id 车辆ID编号
@@ -264,7 +268,6 @@ class AccountController extends Controller
     public function accountcar()
     {
         $validator = Validator::make( Request::all(), [
-            'start_time' => 'required | date',
             'end_time' => 'required | date',
             'account_time' => 'required | date',
             'car_id' => 'required | integer | min:1',
@@ -278,15 +281,14 @@ class AccountController extends Controller
 
         $car=Car::find(Request::input('car_id'));
         if($car){
-            $start_time=Request::input('start_time');
             $end_time=Request::input('end_time');
             $account_time=Request::input('account_time');
 
             //查找所有时间段内已经完成但是还未结算的任务并予以结算
-            $affected_task = DB::update('update cartasks set account_id = -1 where account_id = 0  AND car_id = ? AND  created_at>=? and created_at<=?',
-                [$car->id,$start_time,$end_time]);
-            $affected_pay = DB::update('update userpays set account_id = -1 where account_id = 0  AND object_type=? AND object_id = ? AND  created_at>=? and created_at<=?',
-                ['车辆',$car->id,$start_time,$end_time]);
+            $affected_task = DB::update('update cartasks set account_id = -1 where account_id = 0  AND car_id = ?  and created_at<=?',
+                [$car->id,$end_time]);
+            $affected_pay = DB::update('update userpays set account_id = -1 where account_id = 0  AND object_type=? AND object_id = ?  and created_at<=?',
+                ['车辆',$car->id,$end_time]);
             if( ($affected_task+$affected_pay) ==0){
                 return $this->myResult(0,'未找到指定车辆的待结算信息！',null);
             }
@@ -297,6 +299,7 @@ class AccountController extends Controller
             $acc->account_time=$account_time;
             $acc->object_type='车辆结算';
             $acc->object_id=$car->id;
+            $acc->object_name=$car->car_number;
             $acc->handler=Request::input('handler');
             $acc->trade_type=Request::input('trade_type');
             $acc->trade_account=Request::input('trade_account');
@@ -311,4 +314,68 @@ class AccountController extends Controller
         return $this->myResult(0,'未找到对应编号的车辆信息！',Request::input('car_id'));
     }
 
+    /**
+     * @api {post} /api/accounts/accountuser 7.与员工结算某个时间点之前的工资
+     * @apiGroup 财务管理
+     * @apiDescription
+     * 路由名称 accounts.accountuser
+     * 注意，此接口只用于与员工结算某个时间点之前的工资，结算后不可删除结算记录，所有参与结算的任务和奖惩记录的结算状态均不可再更改
+     * 结算金额自动为该时间点之前的出勤任务及奖惩记录的合计金额，如果以后修改任务情况和奖惩记录后，需手动修改对应的收支记录
+     * 时间节点以出勤任务创建时间为准
+     * @apiParam {String} end_time 截至日期
+     * @apiParam {String} account_time 结算日期
+     * @apiParam {Integer} user_id 人员ID编号
+     * @apiParam {String} handler 经办人，默认登录用户
+     * @apiParam {String} trade_type 交易类型，如：现金、支付宝、微信、银行卡、对公账户等
+     * @apiParam {String} [trade_account] 交易账户号
+     * @apiParam {String} [remark] 备注
+     */
+    public function accountuser()
+    {
+        $validator = Validator::make( Request::all(), [
+            'end_time' => 'required | date',
+            'account_time' => 'required | date',
+            'user_id' => 'required | integer | min:1',
+            'handler' => 'required',
+            'trade_type' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
+        };
+
+        $usr=User::find(Request::input('user_id'));
+        if($usr){
+            $end_time=Request::input('end_time');
+            $account_time=Request::input('account_time');
+
+            //查找所有时间段内已经完成但是还未结算的任务并予以结算
+            $affected_task = DB::update('update usertasks set account_id = -2 where account_id = 0  AND user_id = ? and created_at<=?',
+                [$usr->id,$end_time]);
+            $affected_pay = DB::update('update userpays set account_id = -2 where account_id = 0  AND object_type=? AND object_id = ? and created_at<=?',
+                ['员工',$usr->id,$end_time]);
+            if( ($affected_task+$affected_pay) ==0){
+                return $this->myResult(0,'未找到指定员工的待结算信息！',null);
+            }
+            $taskmoney = DB::select('select COALESCE(SUM(work_salary+extra_salary+award_salary),0) as cc from usertasks  where account_id = -2');
+            $usermoney = DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id = -2');
+
+            $acc=new Account();
+            $acc->account_time=$account_time;
+            $acc->object_type='员工结算';
+            $acc->object_id=$usr->id;
+            $acc->object_name=$usr->name;
+            $acc->handler=Request::input('handler');
+            $acc->trade_type=Request::input('trade_type');
+            $acc->trade_account=Request::input('trade_account');
+            $acc->remark=Request::input('remark');
+            $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc;
+            $acc->save();
+            DB::update('update usertasks set account_id = ? where account_id = -2',[$acc->id]);
+            DB::update('update userpays set account_id = ? where account_id = -2',[$acc->id]);
+
+            return $this->myResult(1,'结算成功，对应的收支记录为:'.$acc->id,$acc);
+        }
+        return $this->myResult(0,'未找到对应编号的人员信息！',Request::input('user_id'));
+    }
 }

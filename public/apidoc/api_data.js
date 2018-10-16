@@ -591,7 +591,7 @@ define({ "api": [
       "examples": [
         {
           "title": "关于奖惩的其他说明",
-          "content": "1、account_id为工资结算单的id，不允许修改的\n2、返回的数据多一个account_id，为0显示为未结算，大于0显示为已结算\n3、此模块的user_id也就是员工编号，且必须是员工表中真实存在的员工编号",
+          "content": "account_id为工资结算单的id，不允许修改的，为0显示为未结算，大于0显示为已结算",
           "type": "json"
         }
       ]
@@ -610,7 +610,7 @@ define({ "api": [
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、路由名称 userpays.index\n2、可选参数\npageSize 分页数量，默认为15\npay_type 奖惩类型,默认为空表示全部,模糊匹配 like %pay_type%\nuser_id  人员ID，默认为空表示全部,精确匹配 =user_id",
+          "content": "1、路由名称 userpays.index\n2、可选参数\npageSize 分页数量，默认为15\nobject_type 奖惩对象类型，范围：车辆、员工,默认为空表示全部\nobject_id  奖惩对象ID，人员或者车辆ID，默认为空表示全部,精确匹配\naccount_id  结算ID，默认为空表示全部,精确匹配，0表示未结算",
           "type": "json"
         }
       ]
@@ -619,7 +619,7 @@ define({ "api": [
       "examples": [
         {
           "title": "数据库表结构",
-          "content": "increments('id')->comment('奖惩编号');\ninteger('user_id')->nullable(false)->comment('人员编号');\ninteger('account_id')->default(0)->comment('结算编号'); //最终发工资时一起合计后的结算编号\ndateTime('time')->nullable(false)->comment('奖惩时间');\nstring('type',20)->nullable(false)->comment('奖惩类型');\ndecimal('money', 8, 2)->default(0)->comment('奖惩金额');\ndecimal('score', 8, 2)->default(0)->comment('奖惩评分');\nstring('reason')->nullable()->comment('奖惩原因');",
+          "content": "id 奖惩编号\nobject_id 奖惩对象编号\nobject_type 奖惩对象类型，范围：车辆、员工\naccount_id 结算编号，也就是收支记录编号\ntime 奖惩时间\ntype 奖惩类型，奖励、惩罚、预支\nmoney 金额\nscore 奖惩评分\nreason 奖惩原因说明\ncreated_at 创建记录时间，服务器时间，不可更改",
           "type": "json"
         }
       ]
@@ -657,7 +657,7 @@ define({ "api": [
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、路由名称 userpays.saveOne\n2、必选参数：\n id，奖惩编号，作为url必填,大于0表示更新，否则新增\n\tuser_id 正整数，人员编号，且必须真实存在\n\ttime 日期时间型，奖惩时间\n\ttype 字符串20，奖惩类型\n\tmoney 数字类型，两位小数，奖惩金额\n\tscore 数字类型，两位小数，奖惩评分\n\treason 字符串，奖惩原因",
+          "content": "1、路由名称 userpays.saveOne\n2、必选参数：\n id，奖惩编号，作为url必填,大于0表示更新，否则新增\n\tobject_id 正整数，人员或者车辆编号，且必须真实存在\n\tobject_type 可选项：人员、车辆\n\ttime 日期时间型，奖惩时间\n\ttype 字符串20，奖惩类型，可选项：奖励、惩罚、预支\n\tmoney 数字类型，两位小数，奖惩金额\n\tscore 数字类型，两位小数，奖惩评分\n\treason 字符串，奖惩原因",
           "type": "json"
         }
       ]
@@ -1516,7 +1516,7 @@ define({ "api": [
             "type": "Integer",
             "optional": true,
             "field": "object_id",
-            "description": "<p>收支对象ID，精准匹配，只有在object_type为员工结算或车辆结算时有意义，默认值空表示全部</p>"
+            "description": "<p>收支对象ID，精准匹配，只有在object_type为员工结算或车辆结算或者客户结算时有意义，默认值空表示全部</p>"
           },
           {
             "group": "Parameter",
@@ -1564,19 +1564,12 @@ define({ "api": [
   {
     "type": "post",
     "url": "/api/accounts/accountcar",
-    "title": "6.与车辆结算某个时间段的工资",
+    "title": "6.与车辆结算某个时间点之前的工资",
     "group": "财务管理",
-    "description": "<p>路由名称 accounts.accountcar 注意，此接口只用于与车辆结算某个时间段的工资，结算后不可删除结算记录，所有参与结算的任务和奖惩记录的结算状态均不可再更改 结算金额自动为该时间段出勤任务及奖惩记录的合计金额，如果以后修改任务情况和奖惩记录后，需手动修改对应的收支记录 时间节点以出勤任务创建时间为准</p>",
+    "description": "<p>路由名称 accounts.accountcar 注意，此接口只用于与车辆结算某个时间点之前创建的任务的工资，结算后不可删除结算记录，所有参与结算的任务和奖惩记录的结算状态均不可再更改 结算金额自动为该时间点之前创建的出勤任务及奖惩记录的合计金额，如果以后修改任务情况和奖惩记录后，需手动修改对应的收支记录 时间节点以出勤任务创建时间为准</p>",
     "parameter": {
       "fields": {
         "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "start_time",
-            "description": "<p>开始日期</p>"
-          },
           {
             "group": "Parameter",
             "type": "String",
@@ -1695,6 +1688,72 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/api/accounts/accountuser",
+    "title": "7.与员工结算某个时间点之前的工资",
+    "group": "财务管理",
+    "description": "<p>路由名称 accounts.accountuser 注意，此接口只用于与员工结算某个时间点之前的工资，结算后不可删除结算记录，所有参与结算的任务和奖惩记录的结算状态均不可再更改 结算金额自动为该时间点之前的出勤任务及奖惩记录的合计金额，如果以后修改任务情况和奖惩记录后，需手动修改对应的收支记录 时间节点以出勤任务创建时间为准</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "end_time",
+            "description": "<p>截至日期</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "account_time",
+            "description": "<p>结算日期</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "user_id",
+            "description": "<p>人员ID编号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "handler",
+            "description": "<p>经办人，默认登录用户</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "trade_type",
+            "description": "<p>交易类型，如：现金、支付宝、微信、银行卡、对公账户等</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "trade_account",
+            "description": "<p>交易账户号</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "remark",
+            "description": "<p>备注</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "财务管理",
+    "name": "PostApiAccountsAccountuser"
+  },
+  {
+    "type": "post",
     "url": "/api/accounts/delete",
     "title": "4.删除指定的手动收支信息",
     "group": "财务管理",
@@ -1722,7 +1781,7 @@ define({ "api": [
     "url": "/api/accounts/saveone",
     "title": "3.新增或更新一条手动收支信息",
     "group": "财务管理",
-    "description": "<p>路由名称 accounts.saveone</p>",
+    "description": "<p>路由名称 accounts.saveone</p> <p>注意，当object_type为客户结算、员工结算、车辆结算时，object_type不允许更改且改记录不允许删除</p>",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -1749,10 +1808,10 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "String",
-            "optional": true,
+            "type": "Integer",
+            "optional": false,
             "field": "object_id",
-            "description": "<p>收支对象ID，当object_type为客户结算、员工结算、车辆结算的时候，表示客户、员工、车辆的ID，其余为null</p>"
+            "description": "<p>收支对象ID，当object_type为客户结算、员工结算、车辆结算的时候，表示客户、员工、车辆的ID，其余必须为0</p>"
           },
           {
             "group": "Parameter",

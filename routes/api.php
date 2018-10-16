@@ -98,5 +98,13 @@ Route::middleware('auth:api')->group(function() {
     Route::get('userpays/{id}', 'UserPayController@getOne')->name('userpays.getOne');
     Route::post('userpays/delete', 'UserPayController@delete')->name('userpays.delete');
     Route::post('userpays/{id?}', 'UserPayController@saveOne')->name('userpays.saveOne');
+    // 财务管理
+    Route::get('accounts/index', 'AccountController@index')->name('accounts.index');
+    Route::get('accounts/getone', 'AccountController@getone')->name('accounts.getone');
+    Route::post('accounts/saveone', 'AccountController@saveone')->name('accounts.saveone');
+    Route::post('accounts/delete', 'AccountController@delete')->name('accounts.delete');
+    Route::post('accounts/accounttask', 'AccountController@accounttask')->name('accounts.accounttask');
+    Route::post('accounts/accountcar', 'AccountController@accountcar')->name('accounts.accountcar');
+    Route::post('accounts/accountuser', 'AccountController@accountuser')->name('accounts.accountuser');
 
 });

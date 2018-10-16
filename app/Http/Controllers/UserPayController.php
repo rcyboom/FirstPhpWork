@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Car;
 use App\Models\Userpay;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Validation\Rule;
 
 class UserPayController extends Controller
 {
@@ -18,33 +20,41 @@ class UserPayController extends Controller
      * 1、路由名称 userpays.index
      * 2、可选参数
      * pageSize 分页数量，默认为15
-     * pay_type 奖惩类型,默认为空表示全部,模糊匹配 like %pay_type%
-     * user_id  人员ID，默认为空表示全部,精确匹配 =user_id
+     * object_type 奖惩对象类型，范围：车辆、员工,默认为空表示全部
+     * object_id  奖惩对象ID，人员或者车辆ID，默认为空表示全部,精确匹配
+     * account_id  结算ID，默认为空表示全部,精确匹配，0表示未结算
      * @apiParamExample数据库表结构
-    * increments('id')->comment('奖惩编号');
-    * integer('user_id')->nullable(false)->comment('人员编号');
-    * integer('account_id')->default(0)->comment('结算编号'); //最终发工资时一起合计后的结算编号
-    * dateTime('time')->nullable(false)->comment('奖惩时间');
-    * string('type',20)->nullable(false)->comment('奖惩类型');
-    * decimal('money', 8, 2)->default(0)->comment('奖惩金额');
-    * decimal('score', 8, 2)->default(0)->comment('奖惩评分');
-    * string('reason')->nullable()->comment('奖惩原因');
+     * id 奖惩编号
+     * object_id 奖惩对象编号
+     * object_type 奖惩对象类型，范围：车辆、员工
+     * account_id 结算编号，也就是收支记录编号
+     * time 奖惩时间
+     * type 奖惩类型，奖励、惩罚、预支
+     * money 金额
+     * score 奖惩评分
+     * reason 奖惩原因说明
+     * created_at 创建记录时间，服务器时间，不可更改
      */
     public function index()
     {
         $pageSize = (int)Request::input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:15;
 
-        $user_id=Request::input('user_id');
-        $pay_type=Request::input('pay_type');
+        $object_type=Request::input('object_type');
+        $object_id=Request::input('object_id');
+        $account_id=Request::input('account_id');
 
         $rs = Userpay::where('id','>',0);
-        if($user_id){
-            $rs = $rs->where('user_id',user_id);
+        if($object_type){
+        $rs = $rs->where('object_type',$object_type);
+    }
+        if($object_id){
+            $rs = $rs->where('object_id',$object_id);
         }
-        if($pay_type){
-            $rs = $rs->where('$pay_type','like','%'.$pay_type.'%');
+        if($account_id){
+            $rs = $rs->where('account_id',$account_id);
         }
+
         $rs = $rs->paginate($pageSize);
         return $this->myResult(1,'获取信息成功！',$rs);
     }
@@ -56,9 +66,7 @@ class UserPayController extends Controller
      * 1、路由名称 userpays.getOne
      * 2、必须传递ID，正整数
      * @apiParamExample 关于奖惩的其他说明
-     * 1、account_id为工资结算单的id，不允许修改的
-     * 2、返回的数据多一个account_id，为0显示为未结算，大于0显示为已结算
-     * 3、此模块的user_id也就是员工编号，且必须是员工表中真实存在的员工编号
+     * account_id为工资结算单的id，不允许修改的，为0显示为未结算，大于0显示为已结算
      */
     public function getOne($id)
     {
@@ -76,9 +84,10 @@ class UserPayController extends Controller
      * 1、路由名称 userpays.saveOne
      * 2、必选参数：
 	 *  id，奖惩编号，作为url必填,大于0表示更新，否则新增
-     * 	user_id 正整数，人员编号，且必须真实存在
+     * 	object_id 正整数，人员或者车辆编号，且必须真实存在
+     * 	object_type 可选项：人员、车辆
      * 	time 日期时间型，奖惩时间
-     * 	type 字符串20，奖惩类型
+     * 	type 字符串20，奖惩类型，可选项：奖励、惩罚、预支
      * 	money 数字类型，两位小数，奖惩金额
      * 	score 数字类型，两位小数，奖惩评分
      * 	reason 字符串，奖惩原因
@@ -86,9 +95,10 @@ class UserPayController extends Controller
     public function saveOne($id=0)
     {
         $validator = Validator::make( Request::all(), [
-            'user_id' => 'required | integer | min:0',
+            'object_id' => 'required | integer | min:1',
+            'object_type' => ['required',Rule::in(['人员', '车辆'])],
             'time' => 'required | date',
-            'type' => 'required',
+            'type' => ['required',Rule::in(['奖励', '惩罚','预支'])],
             'reason' => 'required',
             'money'=>'required | digits',
             'score'=>'required | digits',
@@ -98,9 +108,16 @@ class UserPayController extends Controller
             return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
         }
 
-        $ur=User::find(Request::input('user_id'));
-        if(!$ur){
-            return $this->myResult(0,'更新失败，未找到对应的人员编号！',null);
+        if(Request::input('object_type')=='人员') {
+            $ur = User::find(Request::input('object_id'));
+            if (!$ur) {
+                return $this->myResult(0, '更新失败，未找到对应的人员编号！', null);
+            }
+        }else{
+            $ur = Car::find(Request::input('object_id'));
+            if (!$ur) {
+                return $this->myResult(0, '更新失败，未找到对应的车辆编号！', null);
+            }
         }
 
         if($id>0){
@@ -112,7 +129,8 @@ class UserPayController extends Controller
             $rs=new Userpay();
         }
 
-        $rs->user_id = Request::input('user_id');
+        $rs->object_id = Request::input('object_id');
+        $rs->object_type = Request::input('object_type');
         $rs->time = Request::input('time');
         $rs->type = Request::input('type');
         $rs->money = Request::input('money');
@@ -138,7 +156,7 @@ class UserPayController extends Controller
         $id = Request::input('id',0);
         $rs=Userpay::find($id);
         if($rs){
-            if($rs->account_id>0) {
+            if($rs->account_id != 0) {
                 return $this->myResult(0, '已经结算的奖惩信息不允许被删除！', $rs);
             }
             $rs->delete();

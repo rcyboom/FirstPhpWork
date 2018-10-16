@@ -3,10 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Task  extends Model
 {
     //
+    protected $appends = ['customer_name'];
+
+    public function getCustomerNameAttribute()
+    {
+            $rs = DB::select('select name as cc from customers where id = ?',[$this->customer_id]);
+            if(count($rs)>0){
+                return $rs[0]->cc;
+            }else
+                return null;
+    }
+
     public function customer()
     {
         return $this->belongsTo('App\Models\Customer');
