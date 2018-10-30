@@ -15,67 +15,17 @@ class EmployeeController extends Controller
      * @apiGroup 员工登录后模块
      * @apiDescription
      * 该模块说明：1、当用户登录后role属性中没有admin时，只允许访问该模块的路由，
-     * 配合到前端界面也就是只显示员工查询的对应功能和菜单
+     * 配合到前端界面也就是只显示员工查询的对应功能和菜单，功能如下：
      *
      * 1、登录后可以显示员工自身信息 2、可以查询自己的任务情况
      * 3、可以查询自己的奖惩和预支情况 4、可以查询自己的工资发放情况
      * 5、其余功能均不可见
      *
      * 路由名称 employees.index
-     * @apiParam {Number} [pageSize] 分页大小，默认值15
      */
     public function index()
     {
-        //开始输入校验
-        $validator = Validator::make( Request::all(), [
-            'start_time' => 'required|date',
-            'end_time' => 'required|date',
-        ]);
-        if ($validator->fails()) {
-            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
-        }
-        //获取参数
-        $pageSize = (int)Request::input('pageSize');
-        $pageSize = isset($pageSize) && $pageSize?$pageSize:15;
-        $start_time=Request::input('start_time');
-        $end_time=Request::input('end_time');
-        $account_type=Request::input('account_type',0);
-        $object_type=Request::input('object_type');
-        $object_id=Request::input('object_id');
-        $trade_type=Request::input('trade_type');
-        $object_name=Request::input('object_name');
-        $handler=Request::input('handler');
-        $remark=Request::input('remark');
-
-
-        //构造查询
-        $rs = Account::where('account_time','>=',$start_time);
-        $rs = $rs->where('account_time','<=',$end_time);
-        if($account_type>0){
-            $rs = $rs->where('money','>',0);
-        }elseif ($account_type<0){
-            $rs = $rs->where('money','<',0);
-        }
-        if($object_type){
-            $rs = $rs->where('object_type',$object_type);
-        }
-        if($object_id){
-            $rs = $rs->where('object_id',$object_id);
-        }
-        if($trade_type){
-            $rs = $rs->where('trade_type',$trade_type);
-        }
-        if($object_name){
-            $rs = $rs->where('object_name','like','%'.$object_name.'%');
-        }
-        if($handler){
-            $rs = $rs->where('handler','like','%'.$handler.'%');
-        }
-        if($remark){
-            $rs = $rs->where('remark','like','%'.$remark.'%');
-        }
-        //返回数据
-        $rs = $rs->paginate($pageSize);
+        $rs = Request::user();
         return $this->myResult(1,'获取信息成功！',$rs);
     }
 
@@ -83,9 +33,10 @@ class EmployeeController extends Controller
      * @api {get} /api/employees/tasks 2.登录员工任务查询
      * @apiGroup 员工登录后模块
      * @apiDescription
-     * 暂未实现
      * 路由名称 employees.tasks
-     * @apiParam {Integer} account_id 收支编号
+     * @apiParam {String} start_time 开始日期
+     * @apiParam {String} end_time 截至日期
+     * @apiParam {Integer} is_account 是否结算，可选：-1未计算 0全部 1已经结算
      */
     public function tasks()
     {
@@ -101,8 +52,11 @@ class EmployeeController extends Controller
      * @api {post} /api/employees/pays 3.登录员工预支奖惩查询
      * @apiGroup 员工登录后模块
      * @apiDescription
-     * 暂未实现
      * 路由名称 employees.pays
+     * @apiParam {String} start_time 开始日期
+     * @apiParam {String} end_time 截至日期
+     * @apiParam {Integer} is_account 是否结算，可选：-1未计算 0全部 1已经结算，默认0表示全部
+     * @apiParam {String} type 类型，可选：奖励、惩罚、预支，默认空表示全部
      */
     public function pays()
     {
@@ -150,8 +104,9 @@ class EmployeeController extends Controller
      * @api {post} /api/employees/accounts 4.登录员工收支信息查询
      * @apiGroup 员工登录后模块
      * @apiDescription
-     * 暂未实现
      * 路由名称 employees.accounts
+     * @apiParam {String} start_time 开始日期
+     * @apiParam {String} end_time 截至日期
      */
     public function accounts()
     {
