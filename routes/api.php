@@ -24,8 +24,8 @@ Route::post('/logout', 'Auth\LoginController@logout')->name('login.logout');
 Route::middleware('auth:api','checkAdmin')->group(function() {
     Route::any('/testapi', 'AccountController@test')->name('api.test');
     //日志路由
-    Route::get('/getIssues', 'UserController@getIssues')->name('getIssues.getIssues');
-    Route::post('/setIssues', 'UserController@setIssues')->name('setIssues.setIssues');
+    Route::get('getIssues', 'UserController@getIssues')->name('getIssues.getIssues');
+    Route::post('setIssues', 'UserController@setIssues')->name('setIssues.setIssues');
     // 用户管理
     Route::Resource('admin', 'UserController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
     Route::post('/admin/modify', 'UserController@modify' )->name('admin.modify');
