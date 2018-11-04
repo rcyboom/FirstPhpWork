@@ -651,6 +651,25 @@ define({ "api": [
     "name": "GetApiUser"
   },
   {
+    "type": "get",
+    "url": "/getIssues",
+    "title": "93.获取建议内容",
+    "group": "用户管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "不需要任何参数",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./UserController.php",
+    "groupTitle": "用户管理",
+    "name": "GetGetissues"
+  },
+  {
     "type": "post",
     "url": "/api/admin",
     "title": "5.建立新的管理员",
@@ -981,6 +1000,25 @@ define({ "api": [
     "filename": "./Auth/LoginController.php",
     "groupTitle": "用户管理",
     "name": "PostApiTokenRefresh"
+  },
+  {
+    "type": "post",
+    "url": "/setIssues",
+    "title": "94.更新建议内容",
+    "group": "用户管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "只有一个参数 context 字符串，该内容必须包含以前的内容\n也就是每次都会替换以前的内容",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./UserController.php",
+    "groupTitle": "用户管理",
+    "name": "PostSetissues"
   },
   {
     "type": "put",
