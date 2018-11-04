@@ -6,12 +6,7 @@
  * @package  Laravel
  * @author   Taylor Otwell <taylor@laravel.com>
  */
-header(“Access-Control-Allow-Origin:*”); 
-header(“Access-Control-Allow-Headers:content-type”); 
-header(“Access-Control-Request-Method:GET,POST”); 
-if(strtoupper($_SERVER[‘REQUEST_METHOD’])== ‘OPTIONS’){ 
-exit; 
-}
+header("Access-Control-Allow-Origin:*"); 
 
 define('LARAVEL_START', microtime(true));
 
