@@ -239,6 +239,8 @@ class UserController extends Controller
         {
             return $this->myResult(0,'删除失败,未找到该用户！',null);
         }
+        //$rs=DB::select('select * from issues')
+        //if()
         if ($user->delete()) {
             return $this->myResult(1,'删除成功！',null);
         } else {
