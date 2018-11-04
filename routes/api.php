@@ -14,8 +14,8 @@ use App\Models\User;
 |
 */
 //日志路由
-Route::post('/getIssues', 'UserController@getIssues')->name('getIssues');
-Route::post('/setIssues', 'UserController@setIssues')->name('setIssues');
+Route::get('/getIssues', 'UserController@getIssues')->name('getIssues.getIssues');
+Route::post('/setIssues', 'UserController@setIssues')->name('setIssues.setIssues');
 
 Route::middleware('auth:api')->get('/user', 'UserController@getUserInfo')->name('admin.userInfo');
 Route::post('/login', 'Auth\LoginController@login')->name('login.login');

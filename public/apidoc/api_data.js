@@ -653,7 +653,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/getIssues",
-    "title": "93.获取建议内容",
+    "title": "94.获取建议内容",
     "group": "用户管理",
     "header": {
       "examples": [
@@ -1004,7 +1004,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/setIssues",
-    "title": "94.更新建议内容",
+    "title": "95.更新建议内容",
     "group": "用户管理",
     "header": {
       "examples": [
