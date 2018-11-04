@@ -517,7 +517,7 @@ class UserController extends Controller
      * 只有一个参数 context 字符串，该内容必须包含以前的内容
      * 也就是每次都会替换以前的内容
      */
-    public function setIssues()
+    public function setIssues(Request $request)
     {
         $context = $request->input('context','爱你哦！');
         DB::update('update issues set content = ?',[$context]);
