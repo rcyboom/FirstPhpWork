@@ -598,6 +598,25 @@ define({ "api": [
     "name": "GetApiAdminId"
   },
   {
+    "type": "get",
+    "url": "/api/getIssues",
+    "title": "94.获取建议内容",
+    "group": "用户管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "不需要任何参数",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./UserController.php",
+    "groupTitle": "用户管理",
+    "name": "GetApiGetissues"
+  },
+  {
     "group": "用户管理",
     "type": "get",
     "url": "/api/testapi",
@@ -649,25 +668,6 @@ define({ "api": [
     "filename": "./UserController.php",
     "groupTitle": "用户管理",
     "name": "GetApiUser"
-  },
-  {
-    "type": "get",
-    "url": "/getIssues",
-    "title": "94.获取建议内容",
-    "group": "用户管理",
-    "header": {
-      "examples": [
-        {
-          "title": "简要说明",
-          "content": "不需要任何参数",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "./UserController.php",
-    "groupTitle": "用户管理",
-    "name": "GetGetissues"
   },
   {
     "type": "post",
@@ -975,6 +975,25 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/api/setIssues",
+    "title": "95.更新建议内容",
+    "group": "用户管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "只有一个参数 context 字符串，该内容必须包含以前的内容\n也就是每次都会替换以前的内容",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./UserController.php",
+    "groupTitle": "用户管理",
+    "name": "PostApiSetissues"
+  },
+  {
+    "type": "post",
     "url": "/api/token/refresh",
     "title": "2.刷新Token",
     "group": "用户管理",
@@ -1000,25 +1019,6 @@ define({ "api": [
     "filename": "./Auth/LoginController.php",
     "groupTitle": "用户管理",
     "name": "PostApiTokenRefresh"
-  },
-  {
-    "type": "post",
-    "url": "/setIssues",
-    "title": "95.更新建议内容",
-    "group": "用户管理",
-    "header": {
-      "examples": [
-        {
-          "title": "简要说明",
-          "content": "只有一个参数 context 字符串，该内容必须包含以前的内容\n也就是每次都会替换以前的内容",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "./UserController.php",
-    "groupTitle": "用户管理",
-    "name": "PostSetissues"
   },
   {
     "type": "put",
