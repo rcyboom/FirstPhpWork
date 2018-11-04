@@ -500,7 +500,7 @@ class UserController extends Controller
     }
 
     /**
-     *  @api {get} /getIssues 94.获取建议内容
+     *  @api {get} /api/getIssues 94.获取建议内容
      * @apiGroup 用户管理
      * @apiHeaderExample 简要说明
      * 不需要任何参数
@@ -511,7 +511,7 @@ class UserController extends Controller
     }
 
     /**
-     *  @api {post} /setIssues 95.更新建议内容
+     *  @api {post} /api/setIssues 95.更新建议内容
      * @apiGroup 用户管理
      * @apiHeaderExample 简要说明
      * 只有一个参数 context 字符串，该内容必须包含以前的内容
@@ -520,6 +520,7 @@ class UserController extends Controller
     public function setIssues(Request $request)
     {
         $context = $request->input('context','爱你哦！');
+        dd();
         DB::update('update issues set context = ?',[$context]);
         return $this->myResult(1,'信息更新成功！',DB::select('select * from issues'));
     }
