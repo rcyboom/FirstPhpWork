@@ -17,8 +17,6 @@ class CheckAdmin
      */
     public function handle($request, Closure $next)
     {
-        //1、因为我前面没有指定其类型为\Illuminate\Http\Request，为什么$request有这个user方法？
-        //2、获取后，为什么rs会有个role属性？
         $rs = $request->user();
         if ($rs && strpos($rs->role,'admin') !== false) {
             return $next($request);

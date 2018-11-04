@@ -13,16 +13,19 @@ use App\Models\User;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::any('/testapi', 'AccountController@test')->name('api.test');
+//日志路由
+Route::post('/getIssues', 'UserController@getIssues')->name('getIssues');
+Route::post('/setIssues', 'UserController@setIssues')->name('setIssues');
 
 Route::middleware('auth:api')->get('/user', 'UserController@getUserInfo')->name('admin.userInfo');
 Route::post('/login', 'Auth\LoginController@login')->name('login.login');
-//Route::post('/loginWithThree', 'Auth\LoginController@loginWithThree')->name('login.loginWithThree');
+Route::post('/loginWithThree', 'Auth\LoginController@loginWithThree')->name('login.loginWithThree');
 Route::post('/token/refresh', 'Auth\LoginController@refresh')->name('login.refresh');
 Route::post('/logout', 'Auth\LoginController@logout')->name('login.logout');
 
 //管理员路由
 Route::middleware('auth:api','checkAdmin')->group(function() {
+    Route::any('/testapi', 'AccountController@test')->name('api.test');
     // 用户管理
     Route::Resource('admin', 'UserController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
     Route::post('/admin/modify', 'UserController@modify' )->name('admin.modify');

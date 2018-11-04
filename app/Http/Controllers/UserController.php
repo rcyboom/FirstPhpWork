@@ -7,6 +7,7 @@ use App\Http\Resources\UserCollection;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -78,6 +79,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request);
         //  新建管理员信息
         $data = $request->only(['name', 'role', 'password','password_confirmation', 'email', 'avatar',
             'phone_number' ,'sex' ,'state' ,'birthday' ,'work_time' ,'card_type' ,'card_number' ,'duty' ,
@@ -352,7 +354,7 @@ class UserController extends Controller
         }
         $user->password = bcrypt($password);
         if ($user->save()) {
-            return $this->myResult(0,'密码修改成功！',null);
+            return $this->myResult(1,'密码修改成功！',null);
         } else {
             return $this->myResult(0,'密码修改失败！','系统未知错误');
         }
@@ -495,5 +497,30 @@ class UserController extends Controller
     {
         // 当前控制器所对应的模型
         return 'App\Models\User';
+    }
+
+    /**
+     *  @api {get} /getIssues 93.获取建议内容
+     * @apiGroup 用户管理
+     * @apiHeaderExample 简要说明
+     * 不需要任何参数
+     */
+    public function getIssues()
+    {
+        return $this->myResult(1,'信息获取成功！',DB::select('select * from issues'));
+    }
+
+    /**
+     *  @api {post} /setIssues 94.更新建议内容
+     * @apiGroup 用户管理
+     * @apiHeaderExample 简要说明
+     * 只有一个参数 context 字符串，该内容必须包含以前的内容
+     * 也就是每次都会替换以前的内容
+     */
+    public function setIssues()
+    {
+        $context = $request->input('context','爱你哦！');
+        DB::update('update issues set content = ?',[$context]);
+        return $this->myResult(1,'信息更新成功！',DB::select('select * from issues'));
     }
 }
