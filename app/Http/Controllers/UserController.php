@@ -239,8 +239,11 @@ class UserController extends Controller
         {
             return $this->myResult(0,'删除失败,未找到该用户！',null);
         }
-        //$rs=DB::select('select * from issues')
-        //if()
+        $rs=DB::select('select (select COALESCE(count(*),0) from usertasks where user_id=?)+'.
+            '(select COALESCE(count(*),0) from userpays where user_id=?) as cs',[$id,$id]);
+        if($rs[0]->cs > 0){
+            return $this->myResult(0,'删除失败,已经有任务记录或者支出记录的用户不允许被删除！',null);
+        }
         if ($user->delete()) {
             return $this->myResult(1,'删除成功！',null);
         } else {
