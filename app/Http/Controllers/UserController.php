@@ -520,7 +520,7 @@ class UserController extends Controller
     public function setIssues(Request $request)
     {
         $context = $request->input('context','爱你哦！');
-        DB::update('update issues set content = ?',[$context]);
+        DB::update('update issues set context = ?',[$context]);
         return $this->myResult(1,'信息更新成功！',DB::select('select * from issues'));
     }
 }
