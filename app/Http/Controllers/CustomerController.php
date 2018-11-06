@@ -146,7 +146,7 @@ class CustomerController extends Controller
         {
             return $this->myResult(0,'删除失败,未找到该客户！',null);
         }
-        $rs=DB::select('select count(*) as cs from customers where id=?',[$id]);
+        $rs=DB::select('select count(*) as cs from tasks where customer_id=?',[$id]);
         if($rs[0]->cs > 0){
             return $this->myResult(0,'删除失败,已经有任务记录的客户不允许被删除！',null);
         }
