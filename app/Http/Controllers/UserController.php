@@ -30,14 +30,14 @@ class UserController extends Controller
      * 2、可选参数：
      * name 值不为空时表示 like方式过滤
      * phone_number 值不为空时表示 like方式过滤
-     * email 值不为空时表示 like方式过滤
+     * state 值不为空时表示 like方式过滤
      */
     public function index(Request $request)
     {
         //
         $pageSize = (int)$request->input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:10;
-        $users = User::name()->email()->state()->Phone()->paginate($pageSize);
+        $users = User::name()->state()->Phone()->paginate($pageSize);
         return new UserCollection($users);
     }
 
