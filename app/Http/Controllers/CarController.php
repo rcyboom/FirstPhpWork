@@ -157,4 +157,34 @@ class CarController extends Controller
         $car=Car::select('id','car_number')->get();
         return $this->myResult(1,'获取信息成功！',$car);
     }
+
+    /**
+     * @api {delete} /api/cars/:id  5.删除指定的车辆
+     * @apiGroup 车辆管理
+     *
+     * @apiSuccessExample 简要说明
+     * 路由名称 cars.delete
+     * HTTP/1.1 200 OK
+     * 作为URL的ID参数必填，成功code为1，否则为0
+     */
+
+    public function destroy($id)
+    {
+        $user = Car::find($id);
+        if(!$user)
+        {
+            return $this->myResult(0,'删除失败,未找到该车辆！',null);
+        }
+        $rs=DB::select('select ((select count(*) from cartasks where car_id=?)+'.
+            '(select count(*) from userpays where object_id=? and object_type=?)) as cs',[$id,$id,'车辆']);
+        if($rs[0]->cs > 0){
+            return $this->myResult(0,'删除失败,已经有任务记录或者支出记录的车辆不允许被删除！',null);
+        }
+        if ($user->delete()) {
+            return $this->myResult(1,'删除成功！',null);
+        } else {
+            return $this->myResult(0,'删除失败！',null);
+        }
+
+    }
 }
