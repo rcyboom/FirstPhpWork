@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Car;
 use App\Models\Customer;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Request;
 
@@ -128,6 +128,34 @@ class CustomerController extends Controller
     {
         $car=Customer::select('id','name')->get();
         return $this->myResult(1,'获取信息成功！',$car);
+    }
+
+    /**
+     * @api {delete} /api/customers/:id  5.删除指定的客户
+     * @apiGroup 客户管理
+     * @apiSuccessExample 简要说明
+     * 路由名称 customers.delete
+     * HTTP/1.1 200 OK
+     * 作为URL的ID参数必填，成功code为1，否则为0
+     */
+
+    public function destroy($id)
+    {
+        $user = Customer::find($id);
+        if(!$user)
+        {
+            return $this->myResult(0,'删除失败,未找到该客户！',null);
+        }
+        $rs=DB::select('select count(*) as cs from customers where id=?)',[$id]);
+        if($rs[0]->cs > 0){
+            return $this->myResult(0,'删除失败,已经有任务记录的客户不允许被删除！',null);
+        }
+        if ($user->delete()) {
+            return $this->myResult(1,'删除成功！',null);
+        } else {
+            return $this->myResult(0,'删除失败！',null);
+        }
+
     }
 }
 

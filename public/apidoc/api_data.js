@@ -456,6 +456,25 @@ define({ "api": [
     "name": "PostApiEmployeesPays"
   },
   {
+    "type": "delete",
+    "url": "/api/customers/:id",
+    "title": "5.删除指定的客户",
+    "group": "客户管理",
+    "success": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "路由名称 customers.delete\nHTTP/1.1 200 OK\n作为URL的ID参数必填，成功code为1，否则为0",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./CustomerController.php",
+    "groupTitle": "客户管理",
+    "name": "DeleteApiCustomersId"
+  },
+  {
     "type": "get",
     "url": "/api/customers/customersList",
     "title": "4.返回已有客户名称",
@@ -568,7 +587,7 @@ define({ "api": [
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、默认返回全部数据的分页显示\n2、可选参数：\nname 值不为空时表示 like方式过滤\nphone_number 值不为空时表示 like方式过滤\nemail 值不为空时表示 like方式过滤",
+          "content": "1、默认返回全部数据的分页显示\n2、可选参数：\nname 值不为空时表示 like方式过滤\nphone_number 值不为空时表示 like方式过滤\nstate 值不为空时表示 like方式过滤",
           "type": "json"
         }
       ]
@@ -896,7 +915,7 @@ define({ "api": [
       "examples": [
         {
           "title": "http头部请求:",
-          "content": "    {\n      \"content-type\": \"application/form-data\"\n    }\n返回情况请看postman调试结果",
+          "content": "    {\n      \"content-type\": \"application/form-data\"\n    }\n返回情况请看postman调试结果,上传成功后返回图片的URL，该地址可作为用户创建或更新接口的avatar参数",
           "type": "json"
         }
       ]
@@ -1593,6 +1612,61 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/api/accounts/autoCheckAccount 9.校验某个财务记录中对于已经结算的：任务、车辆或人员出勤、奖惩、预支记录中明细汇总金额",
+    "title": "与财务收支金额是否相等",
+    "group": "财务管理",
+    "description": "<p>路由名称 accounts.autoCheckAccount 注意，此接口只用于对于已经结算的任务记录、人员或者车辆出勤记录、人员或者车辆的奖惩预支等记录的金额后，用于再次合计 其对应的财务收支记录的汇总金额，校验是否相符，返回值为重新校验后的汇总金额。</p> <p>该功能暂未实现</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "account_",
+            "description": "<p>id 对应的结算记录id</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "财务管理",
+    "name": "PostApiAccountsAutocheckaccount9"
+  },
+  {
+    "type": "post",
+    "url": "/api/accounts/autoUpdateAccount 8.对于已经结算的：任务、车辆或人员出勤、奖惩、预支记录后，",
+    "title": "自动更新该记录所对应的财务收支记录的汇总金额。",
+    "group": "财务管理",
+    "description": "<p>路由名称 accounts.autoUpdateAccount 注意，此接口只用于手动修改已经结算的任务记录、人员或者车辆出勤记录、人员或者车辆的奖惩预支等记录的金额后，用于再次合计 其对应的财务收支记录的汇总金额，以便明细和汇总相符。</p> <p>该功能暂未实现</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "account_",
+            "description": "<p>id 对应的结算记录id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "object_id",
+            "description": "<p>对应的客户、车辆、人员的id</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "财务管理",
+    "name": "PostApiAccountsAutoupdateaccount8"
+  },
+  {
+    "type": "post",
     "url": "/api/accounts/delete",
     "title": "4.删除指定的手动收支信息",
     "group": "财务管理",
@@ -1620,7 +1694,7 @@ define({ "api": [
     "url": "/api/accounts/saveone",
     "title": "3.新增或更新一条手动收支信息",
     "group": "财务管理",
-    "description": "<p>路由名称 accounts.saveone</p> <p>注意，当object_type为客户结算、员工结算、车辆结算时，object_type不允许更改且改记录不允许删除</p>",
+    "description": "<p>路由名称 accounts.saveone</p> <p>注意，当object_type为客户结算、员工结算、车辆结算时，object_type不允许更改且该记录不允许删除</p>",
     "parameter": {
       "fields": {
         "Parameter": [

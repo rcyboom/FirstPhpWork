@@ -62,6 +62,7 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
     Route::get('customers/index', 'CustomerController@index')->name('customers.index');
     Route::get('customers/customersList', 'CustomerController@customersList')->name('customers.customersList');
     Route::get('customers/{id}', 'CustomerController@getone')->name('customers.getOne');
+    Route::delete('customers/{id}', 'CustomerController@destroy')->name('customers.delete');
     Route::post('customers/{id?}', 'CustomerController@saveone')->name('customers.saveOne');
 
     //任务管理
