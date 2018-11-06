@@ -79,7 +79,6 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request);
         //  新建管理员信息
         $data = $request->only(['name', 'role', 'password','password_confirmation', 'email', 'avatar',
             'phone_number' ,'sex' ,'state' ,'birthday' ,'work_time' ,'card_type' ,'card_number' ,'duty' ,
@@ -525,7 +524,6 @@ class UserController extends Controller
     public function setIssues(Request $request)
     {
         $context = $request->input('context','爱你哦！');
-        dd();
         DB::update('update issues set context = ?',[$context]);
         return $this->myResult(1,'信息更新成功！',DB::select('select * from issues'));
     }
