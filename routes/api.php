@@ -55,6 +55,7 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
     Route::get('cars/index', 'CarController@index')->name('cars.index');
     Route::get('cars/carNumberList', 'CarController@carNumberList')->name('cars.carNumberList');
     Route::get('cars/{id}', 'CarController@getCar')->name('cars.getCar');
+    Route::delete('cars/{id}', 'CarController@destroy')->name('cars.delete');
     Route::post('cars/{id?}', 'CarController@saveCar')->name('cars.saveCar');
 
 
