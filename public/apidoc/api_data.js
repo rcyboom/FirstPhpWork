@@ -1777,6 +1777,25 @@ define({ "api": [
     "name": "PostApiAccountsSaveone"
   },
   {
+    "type": "delete",
+    "url": "/api/cars/:id",
+    "title": "5.删除指定的车辆",
+    "group": "车辆管理",
+    "success": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "路由名称 cars.delete\nHTTP/1.1 200 OK\n作为URL的ID参数必填，成功code为1，否则为0",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./CarController.php",
+    "groupTitle": "车辆管理",
+    "name": "DeleteApiCarsId"
+  },
+  {
     "type": "get",
     "url": "/api/cars/carNumberList",
     "title": "4.返回已有车牌号列表",
