@@ -37,7 +37,7 @@ class UserController extends Controller
         //
         $pageSize = (int)$request->input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:10;
-        $users = User::name()->email()->Phone()->paginate($pageSize);
+        $users = User::name()->email()->state()->Phone()->paginate($pageSize);
         return new UserCollection($users);
     }
 
@@ -239,8 +239,8 @@ class UserController extends Controller
         {
             return $this->myResult(0,'删除失败,未找到该用户！',null);
         }
-        $rs=DB::select('select (select COALESCE(count(*),0) from usertasks where user_id=?)+'.
-            '(select COALESCE(count(*),0) from userpays where user_id=?) as cs',[$id,$id]);
+        $rs=DB::select('select ((select COALESCE(count(*),0) from usertasks where user_id=?)+'.
+            '(select COALESCE(count(*),0) from userpays where user_id=?)) as cs',[$id,$id]);
         if($rs[0]->cs > 0){
             return $this->myResult(0,'删除失败,已经有任务记录或者支出记录的用户不允许被删除！',null);
         }
@@ -291,7 +291,7 @@ class UserController extends Controller
      *     {
      *       "content-type": "application/form-data"
      *     }
-     * 返回情况请看postman调试结果
+     * 返回情况请看postman调试结果,上传成功后返回图片的URL，该地址可作为用户创建或更新接口的avatar参数
      */
 
     public function uploadAvatar(Request $request)

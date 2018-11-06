@@ -121,7 +121,7 @@ class AccountController extends Controller
      * @apiDescription
      * 路由名称 accounts.saveone
      *
-     * 注意，当object_type为客户结算、员工结算、车辆结算时，object_type不允许更改且改记录不允许删除
+     * 注意，当object_type为客户结算、员工结算、车辆结算时，object_type不允许更改且该记录不允许删除
      * @apiParam {Integer} id 收支编号，整数，小于1表示新增
      * @apiParam {String} account_time 收支时间,日期，格式2018-01-01
      * @apiParam {String} object_type 收支对象，可选项：客户结算、员工结算、车辆结算、自定义字符串
@@ -377,5 +377,40 @@ class AccountController extends Controller
             return $this->myResult(1,'结算成功，对应的收支记录为:'.$acc->id,$acc);
         }
         return $this->myResult(0,'未找到对应编号的人员信息！',Request::input('user_id'));
+    }
+
+    /**
+     * @api {post} /api/accounts/autoUpdateAccount 8.对于已经结算的：任务、车辆或人员出勤、奖惩、预支记录后，
+     * 自动更新该记录所对应的财务收支记录的汇总金额。
+     * @apiGroup 财务管理
+     * @apiDescription
+     * 路由名称 accounts.autoUpdateAccount
+     * 注意，此接口只用于手动修改已经结算的任务记录、人员或者车辆出勤记录、人员或者车辆的奖惩预支等记录的金额后，用于再次合计
+     * 其对应的财务收支记录的汇总金额，以便明细和汇总相符。
+     *
+     * 该功能暂未实现
+     * @apiParam {Integer} account_ id 对应的结算记录id
+     * @apiParam {Integer} object_id 对应的客户、车辆、人员的id
+     */
+    public function autoUpdateAccount()
+    {
+
+    }
+
+    /**
+     * @api {post} /api/accounts/autoCheckAccount 9.校验某个财务记录中对于已经结算的：任务、车辆或人员出勤、奖惩、预支记录中明细汇总金额
+     * 与财务收支金额是否相等
+     * @apiGroup 财务管理
+     * @apiDescription
+     * 路由名称 accounts.autoCheckAccount
+     * 注意，此接口只用于对于已经结算的任务记录、人员或者车辆出勤记录、人员或者车辆的奖惩预支等记录的金额后，用于再次合计
+     * 其对应的财务收支记录的汇总金额，校验是否相符，返回值为重新校验后的汇总金额。
+     *
+     * 该功能暂未实现
+     * @apiParam {Integer} account_ id 对应的结算记录id
+     */
+    public function autoCheckAccount()
+    {
+
     }
 }
