@@ -84,7 +84,7 @@ class CustomerController extends Controller
         }
 
         $validator = Validator::make( Request::all(), [
-            'name' => 'required|unique:customers,name'.$id,
+            'name' => 'required|unique:customers,name,'.$id,
         ]);
 
 
