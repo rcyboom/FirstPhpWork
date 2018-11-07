@@ -112,7 +112,7 @@ class CarController extends Controller
         //unique:table,column,except,idColumn
         $validator = Validator::make( Request::all(), [
             'car_type' => 'required',
-            'car_number' => 'unique:cars,car_number,'.$car->id,
+            'car_number' => 'required|unique:cars,car_number,'.$car->id,
             'linkman' => 'required',
             'work_price'=>'required | integer | min:0'
         ]);

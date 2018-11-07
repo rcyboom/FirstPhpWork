@@ -181,8 +181,8 @@ class UserController extends Controller
             'level' ,'from' ,'fix_salary' ,'work_salary' ,'extra_salary' ,'family_address' ,
             'personal_address' ,'remark' ]);
         $rules = [
-            'name'=>'required',
-            'email' => 'required',
+            'name'=>'required|unique:users,name'.$id,
+            'email' => 'required|unique:users,email'.$id,
             'avatar' => 'nullable|string',
             'birthday' => 'nullable|date',
             'work_time' => 'nullable|date',

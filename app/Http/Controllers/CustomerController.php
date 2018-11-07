@@ -74,7 +74,6 @@ class CustomerController extends Controller
      */
     public function saveOne($id=0)
     {
-        $isNew=false;
         if($id>0){
             $rs= Customer::find($id);
             if(!$rs){
@@ -82,19 +81,11 @@ class CustomerController extends Controller
             }
         }else{
             $rs=new Customer();
-            $isNew=true;
         }
-       // return Request::all();
 
         $validator = Validator::make( Request::all(), [
-            'name' => 'required',
+            'name' => 'required|unique:customers,name'.$id,
         ]);
-        if($isNew || (!$isNew && Request::input('name')!=$rs->name)){
-            $validator->sometimes('name', 'unique:customers',
-                function(){
-                    return true;
-                });
-        }
 
 
         if ($validator->fails()) {
