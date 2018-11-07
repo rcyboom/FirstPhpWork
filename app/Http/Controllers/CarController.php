@@ -100,7 +100,6 @@ class CarController extends Controller
     //Route::post('cars/{id?}', 'CarController@saveCar')->name('cars.saveCar');
     public function saveCar($id=0)
     {
-        $isNew=false;
         if($id>0){
             $car= Car::find($id);
             if(!$car){
@@ -108,23 +107,15 @@ class CarController extends Controller
             }
         }else{
             $car=new Car();
-            $isNew=true;
         }
 
-
+        //unique:table,column,except,idColumn
         $validator = Validator::make( Request::all(), [
             'car_type' => 'required',
-            'car_number' => 'required',
+            'car_number' => 'unique:cars,car_number,'.$car->id,
             'linkman' => 'required',
             'work_price'=>'required | integer | min:0'
         ]);
-        if($isNew || (!$isNew && Request::input('car_number')!=$car->car_number)){
-            $validator->sometimes('car_number', 'unique:cars',
-                function(){
-                    return true;
-                });
-        }
-
 
         if ($validator->fails()) {
             return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
