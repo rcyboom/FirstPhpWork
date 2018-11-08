@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class Task  extends Model
@@ -43,8 +44,8 @@ class Task  extends Model
 
     public function scopeTitle($query)
     {
-        //task_title 过滤
-        $title = request()->input('task_title');
+        //title 过滤
+        $title = request()->input('title');
         if (isset($title)) {
             return $query = $query->where('title', 'like', '%'.$title.'%');
         } else {
@@ -52,15 +53,20 @@ class Task  extends Model
         }
     }
 
-    public function scopeLinkMan($query)
+    public function scopeOther($query)
     {
-        //linkman 过滤
-        $linkman = request()->input('linkman');
-        if (isset($linkman)) {
-            return $query = $query->where('linkman', 'like', '%'.$linkman.'%');
-        } else {
-            return $query;
+        // state    任务状态  默认为全部，我给你一个API，这个API返回的选项作为下拉列表
+        // startTime 开始时间  默认为当前时间前推一个月
+        // endTime   截至时间  默认为当前时间
+        $state = request()->input('state','全部');
+        if ($state!='全部') {
+            $query = $query->where('state', $state);
         }
+        $startTime=request()->input('startTime',Carbon::today()->subDays(30));
+        $endTime=request()->input('endTime',Carbon::now());
+        $query = $query->where('check_time','>=', $startTime)
+            ->where('check_time','<=', $endTime);
+        return $query;
     }
 
 }

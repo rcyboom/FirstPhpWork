@@ -24,8 +24,10 @@ class TaskController extends Controller
      * 2、可选参数
      * pageSize 分页数量，默认为15
      * customer_name 客户名称,默认为空,模糊匹配
-     * task_title    任务名称，默认为空,模糊匹配
-     * linkman       联系人，默认为空,模糊匹配
+     * title    任务名称，默认为空,模糊匹配
+     * state    任务状态  默认为全部，我给你一个API，这个API返回的选项作为下拉列表
+     * startTime 开始时间  默认为当前时间前推一个月
+     * endTime   截至时间  默认为当前时间
      * @apiParamExample 数据库表结构
      * increments('id')->comment('任务编号');
     * dateTime('check_time')->nullable(false)->default(now())->comment('登记时间');
@@ -51,7 +53,7 @@ class TaskController extends Controller
         $pageSize = (int)Request::input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:15;
 
-        $tasks = Task::LinkMan()->Title()->CustomerName()->paginate($pageSize);
+        $tasks = Task::Other()->Title()->CustomerName()->paginate($pageSize);
         return new TaskCollection($tasks);
     }
 
