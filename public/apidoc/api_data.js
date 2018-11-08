@@ -133,6 +133,25 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/api/tasks/getStateList",
+    "title": "94.获取任务各种状态选项",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.getStateList\n2、无需参数，无需分页\n特殊说明：\n1、返回的 states 作为任务状态下拉列表的值，你需要增加一个全部选项",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "GetApiTasksGetstatelist"
+  },
+  {
+    "type": "get",
     "url": "/api/tasks/index",
     "title": "1.任务列表",
     "group": "任务管理",

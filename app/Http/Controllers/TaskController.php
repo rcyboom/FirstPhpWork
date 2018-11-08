@@ -487,4 +487,19 @@ class TaskController extends Controller
 
         return $this->myResult(1,'信息获取成功！',$rs);
     }
+
+    /**
+     * @api {get} /api/tasks/getStateList 94.获取任务各种状态选项
+     * @apiGroup 任务管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 tasks.getStateList
+     * 2、无需参数，无需分页
+     * 特殊说明：
+     * 1、返回的 states 作为任务状态下拉列表的值，你需要增加一个全部选项
+     */
+    public function getStateList()
+    {
+        $rs=DB::select("select distinct(state) from tasks ");
+        return $this->myResult(1,'信息获取成功！',['states'=>$rs]);
+    }
 }

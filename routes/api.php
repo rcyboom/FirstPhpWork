@@ -68,6 +68,7 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
 
     //任务管理
     Route::get('tasks/index', 'TaskController@index')->name('tasks.index');
+    Route::get('tasks/getStateList', 'TaskController@getStateList')->name('tasks.getStateList');
     Route::post('tasks/create', 'TaskController@create')->name('tasks.create');
     Route::post('tasks/update', 'TaskController@update')->name('tasks.update');
     Route::post('tasks/delete', 'TaskController@delete')->name('tasks.delete');
