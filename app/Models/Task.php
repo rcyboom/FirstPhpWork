@@ -20,14 +20,13 @@ class Task  extends Model
                 return null;
     }
 
-    public function customer()
-    {
-        return $this->belongsTo('App\Models\Customer');
-    }
-
     public function account()
     {
-        return $this->belongsTo('App\Models\Account');
+        if($this->account_id>0){
+            return $this->belongsTo('App\Models\Account');
+        }else
+            return null;
+
     }
 
     public function scopeCustomerName($query)

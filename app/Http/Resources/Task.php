@@ -15,8 +15,6 @@ class Task extends Resource
     public function toArray($request)
     {
         $rs= parent::toArray($request);
-        $customerName=$this->customer->name;
-        $rs['customerName']=$customerName;
         $rs['accountState']= ($this->account_id>0)?'已收款':'未收款';
         return $rs;
     }
