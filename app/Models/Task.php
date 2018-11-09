@@ -57,6 +57,7 @@ class Task  extends Model
         // state    任务状态  默认为全部，我给你一个API，这个API返回的选项作为下拉列表
         // startTime 开始时间  默认为当前时间前推一个月
         // endTime   截至时间  默认为当前时间
+        dd(request()->all());
         $state = request()->input('state','全部');
         if ($state!='全部') {
             $query = $query->where('state', $state);
