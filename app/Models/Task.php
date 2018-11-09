@@ -62,8 +62,8 @@ class Task  extends Model
         if ($state!='全部') {
             $query = $query->where('state', $state);
         }
-        $startTime=request()->input('startTime',Carbon::today()->subDays(30));
-        $endTime=request()->input('endTime',Carbon::now());
+        $startTime=request()->input('start_time',Carbon::today()->subDays(30));
+        $endTime=request()->input('end_time',Carbon::now());
         $query = $query->where('check_time','>=', $startTime)
             ->where('check_time','<=', $endTime);
         return $query;

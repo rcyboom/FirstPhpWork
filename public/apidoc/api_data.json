@@ -159,7 +159,7 @@
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、路由名称 tasks.index\n2、可选参数\npageSize 分页数量，默认为15\ncustomer_name 客户名称,默认为空,模糊匹配\ntitle    任务名称，默认为空,模糊匹配\nstate    任务状态  默认为全部，我给你一个API，这个API返回的选项作为下拉列表\nstartTime 开始时间  默认为当前时间前推一个月\nendTime   截至时间  默认为当前时间",
+          "content": "1、路由名称 tasks.index\n2、可选参数\npageSize 分页数量，默认为15\ncustomer_name 客户名称,默认为空,模糊匹配\ntitle    任务名称，默认为空,模糊匹配\nstate    任务状态  默认为全部，我给你一个API，这个API返回的选项作为下拉列表\nstart_time 开始时间  默认为当前时间前推一个月\nend_time   截至时间  默认为当前时间",
           "type": "json"
         }
       ]
