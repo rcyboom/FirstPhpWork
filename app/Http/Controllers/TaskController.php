@@ -464,7 +464,7 @@ class TaskController extends Controller
      */
     public function FreeMans()
     {
-        $rs=DB::select('select id,name,phone_number from users where state=? AND id not in '.
+        $rs=DB::select('select id,name,phone_number,duty,state from users where state=? AND id not in '.
                 '(select user_id from usertasks where end_time is null)',["在位"]);
 
         return $this->myResult(1,'信息获取成功！',$rs);
@@ -482,7 +482,7 @@ class TaskController extends Controller
      */
     public function FreeCars()
     {
-        $rs=DB::select("select id,car_type,car_number,linkman,phone from cars where state=? ".
+        $rs=DB::select("select id,car_type,car_number,linkman,phone,state from cars where state=? ".
             " and id not in (select car_id from cartasks where end_time is null)",['在位']);
 
         return $this->myResult(1,'信息获取成功！',$rs);
