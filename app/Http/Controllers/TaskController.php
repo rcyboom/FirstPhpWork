@@ -430,7 +430,10 @@ class TaskController extends Controller
     public function TaskCars()
     {
         $rs=DB::table('cartasks')
-            ->where('task_id','=',Request::input('task_id',0))->get();
+            ->where('task_id','=',Request::input('task_id',0))
+            ->leftJoin('cars', 'cartasks.car_id', '=', 'cars.id')
+            ->select('cartasks.*', 'cars.car_type', 'cars.car_number','cars.phone')
+            ->get();
         return $this->myResult(1,'信息获取成功！',$rs);
     }
 
@@ -448,7 +451,10 @@ class TaskController extends Controller
     public function TaskMans()
     {
         $rs=DB::table('usertasks')
-            ->where('task_id','=',Request::input('task_id',0))->get();
+            ->where('task_id','=',Request::input('task_id',0))
+            ->leftJoin('users', 'usertasks.user_id', '=', 'users.id')
+            ->select('usertasks.*', 'users.name', 'users.phone_number')
+            ->get();
         return $this->myResult(1,'信息获取成功！',$rs);
     }
 
