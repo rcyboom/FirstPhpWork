@@ -33,7 +33,7 @@ class Task  extends Model
     {
         //customer_name 过滤
         $name = request()->input('customer_name');
-        if (isset($name)) {
+        if ($name !=null) {
             $customer_id=Customer::where('name', 'like', '%'.$name.'%')->select('id');
             return $query = $query->whereIn('customer_id', $customer_id);
         } else {
@@ -45,7 +45,7 @@ class Task  extends Model
     {
         //title 过滤
         $title = request()->input('title');
-        if (isset($title)) {
+        if ($title!=null) {
             return $query = $query->where('title', 'like', '%'.$title.'%');
         } else {
             return $query;

@@ -24,7 +24,11 @@ class AccountController extends Controller
      */
     function test()
     {
-        return $this->myResult(1,'获取信息成功！',Request::all());
+        $mcv=Request::input('mcv');
+        if(!empty($mcv))
+            return $this->myResult(1,'获取信息成功！',['mcv'=>$mcv]);
+        else
+            return $this->myResult(1,'获取信息成功！',1234);
     }
 
     /**
