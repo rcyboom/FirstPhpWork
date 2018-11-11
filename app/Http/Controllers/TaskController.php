@@ -430,7 +430,7 @@ class TaskController extends Controller
     public function TaskCars()
     {
         $rs=DB::select('select cartasks.*,cars.car_type,cars.car_number,cars.phone,'.
-            'sum(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as total from cartasks '.
+            '(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as total from cartasks '.
             'left join cars on cartasks.car_id=cars.id where task_id=?',[Request::input('task_id',0)]);
 
         return $this->myResult(1,'信息获取成功！',$rs);
@@ -450,7 +450,7 @@ class TaskController extends Controller
     public function TaskMans()
     {
          $rs=DB::select('select usertasks.*,users.name,users.phone_number,'.
-            'sum(work_salary+extra_salary+award_salary) as total from usertasks '.
+            '(work_salary+extra_salary+award_salary) as total from usertasks '.
             'left join users on usertasks.user_id=users.id where task_id=?',[Request::input('task_id',0)]);
 
         return $this->myResult(1,'信息获取成功！',$rs);
