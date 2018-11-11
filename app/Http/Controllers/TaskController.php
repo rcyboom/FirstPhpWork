@@ -450,7 +450,7 @@ class TaskController extends Controller
     public function TaskMans()
     {
          $rs=DB::select('select usertasks.*,users.name,users.phone_number,'.
-            '(work_salary+extra_salary+award_salary) as total from usertasks '.
+            '(usertasks.work_salary+usertasks.extra_salary+usertasks.award_salary) as total from usertasks '.
             'left join users on usertasks.user_id=users.id where task_id=?',[Request::input('task_id',0)]);
 
         return $this->myResult(1,'信息获取成功！',$rs);
