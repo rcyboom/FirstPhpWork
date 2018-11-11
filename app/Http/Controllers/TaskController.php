@@ -432,7 +432,7 @@ class TaskController extends Controller
         $rs=DB::table('cartasks')
             ->where('task_id','=',Request::input('task_id',0))
             ->leftJoin('cars', 'cartasks.car_id', '=', 'cars.id')
-            ->select('cartasks.*', 'cars.car_type', 'cars.car_number','cars.phone')
+            ->select('cartasks.*','sum(rent_cost+oil_cost) as total', 'cars.car_type', 'cars.car_number','cars.phone')
             ->get();
         return $this->myResult(1,'信息获取成功！',$rs);
     }
