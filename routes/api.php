@@ -83,6 +83,9 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
     Route::get('tasks/TaskMans', 'TaskController@TaskMans')->name('tasks.TaskMans');
     Route::post('tasks/delTaskMan', 'TaskController@delTaskMan')->name('tasks.delTaskMan');
 
+    Route::get('tasks/getOption', 'TaskController@getOption')->name('tasks.getOption');
+    Route::post('tasks/setOption', 'TaskController@setOption')->name('tasks.setOption');
+
     // 员工奖惩
     Route::get('userpays/index', 'UserPayController@index')->name('userpays.index');
     Route::get('userpays/{id}', 'UserPayController@getOne')->name('userpays.getOne');

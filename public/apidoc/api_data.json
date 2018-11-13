@@ -133,6 +133,25 @@
   },
   {
     "type": "get",
+    "url": "/api/tasks/getOption",
+    "title": "95.获取系统设置",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.getOption\n2、key_name 字符串，返回其对应的数组",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "GetApiTasksGetoption"
+  },
+  {
+    "type": "get",
     "url": "/api/tasks/getStateList",
     "title": "94.获取任务各种状态选项",
     "group": "任务管理",
@@ -329,6 +348,25 @@
     "filename": "./TaskController.php",
     "groupTitle": "任务管理",
     "name": "PostApiTasksDeltaskman"
+  },
+  {
+    "type": "post",
+    "url": "/api/tasks/setOption",
+    "title": "96.更新系统设置",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.setOption\n2、key_name 字符串\n3、key_value 逗号分隔的字符串",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "PostApiTasksSetoption"
   },
   {
     "type": "post",

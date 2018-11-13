@@ -506,4 +506,41 @@ class TaskController extends Controller
         $rs=DB::select("select distinct(state) from tasks ");
         return $this->myResult(1,'信息获取成功！',['states'=>$rs]);
     }
+
+    /**
+     * @api {get} /api/tasks/getOption 95.获取系统设置
+     * @apiGroup 任务管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 tasks.getOption
+     * 2、key_name 字符串，返回其对应的数组
+     */
+    public function getOption()
+    {
+        $options = DB::table('options')->where('key_name',Request::input('key_name','-'))->first();
+        if($options){
+            $rs= explode(',',$options->key_value);
+            return $this->myResult(1,'信息获取成功！',$rs);
+        }else
+            return $this->myResult(0,'未找到对应的键值！',null);
+    }
+
+    /**
+     * @api {post} /api/tasks/setOption 96.更新系统设置
+     * @apiGroup 任务管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 tasks.setOption
+     * 2、key_name 字符串
+     * 3、key_value 逗号分隔的字符串
+     */
+    public function setOption()
+    {
+        $key = Request::input('key_name');
+        if (isset($key)) {
+            $val = Request::input('key_value');
+            DB::table('options')->where('key_name', $key)->delete();
+            DB::table('options')->insert(['key_name' => $key, 'key_value' => $val]);
+            return $this->myResult(1, '更新成功！', null);
+        } else
+            return $this->myResult(0, '键值不能为空！', null);
+    }
 }
