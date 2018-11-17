@@ -95,10 +95,10 @@ class UserPayController extends Controller
     public function saveOne($id=0)
     {
         $validator = Validator::make( Request::all(), [
-            'object_id' => 'required | integer | min:1',
-            'object_type' => 'required |in:人员,车辆',
+           // 'object_id' => 'required | integer | min:1',
+           // 'object_type' => 'required |in:人员,车辆',
             'time' => 'required | date',
-            'type' => 'required|in:奖励,惩罚,预支',
+           // 'type' => 'required|in:奖励,惩罚,预支',
             'reason' => 'required',
             'money'=>'required | digits',
             'score'=>'required | digits',
