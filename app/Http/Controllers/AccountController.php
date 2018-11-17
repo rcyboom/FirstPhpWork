@@ -147,7 +147,7 @@ class AccountController extends Controller
             'object_name' => 'required',
             'handler' => 'required',
             'trade_type' => 'required',
-            'money'=>'required | digits'
+            'money'=>'required | numeric'
         ]);
 
         if ($validator->fails()) {
