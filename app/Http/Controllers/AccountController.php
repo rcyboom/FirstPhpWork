@@ -422,7 +422,6 @@ class AccountController extends Controller
             'AND object_type=? and created_at<=? group by object_id) tc on users.id=tc.object_id',
             [$end_time,$end_time,'员工',$end_time]);
         return $this->myResult(1,'获取成功！',$taskmoney);
-
     }
 
     /**
@@ -434,6 +433,24 @@ class AccountController extends Controller
      */
     public function getAccountCar()
     {
-
+        $validator = Validator::make( Request::all(), [
+            'end_time' => 'required | date',
+        ]);
+        if ($validator->fails()) {
+            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
+        };
+        $end_time=Request::input('end_time');
+        $taskmoney = DB::select('select cars.id,cars.car_number,? as end_time,'.
+            'COALESCE(tb.task_money,0) as task_money,COALESCE(tb.task_count,0) as task_count,'.
+            'COALESCE(tc.pay_money,0) as pay_money,COALESCE(tc.pay_count,0) as pay_count,'.
+            'COALESCE(tb.task_money+tc.pay_money,0) as total_count,COALESCE(tb.task_count+tc.pay_count,0) as total_money '.
+            'from cars left join '.
+            '(select car_id,SUM(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as task_money,count(*) as task_count from cartasks  '.
+            'where account_id = 0 and created_at<=? group by car_id) tb '.
+            'on cars.id=tb.car_id left join '.
+            '(select object_id,SUM(money) as pay_money,count(*) as pay_count from userpays where account_id = 0  '.
+            'AND object_type=? and created_at<=? group by object_id) tc on cars.id=tc.object_id',
+            [$end_time,$end_time,'车辆',$end_time]);
+        return $this->myResult(1,'获取成功！',$taskmoney);
     }
 }

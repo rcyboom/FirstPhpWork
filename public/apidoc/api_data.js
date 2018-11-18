@@ -1367,6 +1367,54 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/api/accounts/getAccountCar",
+    "title": "9.返回截至日期前需要结算的车辆列表",
+    "group": "财务管理",
+    "description": "<p>路由名称 accounts.getAccountCar</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "end_time",
+            "description": "<p>截至日期</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "财务管理",
+    "name": "GetApiAccountsGetaccountcar"
+  },
+  {
+    "type": "get",
+    "url": "/api/accounts/getAccountUser",
+    "title": "8.返回截至日期前需要结算的员工列表",
+    "group": "财务管理",
+    "description": "<p>路由名称 accounts.getAccountUser</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "end_time",
+            "description": "<p>截至日期</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "财务管理",
+    "name": "GetApiAccountsGetaccountuser"
+  },
+  {
+    "type": "get",
     "url": "/api/accounts/getone",
     "title": "2.获取某条收支记录",
     "group": "财务管理",
@@ -1547,7 +1595,7 @@ define({ "api": [
     "url": "/api/accounts/accounttask",
     "title": "5.与客户结算某个任务",
     "group": "财务管理",
-    "description": "<p>路由名称 accounts.accounttask 注意，此接口只用于与客户结算某个任务，结算后不可删除结算记录，任务结算状态不可再更改 结算金额自动为该任务的结算金额，如果以后修改任务后，需手动修改对应的收支记录</p>",
+    "description": "<p>路由名称 accounts.accounttask 注意，此接口只用于与客户结算某个任务，结算后不可删除结算记录，任务结算状态不可再更改 结算金额自动为该任务的结算金额，如果以后修改任务后，系统自动修改对应的结算金额</p>",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -1669,61 +1717,6 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/api/accounts/autoCheckAccount 9.校验某个财务记录中对于已经结算的：任务、车辆或人员出勤、奖惩、预支记录中明细汇总金额",
-    "title": "与财务收支金额是否相等",
-    "group": "财务管理",
-    "description": "<p>路由名称 accounts.autoCheckAccount 注意，此接口只用于对于已经结算的任务记录、人员或者车辆出勤记录、人员或者车辆的奖惩预支等记录的金额后，用于再次合计 其对应的财务收支记录的汇总金额，校验是否相符，返回值为重新校验后的汇总金额。</p> <p>该功能暂未实现</p>",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "Integer",
-            "optional": false,
-            "field": "account_",
-            "description": "<p>id 对应的结算记录id</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "./AccountController.php",
-    "groupTitle": "财务管理",
-    "name": "PostApiAccountsAutocheckaccount9"
-  },
-  {
-    "type": "post",
-    "url": "/api/accounts/autoUpdateAccount 8.对于已经结算的：任务、车辆或人员出勤、奖惩、预支记录后，",
-    "title": "自动更新该记录所对应的财务收支记录的汇总金额。",
-    "group": "财务管理",
-    "description": "<p>路由名称 accounts.autoUpdateAccount 注意，此接口只用于手动修改已经结算的任务记录、人员或者车辆出勤记录、人员或者车辆的奖惩预支等记录的金额后，用于再次合计 其对应的财务收支记录的汇总金额，以便明细和汇总相符。</p> <p>该功能暂未实现</p>",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "Integer",
-            "optional": false,
-            "field": "account_",
-            "description": "<p>id 对应的结算记录id</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Integer",
-            "optional": false,
-            "field": "object_id",
-            "description": "<p>对应的客户、车辆、人员的id</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "./AccountController.php",
-    "groupTitle": "财务管理",
-    "name": "PostApiAccountsAutoupdateaccount8"
-  },
-  {
-    "type": "post",
     "url": "/api/accounts/delete",
     "title": "4.删除指定的手动收支信息",
     "group": "财务管理",
@@ -1774,7 +1767,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "object_type",
-            "description": "<p>收支对象，可选项：客户结算、员工结算、车辆结算、自定义字符串</p>"
+            "description": "<p>收支对象，可选项：除【客户结算、员工结算、车辆结算】之外的自定义字符串</p>"
           },
           {
             "group": "Parameter",
