@@ -290,7 +290,7 @@ class AccountController extends Controller
             $account_time=Request::input('account_time');
 
             //查找所有时间段内已经完成但是还未结算的任务并予以结算
-            $affected_task = DB::update('update cartasks set account_id = -1 where account_id = 0  AND car_id = ?  and created_at<=?',
+            $affected_task = DB::update('update cartasks set account_id = -1 where account_id = 0  AND car_id = ?  and created_at<=? and end_time is not NULL ',
                 [$car->id,$end_time]);
             $affected_pay = DB::update('update userpays set account_id = -1 where account_id = 0  AND object_type=? AND object_id = ?  and created_at<=?',
                 ['车辆',$car->id,$end_time]);
@@ -355,7 +355,7 @@ class AccountController extends Controller
             $account_time=Request::input('account_time');
 
             //查找所有时间段内已经完成但是还未结算的任务并予以结算
-            $affected_task = DB::update('update usertasks set account_id = -2 where account_id = 0  AND user_id = ? and created_at<=?',
+            $affected_task = DB::update('update usertasks set account_id = -2 where account_id = 0  AND user_id = ? and created_at<=? and end_time is not NULL ',
                 [$usr->id,$end_time]);
             $affected_pay = DB::update('update userpays set account_id = -2 where account_id = 0  AND object_type=? AND object_id = ? and created_at<=?',
                 ['员工',$usr->id,$end_time]);
@@ -416,7 +416,7 @@ class AccountController extends Controller
             'COALESCE(tb.task_money+tc.pay_money,0) as total_count,COALESCE(tb.task_count+tc.pay_count,0) as total_money '.
             'from users left join '.
             '(select user_id,SUM(work_salary+extra_salary+award_salary) as task_money,count(*) as task_count from usertasks  '.
-            'where account_id = 0 and created_at<=? group by user_id) tb '.
+            'where account_id = 0 and created_at<=?  and end_time is not NULL group by user_id) tb '.
             'on users.id=tb.user_id left join '.
             '(select object_id,SUM(money) as pay_money,count(*) as pay_count from userpays where account_id = 0  '.
             'AND object_type=? and created_at<=? group by object_id) tc on users.id=tc.object_id',
@@ -446,7 +446,7 @@ class AccountController extends Controller
             'COALESCE(tb.task_money+tc.pay_money,0) as total_count,COALESCE(tb.task_count+tc.pay_count,0) as total_money '.
             'from cars left join '.
             '(select car_id,SUM(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as task_money,count(*) as task_count from cartasks  '.
-            'where account_id = 0 and created_at<=? group by car_id) tb '.
+            'where account_id = 0 and created_at<=?  and end_time is not NULL group by car_id) tb '.
             'on cars.id=tb.car_id left join '.
             '(select object_id,SUM(money) as pay_money,count(*) as pay_count from userpays where account_id = 0  '.
             'AND object_type=? and created_at<=? group by object_id) tc on cars.id=tc.object_id',
