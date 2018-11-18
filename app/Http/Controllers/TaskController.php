@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\TaskCollection;
+use App\Models\Account;
 use App\Models\Cartask;
 use App\Models\Task;
 use App\Models\Usertask;
@@ -165,9 +166,19 @@ class TaskController extends Controller
         $rs->remark = Request::input('remark');
 
         if($rs->save()){
-            return $this->myResult(1,'更新成功！',$rs);
-        }
-        return $this->myResult(0,'操作失败，未知错误！',null);
+            if($rs->account_id >0){
+                $acc=Account::find($rs->account_id);
+                if($acc){
+                    $acc->money=$rs->receivables;
+                    if($acc->save()){
+                        return $this->myResult(1,'任务更新成功，并同步更新了收支记录！',$rs);
+                    }
+                }else
+                    return $this->myResult(1,'任务更新成功，但未更新成功对应的收支记录！',$rs);
+            }else
+                return $this->myResult(1,'更新成功！',$rs);
+        }else
+            return $this->myResult(0,'操作失败，请刷新数据后重试！',null);
     }
 
     /**

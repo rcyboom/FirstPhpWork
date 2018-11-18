@@ -99,6 +99,8 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
     Route::post('accounts/accounttask', 'AccountController@accounttask')->name('accounts.accounttask');
     Route::post('accounts/accountcar', 'AccountController@accountcar')->name('accounts.accountcar');
     Route::post('accounts/accountuser', 'AccountController@accountuser')->name('accounts.accountuser');
+    Route::get('accounts/getAccountUser', 'AccountController@getAccountUser')->name('accounts.getAccountUser');
+    Route::get('accounts/getAccountCar', 'AccountController@getAccountCar')->name('accounts.getAccountCar');
 
 });
 // 员工路由

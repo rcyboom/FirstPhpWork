@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Models\Car;
 use App\Models\Task;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Request;
@@ -128,7 +129,7 @@ class AccountController extends Controller
      * 注意，当object_type为客户结算、员工结算、车辆结算时，object_type不允许更改且该记录不允许删除
      * @apiParam {Integer} id 收支编号，整数，小于1表示新增
      * @apiParam {String} account_time 收支时间,日期，格式2018-01-01
-     * @apiParam {String} object_type 收支对象，可选项：客户结算、员工结算、车辆结算、自定义字符串
+     * @apiParam {String} object_type 收支对象，可选项：除【客户结算、员工结算、车辆结算】之外的自定义字符串
      * @apiParam {Integer} object_id 收支对象ID，当object_type为客户结算、员工结算、车辆结算的时候，表示客户、员工、车辆的ID，其余必须为0
      * @apiParam {String} object_name 对象名称，当object_type为客户结算、员工结算、车辆结算的时候，表示客户、员工、车辆的名称，其余为自定义字符串
      * @apiParam {String} handler 经办人，默认登录用户
@@ -208,7 +209,7 @@ class AccountController extends Controller
      * @apiDescription
      * 路由名称 accounts.accounttask
      * 注意，此接口只用于与客户结算某个任务，结算后不可删除结算记录，任务结算状态不可再更改
-     * 结算金额自动为该任务的结算金额，如果以后修改任务后，需手动修改对应的收支记录
+     * 结算金额自动为该任务的结算金额，如果以后修改任务后，系统自动修改对应的结算金额
      * @apiParam {String} account_time 结算日期
      * @apiParam {Integer} task_id 任务ID编号
      * @apiParam {String} handler 经办人，默认登录用户
@@ -383,18 +384,10 @@ class AccountController extends Controller
         return $this->myResult(0,'未找到对应编号的人员信息！',Request::input('user_id'));
     }
 
-    /**
-     * @api {post} /api/accounts/autoUpdateAccount 8.对于已经结算的：任务、车辆或人员出勤、奖惩、预支记录后，
-     * 自动更新该记录所对应的财务收支记录的汇总金额。
-     * @apiGroup 财务管理
-     * @apiDescription
-     * 路由名称 accounts.autoUpdateAccount
-     * 注意，此接口只用于手动修改已经结算的任务记录、人员或者车辆出勤记录、人员或者车辆的奖惩预支等记录的金额后，用于再次合计
-     * 其对应的财务收支记录的汇总金额，以便明细和汇总相符。
-     *
-     * 该功能暂未实现
-     * @apiParam {Integer} account_ id 对应的结算记录id
-     * @apiParam {Integer} object_id 对应的客户、车辆、人员的id
+     /**
+     * 对于已经结算的：任务、车辆或人员出勤、奖惩、预支记录后，重新计算结算金额
+     * account_ id 对应的结算记录id
+     * object_id 对应的客户、车辆、人员的id
      */
     public function autoUpdateAccount()
     {
@@ -402,18 +395,44 @@ class AccountController extends Controller
     }
 
     /**
-     * @api {post} /api/accounts/autoCheckAccount 9.校验某个财务记录中对于已经结算的：任务、车辆或人员出勤、奖惩、预支记录中明细汇总金额
-     * 与财务收支金额是否相等
+     * @api {get} /api/accounts/getAccountUser 8.返回截至日期前需要结算的员工列表
      * @apiGroup 财务管理
      * @apiDescription
-     * 路由名称 accounts.autoCheckAccount
-     * 注意，此接口只用于对于已经结算的任务记录、人员或者车辆出勤记录、人员或者车辆的奖惩预支等记录的金额后，用于再次合计
-     * 其对应的财务收支记录的汇总金额，校验是否相符，返回值为重新校验后的汇总金额。
-     *
-     * 该功能暂未实现
-     * @apiParam {Integer} account_ id 对应的结算记录id
+     * 路由名称 accounts.getAccountUser
+     * @apiParam {String} end_time 截至日期
      */
-    public function autoCheckAccount()
+    public function getAccountUser()
+    {
+        $validator = Validator::make( Request::all(), [
+            'end_time' => 'required | date',
+        ]);
+        if ($validator->fails()) {
+            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
+        };
+        $end_time=Request::input('end_time');
+        $taskmoney = DB::select('select users.id,users.name,? as end_time,'.
+            'COALESCE(tb.task_money,0) as task_money,COALESCE(tb.task_count,0) as task_count,'.
+            'COALESCE(tc.pay_money,0) as pay_money,COALESCE(tc.pay_count,0) as pay_count,'.
+            'COALESCE(tb.task_money+tc.pay_money,0) as total_count,COALESCE(tb.task_count+tc.pay_count,0) as total_money '.
+            'from users left join '.
+            '(select user_id,SUM(work_salary+extra_salary+award_salary) as task_money,count(*) as task_count from usertasks  '.
+            'where account_id = 0 and created_at<=? group by user_id) tb '.
+            'on users.id=tb.user_id left join '.
+            '(select object_id,SUM(money) as pay_money,count(*) as pay_count from userpays where account_id = 0  '.
+            'AND object_type=? and created_at<=? group by object_id) tc on users.id=tc.object_id',
+            [$end_time,$end_time,'员工',$end_time]);
+        return $this->myResult(1,'获取成功！',$taskmoney);
+
+    }
+
+    /**
+     * @api {get} /api/accounts/getAccountCar 9.返回截至日期前需要结算的车辆列表
+     * @apiGroup 财务管理
+     * @apiDescription
+     * 路由名称 accounts.getAccountCar
+     * @apiParam {String} end_time 截至日期
+     */
+    public function getAccountCar()
     {
 
     }
