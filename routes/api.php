@@ -102,6 +102,7 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
     Route::get('accounts/getAccountUser', 'AccountController@getAccountUser')->name('accounts.getAccountUser');
     Route::get('accounts/getAccountCar', 'AccountController@getAccountCar')->name('accounts.getAccountCar');
     Route::get('accounts/getAccountCarListById', 'AccountController@getAccountCarListById')->name('accounts.getAccountCarListById');
+    Route::get('accounts/getAccountUserListById', 'AccountController@getAccountUserListById')->name('accounts.getAccountUserListById');
 
 });
 // 员工路由
