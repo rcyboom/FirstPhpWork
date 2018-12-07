@@ -1391,6 +1391,30 @@
   },
   {
     "type": "get",
+    "url": "/api/accounts/getAccountCarListById",
+    "title": "91.返回指定结算ID的车辆结算的详情列表",
+    "group": "财务管理",
+    "description": "<p>路由名称 accounts.getAccountCarListById</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "accountID",
+            "description": "<p>结算编号，如果是还未结算的详情，直接传递车辆ID的【负数】</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "财务管理",
+    "name": "GetApiAccountsGetaccountcarlistbyid"
+  },
+  {
+    "type": "get",
     "url": "/api/accounts/getAccountUser",
     "title": "8.返回截至日期前需要结算的员工列表",
     "group": "财务管理",
@@ -1412,6 +1436,30 @@
     "filename": "./AccountController.php",
     "groupTitle": "财务管理",
     "name": "GetApiAccountsGetaccountuser"
+  },
+  {
+    "type": "get",
+    "url": "/api/accounts/getAccountUserListById",
+    "title": "81.返回指定结算ID的人员结算的详情列表",
+    "group": "财务管理",
+    "description": "<p>路由名称 accounts.getAccountUserListById</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "accountID",
+            "description": "<p>结算编号，如果是还未结算前的详情，直接传递人员ID的【负数】</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "财务管理",
+    "name": "GetApiAccountsGetaccountuserlistbyid"
   },
   {
     "type": "get",
@@ -1527,18 +1575,18 @@
   {
     "type": "post",
     "url": "/api/accounts/accountcar",
-    "title": "6.与车辆结算某个时间点之前的工资",
+    "title": "92.与车辆结算某个时间点之前的工资",
     "group": "财务管理",
-    "description": "<p>路由名称 accounts.accountcar 注意，此接口只用于与车辆结算某个时间点之前创建的任务的工资，结算后不可删除结算记录，所有参与结算的任务和奖惩记录的结算状态均不可再更改 结算金额自动为该时间点之前创建的出勤任务及奖惩记录的合计金额，如果以后修改任务情况和奖惩记录后，需手动修改对应的收支记录 时间节点以出勤任务创建时间为准</p>",
+    "description": "<p>路由名称 accounts.accountcar</p>",
     "parameter": {
       "fields": {
         "Parameter": [
           {
             "group": "Parameter",
-            "type": "String",
+            "type": "Integer",
             "optional": false,
-            "field": "end_time",
-            "description": "<p>截至日期</p>"
+            "field": "car_id",
+            "description": "<p>车辆ID编号</p>"
           },
           {
             "group": "Parameter",
@@ -1546,13 +1594,6 @@
             "optional": false,
             "field": "account_time",
             "description": "<p>结算日期</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Integer",
-            "optional": false,
-            "field": "car_id",
-            "description": "<p>车辆ID编号</p>"
           },
           {
             "group": "Parameter",
@@ -1652,18 +1693,18 @@
   {
     "type": "post",
     "url": "/api/accounts/accountuser",
-    "title": "7.与员工结算某个时间点之前的工资",
+    "title": "82.与员工结算某个时间点之前的工资",
     "group": "财务管理",
-    "description": "<p>路由名称 accounts.accountuser 注意，此接口只用于与员工结算某个时间点之前的工资，结算后不可删除结算记录，所有参与结算的任务和奖惩记录的结算状态均不可再更改 结算金额自动为该时间点之前的出勤任务及奖惩记录的合计金额，如果以后修改任务情况和奖惩记录后，需手动修改对应的收支记录 时间节点以出勤任务创建时间为准</p>",
+    "description": "<p>路由名称 accounts.accountuser 注意，此接口只用于与员工结算某个时间点之前的工资，结算后不可删除结算记录，所有参与结算的任务和奖惩记录的结算状态均不可再更改 结算金额自动为该时间点之前的出勤任务及奖惩记录的合计金额，如果以后修改任务情况和奖惩记录后，系统自动修改对应的收支记录</p>",
     "parameter": {
       "fields": {
         "Parameter": [
           {
             "group": "Parameter",
-            "type": "String",
+            "type": "Integer",
             "optional": false,
-            "field": "end_time",
-            "description": "<p>截至日期</p>"
+            "field": "user_id",
+            "description": "<p>人员ID编号</p>"
           },
           {
             "group": "Parameter",
@@ -1671,13 +1712,6 @@
             "optional": false,
             "field": "account_time",
             "description": "<p>结算日期</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Integer",
-            "optional": false,
-            "field": "user_id",
-            "description": "<p>人员ID编号</p>"
           },
           {
             "group": "Parameter",
