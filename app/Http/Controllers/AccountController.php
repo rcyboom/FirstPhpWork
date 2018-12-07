@@ -301,7 +301,6 @@ class AccountController extends Controller
     {
         $validator = Validator::make( Request::all(), [
             'accountID' => 'required | integer',
-            'userID' => 'required | integer | min:1'
         ]);
 
         if ($validator->fails()) {
@@ -426,7 +425,6 @@ class AccountController extends Controller
     {
         $validator = Validator::make( Request::all(), [
             'accountID' => 'required | integer',
-            'carID' => 'required | integer | min:1'
         ]);
 
         if ($validator->fails()) {
