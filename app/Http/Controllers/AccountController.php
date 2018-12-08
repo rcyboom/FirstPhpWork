@@ -321,6 +321,7 @@ class AccountController extends Controller
             [$userID,$accountID]);
         $rs['pays']=$tmp = DB::select('select * from userpays where object_id=? and account_id=? and  object_type=?',
             [$userID,$accountID,'员工']);
+        $rs['account']=DB::select('select * from accounts where id=?',[$accountID]);
 
         return $this->myResult(1,'获取成功！',$rs);
     }
@@ -444,6 +445,7 @@ class AccountController extends Controller
             [$carID,$accountID]);
         $rs['pays']=DB::select('select * from userpays where object_id=? and account_id=? and  object_type=?',
             [$carID,$accountID,'车辆']);
+        $rs['account']=DB::select('select * from accounts where id=?',[$accountID]);
 
         return $this->myResult(1,'获取成功！',$rs);
     }
