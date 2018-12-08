@@ -96,7 +96,7 @@ class UserPayController extends Controller
     {
         $validator = Validator::make( Request::all(), [
             'object_id' => 'required | integer | min:1',
-            'object_type' => 'required |in:人员,车辆',
+            'object_type' => 'required |in:员工,车辆',
             'time' => 'required | date',
             'type' => 'required|in:奖励,惩罚,预支',
             'reason' => 'required',
@@ -108,7 +108,7 @@ class UserPayController extends Controller
             return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
         }
 
-        if(Request::input('object_type')=='人员') {
+        if(Request::input('object_type')=='员工') {
             $ur = User::find(Request::input('object_id'));
             if (!$ur) {
                 return $this->myResult(0, '更新失败，未找到对应的人员编号！', null);

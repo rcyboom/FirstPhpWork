@@ -320,7 +320,7 @@ class AccountController extends Controller
             'left join tasks on usertasks.task_id=tasks.id where usertasks.user_id=? and usertasks.account_id=? ',
             [$userID,$accountID]);
         $rs['pays']=$tmp = DB::select('select * from userpays where object_id=? and account_id=? and  object_type=?',
-            [$userID,$accountID,'人员']);
+            [$userID,$accountID,'员工']);
 
         return $this->myResult(1,'获取成功！',$rs);
     }
@@ -358,7 +358,7 @@ class AccountController extends Controller
             $taskmoney = DB::select('select COALESCE(SUM(work_salary+extra_salary+award_salary),0) as cc from usertasks  where account_id = ?',
                 [-$usr->id]);
             $usermoney = DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id = ? and object_type=?',
-                [-$usr->id,'人员']);
+                [-$usr->id,'员工']);
 
             $acc=new Account();
             $acc->account_time=$account_time;
@@ -372,7 +372,7 @@ class AccountController extends Controller
             $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc;
             $acc->save();
             DB::update('update usertasks set account_id = ? where account_id = ?',[$acc->id,-$usr->id]);
-            DB::update('update userpays set account_id = ? where account_id = ? and object_type=?',[$acc->id,-$usr->id,'人员']);
+            DB::update('update userpays set account_id = ? where account_id = ? and object_type=?',[$acc->id,-$usr->id,'员工']);
 
             return $this->myResult(1,'结算成功，对应的收支记录为:'.$acc->id,$acc);
         }
