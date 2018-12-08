@@ -83,7 +83,7 @@ define({ "api": [
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、路由名称 userpays.saveOne\n2、必选参数：\n id，奖惩编号，作为url必填,大于0表示更新，否则新增\n\tobject_id 正整数，人员或者车辆编号，且必须真实存在\n\tobject_type 可选项：人员、车辆\n\ttime 日期时间型，奖惩时间\n\ttype 字符串20，奖惩类型，可选项：奖励、惩罚、预支\n\tmoney 数字类型，两位小数，奖惩金额\n\tscore 数字类型，两位小数，奖惩评分\n\treason 字符串，奖惩原因",
+          "content": "1、路由名称 userpays.saveOne\n2、必选参数：\n id，奖惩编号，作为url必填,大于0表示更新，否则新增\n\tobject_id 正整数，人员或者车辆编号，且必须真实存在\n\tobject_type 可选项：员工、车辆\n\ttime 日期时间型，奖惩时间\n\ttype 字符串20，奖惩类型，可选项：奖励、惩罚、预支\n\tmoney 数字类型，两位小数，奖惩金额\n\tscore 数字类型，两位小数，奖惩评分\n\treason 字符串，奖惩原因",
           "type": "json"
         }
       ]
