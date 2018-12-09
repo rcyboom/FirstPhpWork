@@ -315,7 +315,7 @@ class AccountController extends Controller
         $rs=array();
         $rs['object']='user';
         $rs['user']=DB::select('select * from users where id=?',[$userID]);
-        $rs['tasks']=DB::select('select tasks.title as tsaktitle,tasks.state as taskstate,tasks.station as taskstation,'.
+        $rs['tasks']=DB::select('select tasks.title as tasktitle,tasks.state as taskstate,tasks.station as taskstation,'.
             'usertasks.*,(work_salary+extra_salary+award_salary) as money from usertasks '.
             'left join tasks on usertasks.task_id=tasks.id where usertasks.user_id=? and usertasks.account_id=? ',
             [$userID,$accountID]);
@@ -439,7 +439,7 @@ class AccountController extends Controller
         $rs=array();
         $rs['object']='car';
         $rs['car']=DB::select('select * from cars where id=?',[$carID]);
-        $rs['tasks']=DB::select('select tasks.title as tsaktitle,tasks.state as taskstate,tasks.station as taskstation,'.
+        $rs['tasks']=DB::select('select tasks.title as tasktitle,tasks.state as taskstate,tasks.station as taskstation,'.
             'cartasks.*,(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as money from cartasks '.
             'left join tasks on cartasks.task_id=tasks.id where cartasks.car_id=? and cartasks.account_id=? ',
             [$carID,$accountID]);
