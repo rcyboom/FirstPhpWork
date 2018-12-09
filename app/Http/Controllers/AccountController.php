@@ -439,7 +439,7 @@ class AccountController extends Controller
         $rs=array();
         $rs['object']='car';
         $rs['car']=DB::select('select * from cars where id=?',[$carID]);
-        $rs['tasks']=DB::select('select vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,,vtasks.name as customername,'.
+        $rs['tasks']=DB::select('select vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
             'cartasks.*,(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as money from cartasks '.
             'left join vtasks on cartasks.task_id=vtasks.id where cartasks.car_id=? and cartasks.account_id=? ',
             [$carID,$accountID]);
