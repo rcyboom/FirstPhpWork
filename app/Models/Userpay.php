@@ -18,7 +18,7 @@ class Userpay  extends Model
                 return $rs[0]->cc;
             }else
                 return null;
-        }else if ($this->object_type == '人员'){
+        }else if ($this->object_type == '员工'){
             $rs = DB::select('select name as cc from users where id = ?',[$this->object_id]);
             if(count($rs)>0){
                 return $rs[0]->cc;
