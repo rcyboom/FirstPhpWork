@@ -252,6 +252,7 @@ class AccountController extends Controller
             return $this->myResult(1,'结算成功，对应的收支记录为:'.$acc->id,$acc->id);
         }
         return $this->myResult(0,'未找到对应编号的任务信息！',Request::input('task_id'));
+        return view();
     }
 
 
