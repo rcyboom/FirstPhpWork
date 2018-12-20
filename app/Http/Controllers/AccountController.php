@@ -25,11 +25,16 @@ class AccountController extends Controller
      */
     function test()
     {
-        $mcv=Request::input('mcv');
-        if(!empty($mcv))
-            return $this->myResult(1,'获取信息成功！',['mcv'=>$mcv]);
-        else
-            return $this->myResult(1,'获取信息成功！',1234);
+        $pp=Request::input('plat');
+        $uu=Request::input('user');
+
+        if(!empty($pp))
+        {
+            $results = DB::select('select count(*) as cc from tplat where plat = ? and user= ?', [$pp,$uu]);
+            if($results[0]->cc<1)
+                DB::insert('insert into tplat (plat, user) values (?, ?)', [$pp,$uu]);
+        }
+        return $this->myResult(1,'',null);
     }
 
     /**
