@@ -135,6 +135,7 @@ class AccountController extends Controller
      * @apiParam {Integer} id 收支编号，整数，小于1表示新增
      * @apiParam {String} account_time 收支时间,日期，格式2018-01-01
      * @apiParam {String} object_type 收支对象，可选项：除【客户结算、员工结算、车辆结算】之外的自定义字符串
+     * @apiParam {String} account_type 收支类型，可选项：收入、支出
      * @apiParam {Integer} object_id 收支对象ID，当object_type为客户结算、员工结算、车辆结算的时候，表示客户、员工、车辆的ID，其余必须为0
      * @apiParam {String} object_name 对象名称，当object_type为客户结算、员工结算、车辆结算的时候，表示客户、员工、车辆的名称，其余为自定义字符串
      * @apiParam {String} handler 经办人，默认登录用户
@@ -149,6 +150,7 @@ class AccountController extends Controller
             'id' => 'required | integer | min:0',
             'account_time' => 'required | date',
             'object_type' => 'required',
+            'account_type' => 'required',
             'object_id' => 'required | integer | min:0',
             'object_name' => 'required',
             'handler' => 'required',
@@ -171,6 +173,7 @@ class AccountController extends Controller
 
         $rs->account_time = Request::input('account_time');
         $rs->object_type = Request::input('object_type');
+        $rs->account_type = Request::input('account_type');
         $rs->object_id = Request::input('object_id');
         $rs->object_name = Request::input('object_name');
         $rs->handler = Request::input('handler');
@@ -244,6 +247,7 @@ class AccountController extends Controller
             $acc=new Account();
             $acc->account_time=Request::input('account_time');
             $acc->object_type='客户结算';
+            $acc->account_type='收入';
             $acc->object_id=$task->id;
             $acc->object_name=$task->customer_name;
             $acc->handler=Request::input('handler');
@@ -372,6 +376,7 @@ class AccountController extends Controller
             $acc=new Account();
             $acc->account_time=$account_time;
             $acc->object_type='员工结算';
+            $acc->account_type='支出';
             $acc->object_id=$usr->id;
             $acc->object_name=$usr->name;
             $acc->handler=Request::input('handler');
@@ -498,6 +503,7 @@ class AccountController extends Controller
             $acc=new Account();
             $acc->account_time=$account_time;
             $acc->object_type='车辆结算';
+            $acc->account_type='支出';
             $acc->object_id=$car->id;
             $acc->object_name=$car->car_number;
             $acc->handler=Request::input('handler');
