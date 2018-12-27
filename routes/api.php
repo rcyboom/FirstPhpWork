@@ -106,9 +106,9 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
 
 });
 // 员工路由
-Route::middleware('auth:api')->group(function() {
+/*Route::middleware('auth:api')->group(function() {
     Route::get('employees/index', 'EmployeeController@index')->name('employees.index');
     Route::get('employees/tasks', 'EmployeeController@tasks')->name('employees.tasks');
     Route::get('employees/pays', 'EmployeeController@pays')->name('employees.pays');
     Route::get('employees/accounts', 'EmployeeController@accounts')->name('employees.accounts');
-});
+});*/

@@ -504,27 +504,39 @@ class UserController extends Controller
     }
 
     /**
-     *  @api {get} /api/getIssues 94.获取建议内容
+     *  @api {get} /api/getIssues 94.获取建议内容列表
      * @apiGroup 用户管理
      * @apiHeaderExample 简要说明
      * 不需要任何参数
      */
-    public function getIssues()
+    public function getIssues(Request $request)
     {
-        return $this->myResult(1,'信息获取成功！',DB::select('select * from issues'));
+        $pageSize = (int)$request->input('pageSize');
+        $pageSize = isset($pageSize) && $pageSize?$pageSize:10;
+
+        $rs=DB::select('select * from issues order by id desc');
+        return $this->myResult(1,'信息获取成功！',$rs->paginate($pageSize));
     }
 
     /**
      *  @api {post} /api/setIssues 95.更新建议内容
      * @apiGroup 用户管理
      * @apiHeaderExample 简要说明
-     * 只有一个参数 context 字符串，该内容必须包含以前的内容
-     * 也就是每次都会替换以前的内容
+     * context 字符串内容
+     * id 具体某一条的ID，大于0表示更新，小于1表示新增
+     * type 字符串内容，不大于50长度
      */
     public function setIssues(Request $request)
     {
+        $id=$request->input('id',0);
+        $type=$request->input('type','默认类型');
         $context = $request->input('context','爱你哦！');
-        DB::update('update issues set context = ?',[$context]);
-        return $this->myResult(1,'信息更新成功！',DB::select('select * from issues'));
+        if($id>0){
+            DB::update('update issues set context = ?,type=?',[$context,type]);
+            return $this->myResult(1,'信息更新成功！',DB::select('select * from issues WHERE id=?',[$id]));
+        }else{
+            DB::insert('insert into issues (context,created_at,type) values(?,NOW(),?)',[$context,$type]);
+            return $this->myResult(1,'信息更新成功！',DB::select('select * from issues order by id DESC LIMIT 1'));
+        }
     }
 }
