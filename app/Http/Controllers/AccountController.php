@@ -341,6 +341,7 @@ class AccountController extends Controller
      * 结算金额自动为该时间点之前的出勤任务及奖惩记录的合计金额，如果以后修改任务情况和奖惩记录后，系统自动修改对应的收支记录
      * @apiParam {Integer} user_id 人员ID编号
      * @apiParam {String} account_time 结算日期
+     * @apiParam {String} end_time 截至日期
      * @apiParam {String} handler 经办人，默认登录用户
      * @apiParam {String} trade_type 交易类型，如：现金、支付宝、微信、银行卡、对公账户等
      * @apiParam {String} [trade_account] 交易账户号
@@ -350,6 +351,7 @@ class AccountController extends Controller
     {
         $validator = Validator::make( Request::all(), [
             'account_time' => 'required | date',
+            'end_time' => 'required | date',
             'user_id' => 'required | integer | min:1',
             'handler' => 'required',
             'trade_type' => 'required',
@@ -375,6 +377,8 @@ class AccountController extends Controller
             $acc->handler=Request::input('handler');
             $acc->trade_type=Request::input('trade_type');
             $acc->trade_account=Request::input('trade_account');
+            $acc->end_time=Request::input('end_time');
+            $acc->fix_salary=Request::input('fix_salary');
             $acc->remark=Request::input('remark');
             $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc;
             $acc->save();
@@ -410,7 +414,7 @@ class AccountController extends Controller
         $taskmoney = DB::select('select cars.id,cars.car_number,? as end_time,'.
             'COALESCE(tb.task_money,0) as task_money,COALESCE(tb.task_count,0) as task_count,'.
             'COALESCE(tc.pay_money,0) as pay_money,COALESCE(tc.pay_count,0) as pay_count,'.
-            'COALESCE(tb.task_money+tc.pay_money,0) as total_count,COALESCE(tb.task_count+tc.pay_count,0) as total_money '.
+            'COALESCE(tb.task_money+tc.pay_money,0) as total_money,COALESCE(tb.task_count+tc.pay_count,0) as total_count '.
             'from cars left join '.
             '(select car_id,SUM(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as task_money,count(*) as task_count from cartasks  '.
             'where account_id = -car_id  group by car_id) tb '.
@@ -463,6 +467,7 @@ class AccountController extends Controller
      * 路由名称 accounts.accountcar
      * @apiParam {Integer} car_id 车辆ID编号
      * @apiParam {String} account_time 结算日期
+     * @apiParam {String} end_time 截至日期
      * @apiParam {String} handler 经办人，默认登录用户
      * @apiParam {String} trade_type 交易类型，如：现金、支付宝、微信、银行卡、对公账户等
      * @apiParam {String} [trade_account] 交易账户号
@@ -498,6 +503,7 @@ class AccountController extends Controller
             $acc->handler=Request::input('handler');
             $acc->trade_type=Request::input('trade_type');
             $acc->trade_account=Request::input('trade_account');
+            $acc->end_time=Request::input('end_time');
             $acc->remark=Request::input('remark');
             $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc;
             $acc->save();
