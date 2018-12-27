@@ -282,7 +282,7 @@ class AccountController extends Controller
         DB::update('update userpays set account_id = -object_id where account_id <1  and object_type=? and created_at<=?',
             ['员工',$end_time]);
 
-        $taskmoney = DB::select('select users.id,users.name,? as end_time,'.
+        $taskmoney = DB::select('select users.id,users.fix_salary,users.name,? as end_time,'.
             'COALESCE(tb.task_money,0) as task_money,COALESCE(tb.task_count,0) as task_count,'.
             'COALESCE(tc.pay_money,0) as pay_money,COALESCE(tc.pay_count,0) as pay_count,'.
             'COALESCE(tb.task_money+tc.pay_money,0) as total_count,COALESCE(tb.task_count+tc.pay_count,0) as total_money '.
