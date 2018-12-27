@@ -676,7 +676,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/api/getIssues",
-    "title": "94.获取建议内容",
+    "title": "94.获取建议内容列表",
     "group": "用户管理",
     "header": {
       "examples": [
@@ -1058,7 +1058,7 @@ define({ "api": [
       "examples": [
         {
           "title": "简要说明",
-          "content": "只有一个参数 context 字符串，该内容必须包含以前的内容\n也就是每次都会替换以前的内容",
+          "content": "context 字符串内容\nid 具体某一条的ID，大于0表示更新，小于1表示新增\ntype 字符串内容，不大于50长度",
           "type": "json"
         }
       ]
