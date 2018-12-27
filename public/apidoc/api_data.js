@@ -1599,6 +1599,13 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
+            "field": "end_time",
+            "description": "<p>截至日期</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
             "field": "handler",
             "description": "<p>经办人，默认登录用户</p>"
           },
@@ -1717,6 +1724,13 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
+            "field": "end_time",
+            "description": "<p>截至日期</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
             "field": "handler",
             "description": "<p>经办人，默认登录用户</p>"
           },
@@ -1802,6 +1816,13 @@ define({ "api": [
             "optional": false,
             "field": "object_type",
             "description": "<p>收支对象，可选项：除【客户结算、员工结算、车辆结算】之外的自定义字符串</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "account_type",
+            "description": "<p>收支类型，可选项：1=收入、-1=支出</p>"
           },
           {
             "group": "Parameter",
