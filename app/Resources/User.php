@@ -35,7 +35,8 @@ class User extends Resource
             'extra_salary' => $this->extra_salary,
             'family_address' => $this->family_address,
             'personal_address' => $this->personal_address,
-            'remark' => $this->remark
+            'remark' => $this->remark,
+            'levelavg' => $this->levelavg,
         ];
     }
 
