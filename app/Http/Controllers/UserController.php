@@ -509,6 +509,7 @@ class UserController extends Controller
      * @apiGroup 用户管理
      * @apiHeaderExample 简要说明
      * type 类型
+     * title 标题
      * start_time,end_time 日期格式
      */
     public function getIssues(Request $request)
@@ -526,6 +527,7 @@ class UserController extends Controller
         $pageSize = isset($pageSize) && $pageSize?$pageSize:10;
 
         $type=$request->input('type');
+        $title=$request->input('title');
         $start_time=new Carbon($request->input('start_time'));
         $end_time=new Carbon($request->input('end_time'));
 
@@ -533,6 +535,8 @@ class UserController extends Controller
                 ->where('created_at','<=',$end_time->endOfDay());
         if($type)
             $rs=$rs->where('type','like','*'.$type.'*');
+        if($title)
+            $rs=$rs->where('title','like','*'.$title.'*');
 
         return $this->myResult(1,'信息获取成功！',$rs->orderby('id','desc')->paginate($pageSize));
     }
@@ -543,18 +547,20 @@ class UserController extends Controller
      * @apiHeaderExample 简要说明
      * context 字符串内容
      * id 具体某一条的ID，大于0表示更新，小于1表示新增
-     * type 字符串内容，不大于50长度
+     * type 类型，字符串内容，不大于50长度
+     * title 标题，字符串内容，不大于50长度
      */
     public function setIssues(Request $request)
     {
         $id=$request->input('id',0);
         $type=$request->input('type','默认类型');
+        $title=$request->input('title','新日志');
         $context = $request->input('context','爱你哦！');
         if($id>0){
-            DB::update('update issues set context = ?,type=?',[$context,$type]);
+            DB::update('update issues set context = ?,type=?,title=?',[$context,$type,$title]);
             return $this->myResult(1,'信息更新成功！',DB::select('select * from issues WHERE id=?',[$id]));
         }else{
-            DB::insert('insert into issues (context,created_at,type) values(?,NOW(),?)',[$context,$type]);
+            DB::insert('insert into issues (context,created_at,type,title) values(?,NOW(),?,?)',[$context,$type,$title]);
             return $this->myResult(1,'信息更新成功！',DB::select('select * from issues order by id DESC LIMIT 1'));
         }
     }
