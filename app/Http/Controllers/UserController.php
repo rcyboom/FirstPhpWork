@@ -7,6 +7,7 @@ use App\Http\Resources\UserCollection;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -512,16 +513,28 @@ class UserController extends Controller
      */
     public function getIssues(Request $request)
     {
+        //开始输入校验
+        $validator = Validator::make( Request::all(), [
+            'start_time' => 'nullable|date',
+            'end_time' => 'nullable|date',
+        ]);
+        if ($validator->fails()) {
+            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
+        }
+
         $pageSize = (int)$request->input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:10;
 
         $type=$request->input('type');
-        $start_time=$request->input('start_time');
-        $end_time=$request->input('end_time');
+        $start_time=new Carbon($request->input('start_time'),Carbon::now()->subDays(7));
+        $end_time=new Carbon($request->input('end_time'),Carbon::now());
 
-        $rs=DB::table('issues')->paginate(15);
-        //$rs=DB::select('select * from issues order by id desc')->paginate($pageSize);
-        return $this->myResult(1,'信息获取成功！',$rs);
+        $rs=DB::table('issues')->where('created_at','>=',$start_time->startOfDay())
+                ->where('created_at','<=',$end_time->endOfDay());
+        if($type)
+            $rs=$rs->where('type','like','*'.$type.'*');
+
+        return $this->myResult(1,'信息获取成功！',$rs->orderby('id','desc')->paginate($pageSize));
     }
 
     /**
@@ -538,7 +551,7 @@ class UserController extends Controller
         $type=$request->input('type','默认类型');
         $context = $request->input('context','爱你哦！');
         if($id>0){
-            DB::update('update issues set context = ?,type=?',[$context,type]);
+            DB::update('update issues set context = ?,type=?',[$context,$type]);
             return $this->myResult(1,'信息更新成功！',DB::select('select * from issues WHERE id=?',[$id]));
         }else{
             DB::insert('insert into issues (context,created_at,type) values(?,NOW(),?)',[$context,$type]);
