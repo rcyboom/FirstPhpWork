@@ -289,7 +289,7 @@ class AccountController extends Controller
         $taskmoney = DB::select('select users.id,users.fix_salary,users.name,? as end_time,'.
             'COALESCE(tb.task_money,0) as task_money,COALESCE(tb.task_count,0) as task_count,'.
             'COALESCE(tc.pay_money,0) as pay_money,COALESCE(tc.pay_count,0) as pay_count,'.
-            'COALESCE(tb.task_money+tc.pay_money+users.fix_salary,0) as total_money,COALESCE(tb.task_count+tc.pay_count,0) as total_count '.
+            'COALESCE(tb.task_money,0)+COALESCE(tc.pay_money,0)+users.fix_salary,0) as total_money,COALESCE(tb.task_count+tc.pay_count,0) as total_count '.
             'from users left join '.
             '(select user_id,SUM(work_salary+extra_salary+award_salary) as task_money,count(*) as task_count from usertasks  '.
             'where account_id = -user_id group by user_id) tb '.
@@ -419,7 +419,7 @@ class AccountController extends Controller
         $taskmoney = DB::select('select cars.id,cars.car_number,? as end_time,'.
             'COALESCE(tb.task_money,0) as task_money,COALESCE(tb.task_count,0) as task_count,'.
             'COALESCE(tc.pay_money,0) as pay_money,COALESCE(tc.pay_count,0) as pay_count,'.
-            'COALESCE(tb.task_money+tc.pay_money,0) as total_money,COALESCE(tb.task_count+tc.pay_count,0) as total_count '.
+            'COALESCE(tb.task_money,0)+COALESCE(tc.pay_money,0) as total_money,COALESCE(tb.task_count+tc.pay_count,0) as total_count '.
             'from cars left join '.
             '(select car_id,SUM(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as task_money,count(*) as task_count from cartasks  '.
             'where account_id = -car_id  group by car_id) tb '.
