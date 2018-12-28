@@ -81,9 +81,9 @@ class AccountController extends Controller
         $rs = Account::where('account_time','>=',$start_time->startOfDay());
         $rs = $rs->where('account_time','<=',$end_time->endOfDay());
         if($account_type>0){
-            $rs = $rs->where('money','>',0);
+            $rs = $rs->where('account_type',1);
         }elseif ($account_type<0){
-            $rs = $rs->where('money','<',0);
+            $rs = $rs->where('account_type',-1);
         }
         if($object_type){
             $rs = $rs->where('object_type',$object_type);
