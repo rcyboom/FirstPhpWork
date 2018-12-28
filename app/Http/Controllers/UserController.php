@@ -507,15 +507,20 @@ class UserController extends Controller
      *  @api {get} /api/getIssues 94.获取建议内容列表
      * @apiGroup 用户管理
      * @apiHeaderExample 简要说明
-     * 不需要任何参数
+     * type 类型
+     * start_time,end_time 日期格式
      */
     public function getIssues(Request $request)
     {
         $pageSize = (int)$request->input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:10;
 
-        $rs=DB::select('select * from issues order by id desc');
-        return $this->myResult(1,'信息获取成功！',$rs->paginate($pageSize));
+        $type=$request->input('type');
+        $start_time=$request->input('start_time');
+        $end_time=$request->input('end_time');
+
+        $rs=DB::select('select * from issues order by id desc')->paginate($pageSize);
+        return $this->myResult(1,'信息获取成功！',$rs);
     }
 
     /**
