@@ -519,7 +519,8 @@ class UserController extends Controller
         $start_time=$request->input('start_time');
         $end_time=$request->input('end_time');
 
-        $rs=DB::select('select * from issues order by id desc')->paginate($pageSize);
+        $rs=DB::table('issues')->paginate(15);
+        //$rs=DB::select('select * from issues order by id desc')->paginate($pageSize);
         return $this->myResult(1,'信息获取成功！',$rs);
     }
 
