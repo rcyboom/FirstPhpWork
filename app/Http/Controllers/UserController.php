@@ -515,8 +515,8 @@ class UserController extends Controller
     {
         //开始输入校验
         $validator = Validator::make( $request->all(), [
-            'start_time' => 'nullable|date',
-            'end_time' => 'nullable|date',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date',
         ]);
         if ($validator->fails()) {
             return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
@@ -526,8 +526,8 @@ class UserController extends Controller
         $pageSize = isset($pageSize) && $pageSize?$pageSize:10;
 
         $type=$request->input('type');
-        $start_time=new Carbon($request->input('start_time'),Carbon::now()->subDays(7));
-        $end_time=new Carbon($request->input('end_time'),Carbon::now());
+        $start_time=new Carbon($request->input('start_time'));
+        $end_time=new Carbon($request->input('end_time'));
 
         $rs=DB::table('issues')->where('created_at','>=',$start_time->startOfDay())
                 ->where('created_at','<=',$end_time->endOfDay());
