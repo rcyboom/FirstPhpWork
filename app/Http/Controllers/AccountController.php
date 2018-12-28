@@ -66,8 +66,8 @@ class AccountController extends Controller
         //获取参数
         $pageSize = (int)Request::input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:15;
-        $start_time=Request::input('start_time');
-        $end_time=Request::input('end_time');
+        $start_time=new Carbon(Request::input('start_time'));
+        $end_time=new Carbon(Request::input('end_time'));
         $account_type=Request::input('account_type',0);
         $object_type=Request::input('object_type');
         $object_id=Request::input('object_id');
@@ -78,8 +78,8 @@ class AccountController extends Controller
 
 
         //构造查询
-        $rs = Account::where('account_time','>=',$start_time);
-        $rs = $rs->where('account_time','<=',$end_time);
+        $rs = Account::where('account_time','>=',$start_time->startOfDay());
+        $rs = $rs->where('account_time','<=',$end_time->endOfDay());
         if($account_type>0){
             $rs = $rs->where('money','>',0);
         }elseif ($account_type<0){
