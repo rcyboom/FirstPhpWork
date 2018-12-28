@@ -557,7 +557,7 @@ class UserController extends Controller
         $title=$request->input('title','新日志');
         $context = $request->input('context','爱你哦！');
         if($id>0){
-            DB::update('update issues set context = ?,type=?,title=?',[$context,$type,$title]);
+            DB::update('update issues set context = ?,type=?,title=?,updated_at=NOW()',[$context,$type,$title]);
             return $this->myResult(1,'信息更新成功！',DB::select('select * from issues WHERE id=?',[$id]));
         }else{
             DB::insert('insert into issues (context,created_at,type,title) values(?,NOW(),?,?)',[$context,$type,$title]);
