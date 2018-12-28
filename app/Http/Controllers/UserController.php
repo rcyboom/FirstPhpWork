@@ -514,7 +514,7 @@ class UserController extends Controller
     public function getIssues(Request $request)
     {
         //开始输入校验
-        $validator = Validator::make( Request::all(), [
+        $validator = Validator::make( $request->all(), [
             'start_time' => 'nullable|date',
             'end_time' => 'nullable|date',
         ]);
