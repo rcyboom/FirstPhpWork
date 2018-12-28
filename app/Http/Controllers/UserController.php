@@ -560,7 +560,7 @@ class UserController extends Controller
             DB::update('update issues set context = ?,type=?,title=?,updated_at=NOW()',[$context,$type,$title]);
             return $this->myResult(1,'信息更新成功！',DB::select('select * from issues WHERE id=?',[$id]));
         }else{
-            DB::insert('insert into issues (context,created_at,type,title) values(?,NOW(),?,?)',[$context,$type,$title]);
+            DB::insert('insert into issues (context,created_at,type,title,updated_at) values(?,NOW(),?,?,NOW())',[$context,$type,$title]);
             return $this->myResult(1,'信息更新成功！',DB::select('select * from issues order by id DESC LIMIT 1'));
         }
     }
