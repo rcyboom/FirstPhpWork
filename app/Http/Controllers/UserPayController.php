@@ -55,7 +55,7 @@ class UserPayController extends Controller
             $rs = $rs->where('account_id',$account_id);
         }
 
-        $rs = $rs->paginate($pageSize);
+        $rs = $rs->orderBy('id', 'desc')->paginate($pageSize);
         return $this->myResult(1,'获取信息成功！',$rs);
     }
 

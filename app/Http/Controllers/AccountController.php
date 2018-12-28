@@ -104,7 +104,7 @@ class AccountController extends Controller
             $rs = $rs->where('remark','like','%'.$remark.'%');
         }
         //返回数据
-        $rs = $rs->paginate($pageSize);
+        $rs = $rs->orderBy('id', 'desc')->paginate($pageSize);
         return $this->myResult(1,'获取信息成功！',$rs);
     }
 

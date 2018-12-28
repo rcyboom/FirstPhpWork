@@ -54,7 +54,7 @@ class TaskController extends Controller
         $pageSize = (int)Request::input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:15;
 
-        $tasks = Task::Other()->Title()->CustomerName()->paginate($pageSize);
+        $tasks = Task::Other()->Title()->CustomerName()->->orderBy('id', 'desc')->paginate($pageSize);
         return new TaskCollection($tasks);
     }
 
