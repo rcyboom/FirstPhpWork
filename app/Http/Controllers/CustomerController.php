@@ -171,7 +171,7 @@ class CustomerController extends Controller
      * @apiSuccessExample 简要说明
      * 路由名称 linkmans.save
      * HTTP/1.1 200 OK
-     * id 联系人ID，整数，大于等于0
+     * id 联系人ID，整数，大于等于0,大于0更新等于0新建
      * customer_id 整数，客户ID
      * name 字符串，必填
      * phone 电话，必填
@@ -179,11 +179,23 @@ class CustomerController extends Controller
 
     public function saveLinkMan()
     {
-        DB::table('linkmans')->updateOrCreate(
-            ['id' => Request::input('id')],
-            ['customer_id' => Request::input('customer_id'),
-                'name' => Request::input('name'),
-                'phone' => Request::input('phone')]);
+        $id=Request::input('id');
+        if($id>0)
+        {
+            DB::table('linkmans')
+                ->where('id', Request::input('id'))
+                ->update(['customer_id' => Request::input('customer_id'),
+                    'name' => Request::input('name'),
+                    'phone' => Request::input('phone')]);
+        }else{
+            DB::table('linkmans')
+                ->insert(
+                    ['customer_id' => Request::input('customer_id'),
+                        'name' => Request::input('name'),
+                        'phone' => Request::input('phone')]
+            );
+        }
+
         return $this->myResult(1,'保存成功！',null);
 
     }

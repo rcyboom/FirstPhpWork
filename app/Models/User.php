@@ -80,20 +80,24 @@ class User extends Authenticatable
 
     public function getLevelavgAttribute()
     {
-        $rs = DB::select('select avg(score) as levelavg,count(*) as taskcount from usertasks where end_time is not null and  user_id= ?',[$this->id]);
+        $rs = DB::select('select avg(score) as levelavg from usertasks where end_time is not null and  user_id= ?',[$this->id]);
         $rs=$rs[0]->levelavg;
         $this->taskcount=$rs[0]->taskcount;
-        if($rs<5)
-            return "初级";
-        elseif ($rs>=5 and $rs<6)
-            return "中级";
-        elseif ($rs>=6 and $rs<7)
-            return "高级";
-        elseif ($rs>=7 and $rs<8)
-            return "称职";
-        elseif ($rs>=8 and $rs<9)
+        if($rs<60)
+            return "差";
+        elseif ($rs>=60 and $rs<75)
+            return "一般";
+        elseif ($rs>=75 and $rs<88)
             return "良好";
-        elseif ($rs>=9)
+        elseif ($rs>=88 and $rs<95)
             return "优秀";
+        elseif ($rs>=95)
+            return "非常优秀";
+    }
+
+    public function getTaskCountAttribute()
+    {
+        $rs = DB::select('select  count(*) as taskcount from usertasks where end_time is not null and  user_id= ?',[$this->id]);
+        return $rs[0]->taskcount;
     }
 }
