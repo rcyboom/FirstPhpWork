@@ -37,6 +37,7 @@ class User extends Resource
             'personal_address' => $this->personal_address,
             'remark' => $this->remark,
             'levelavg' => $this->levelavg,
+            'taskcount' => $this->taskcount,
         ];
     }
 

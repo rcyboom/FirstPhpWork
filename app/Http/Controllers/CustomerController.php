@@ -148,5 +148,59 @@ class CustomerController extends Controller
         }
 
     }
+
+    /**
+     * @api {post} /api/linkmans/:id  51.删除指定的客户联系人
+     * @apiGroup 客户管理
+     * @apiSuccessExample 简要说明
+     * 路由名称 linkmans.delete
+     * HTTP/1.1 200 OK
+     * 作为URL的ID参数必填，始终返回成功，注意这个ID是联系人ID不是客户ID
+     */
+
+    public function delLinkMan($id)
+    {
+        DB::table('linkmans')->where('id',$id)->delete();
+        return $this->myResult(1,'删除成功！',null);
+
+    }
+
+    /**
+     * @api {post} /api/linkmans/save  52.新建或者更新联系人
+     * @apiGroup 客户管理
+     * @apiSuccessExample 简要说明
+     * 路由名称 linkmans.save
+     * HTTP/1.1 200 OK
+     * id 联系人ID，整数，大于等于0
+     * customer_id 整数，客户ID
+     * name 字符串，必填
+     * phone 电话，必填
+     */
+
+    public function saveLinkMan()
+    {
+        DB::table('linkmans')::updateOrCreate(
+            ['id' => Request::input('id')],
+            ['customer_id' => Request::input('customer_id'),
+                'name' => Request::input('name'),
+                'phone' => Request::input('phone')]);
+        return $this->myResult(1,'保存成功！',null);
+
+    }
+
+    /**
+     * @api {post} /api/linkmans/list  53.获取某一个客户端联系人列表
+     * @apiGroup 客户管理
+     * @apiSuccessExample 简要说明
+     * 路由名称 linkmans.list
+     * HTTP/1.1 200 OK
+     * customer_id 整数，客户ID
+     */
+
+    public function list()
+    {
+        $rs=DB::table('linkmans')::where('customer_id' , Request::input('customer_id'))->get();
+        return $this->myResult(1,'获取成功！',$rs);
+    }
 }
 

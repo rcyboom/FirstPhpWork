@@ -76,12 +76,13 @@ class User extends Authenticatable
     }
 
     //AVG
-    protected $appends = ['levelavg'];
+    protected $appends = ['levelavg','taskcount'];
 
     public function getLevelavgAttribute()
     {
-        $rs = DB::select('select avg(score) as levelavg from usertasks where end_time is not null and  user_id= ?',[$this->id]);
+        $rs = DB::select('select avg(score) as levelavg,count(*) as taskcount from usertasks where end_time is not null and  user_id= ?',[$this->id]);
         $rs=$rs[0]->levelavg;
+        $this->taskcount=$rs[0]->taskcount;
         if($rs<5)
             return "初级";
         elseif ($rs>=5 and $rs<6)
