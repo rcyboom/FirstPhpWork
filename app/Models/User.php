@@ -82,7 +82,6 @@ class User extends Authenticatable
     {
         $rs = DB::select('select avg(score) as levelavg from usertasks where end_time is not null and  user_id= ?',[$this->id]);
         $rs=$rs[0]->levelavg;
-        $this->taskcount=$rs[0]->taskcount;
         if($rs<60)
             return "差";
         elseif ($rs>=60 and $rs<75)
