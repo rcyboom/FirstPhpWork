@@ -65,7 +65,7 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
     Route::get('customers/{id}', 'CustomerController@getone')->name('customers.getOne');
     Route::delete('customers/{id}', 'CustomerController@destroy')->name('customers.delete');
     Route::post('customers/{id?}', 'CustomerController@saveone')->name('customers.saveOne');
-    Route::post('linkmans/{id?}', 'CustomerController@delLinkMan')->name('linkmans.delLinkMan');
+    Route::post('linkmans/delete', 'CustomerController@delLinkMan')->name('linkmans.delLinkMan');
     Route::post('linkmans/save', 'CustomerController@saveLinkMan')->name('linkmans.save');
     Route::post('linkmans/list', 'CustomerController@list')->name('linkmans.list');
 

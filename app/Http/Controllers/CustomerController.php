@@ -158,9 +158,9 @@ class CustomerController extends Controller
      * 作为URL的ID参数必填，始终返回成功，注意这个ID是联系人ID不是客户ID
      */
 
-    public function delLinkMan($id)
+    public function delLinkMan()
     {
-        DB::table('linkmans')->where('id',$id)->delete();
+        DB::table('linkmans')->where('id',Request::input('id'))->delete();
         return $this->myResult(1,'删除成功！',null);
 
     }
