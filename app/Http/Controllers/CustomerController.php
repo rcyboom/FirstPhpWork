@@ -179,7 +179,7 @@ class CustomerController extends Controller
 
     public function saveLinkMan()
     {
-        DB::table('linkmans')::updateOrCreate(
+        DB::table('linkmans')->updateOrCreate(
             ['id' => Request::input('id')],
             ['customer_id' => Request::input('customer_id'),
                 'name' => Request::input('name'),
@@ -199,7 +199,7 @@ class CustomerController extends Controller
 
     public function list()
     {
-        $rs=DB::table('linkmans')::where('customer_id' , Request::input('customer_id'))->get();
+        $rs=DB::table('linkmans')->where('customer_id' , Request::input('customer_id'))->get();
         return $this->myResult(1,'获取成功！',$rs);
     }
 }
