@@ -337,7 +337,7 @@ class TaskController extends Controller
             return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
         }
         $users=Request::input('users');
-        dd($users);
+
         if(DB::table('usertasks')->insert($users)){
             return $this->myResult(1,'添加成功！',null);
         }
