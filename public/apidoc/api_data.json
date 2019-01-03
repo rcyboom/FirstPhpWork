@@ -256,6 +256,25 @@
   },
   {
     "type": "post",
+    "url": "/api/tasks/addTaskCarList",
+    "title": "71.批量新增出勤车辆",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.addTaskCarList\n2、必选参数\n\n注意参数只有一个数组形式cars，以下为数组参数的内容，数组数量必须大于0个\ntask_id 任务编号   必须大于0，且为真实存在的任务编号\ncar_id 出勤车辆编号 必须大于0，且为存在的车辆\nstart_time 开始时间 datetime\nrent_cost 车费 2位小数",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "PostApiTasksAddtaskcarlist"
+  },
+  {
+    "type": "post",
     "url": "/api/tasks/addTaskMan",
     "title": "5.新增或编辑出勤人员",
     "group": "任务管理",
@@ -272,6 +291,25 @@
     "filename": "./TaskController.php",
     "groupTitle": "任务管理",
     "name": "PostApiTasksAddtaskman"
+  },
+  {
+    "type": "post",
+    "url": "/api/tasks/addTaskManList",
+    "title": "51.批量新增出勤人员",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.addTaskMan\n2、必选参数\n\n注意参数只有一个数组形式users，以下为数组参数的内容，数组数量必须大于0个\ntask_id 任务编号   必须大于0，且为真实存在的任务编号\nuser_id 出勤人员编号 必须大于0，且为存在的人员\npost 岗位 string 20\nstart_time 开始时间 datetime\nwork_salary 岗位工资 2位小数",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "PostApiTasksAddtaskmanlist"
   },
   {
     "type": "post",
@@ -615,63 +653,6 @@
     "filename": "./CustomerController.php",
     "groupTitle": "客户管理",
     "name": "PostApiCustomersId"
-  },
-  {
-    "type": "post",
-    "url": "/api/linkmans/:id",
-    "title": "51.删除指定的客户联系人",
-    "group": "客户管理",
-    "success": {
-      "examples": [
-        {
-          "title": "简要说明",
-          "content": "路由名称 linkmans.delete\nHTTP/1.1 200 OK\n作为URL的ID参数必填，始终返回成功，注意这个ID是联系人ID不是客户ID",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "./CustomerController.php",
-    "groupTitle": "客户管理",
-    "name": "PostApiLinkmansId"
-  },
-  {
-    "type": "post",
-    "url": "/api/linkmans/list",
-    "title": "53.获取某一个客户端联系人列表",
-    "group": "客户管理",
-    "success": {
-      "examples": [
-        {
-          "title": "简要说明",
-          "content": "路由名称 linkmans.list\nHTTP/1.1 200 OK\ncustomer_id 整数，客户ID",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "./CustomerController.php",
-    "groupTitle": "客户管理",
-    "name": "PostApiLinkmansList"
-  },
-  {
-    "type": "post",
-    "url": "/api/linkmans/save",
-    "title": "52.新建或者更新联系人",
-    "group": "客户管理",
-    "success": {
-      "examples": [
-        {
-          "title": "简要说明",
-          "content": "路由名称 linkmans.save\nHTTP/1.1 200 OK\nid 联系人ID，整数，大于等于0\ncustomer_id 整数，客户ID\nname 字符串，必填\nphone 电话，必填",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "./CustomerController.php",
-    "groupTitle": "客户管理",
-    "name": "PostApiLinkmansSave"
   },
   {
     "type": "delete",
