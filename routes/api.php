@@ -65,9 +65,9 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
     Route::get('customers/{id}', 'CustomerController@getone')->name('customers.getOne');
     Route::delete('customers/{id}', 'CustomerController@destroy')->name('customers.delete');
     Route::post('customers/{id?}', 'CustomerController@saveone')->name('customers.saveOne');
-    Route::post('linkmans/delete', 'CustomerController@delLinkMan')->name('linkmans.delLinkMan');
-    Route::post('linkmans/save', 'CustomerController@saveLinkMan')->name('linkmans.save');
-    Route::post('linkmans/list', 'CustomerController@list')->name('linkmans.list');
+    //Route::post('linkmans/delete', 'CustomerController@delLinkMan')->name('linkmans.delLinkMan');
+    //Route::post('linkmans/save', 'CustomerController@saveLinkMan')->name('linkmans.save');
+    //Route::post('linkmans/list', 'CustomerController@list')->name('linkmans.list');
 
     //任务管理
     Route::get('tasks/index', 'TaskController@index')->name('tasks.index');
@@ -78,11 +78,13 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
 
     Route::get('tasks/FreeCars', 'TaskController@FreeCars')->name('tasks.FreeCars');
     Route::post('tasks/addTaskCar', 'TaskController@addTaskCar')->name('tasks.addTaskCar');
+    Route::post('tasks/addTaskCarList', 'TaskController@addTaskCarList')->name('tasks.addTaskCarList');
     Route::get('tasks/TaskCars', 'TaskController@TaskCars')->name('tasks.TaskCars');
     Route::post('tasks/delTaskCar', 'TaskController@delTaskCar')->name('tasks.delTaskCar');
 
     Route::get('tasks/FreeMans', 'TaskController@FreeMans')->name('tasks.FreeMans');
     Route::post('tasks/addTaskMan', 'TaskController@addTaskMan')->name('tasks.addTaskMan');
+    Route::post('tasks/addTaskManList', 'TaskController@addTaskManList')->name('tasks.addTaskManList');
     Route::get('tasks/TaskMans', 'TaskController@TaskMans')->name('tasks.TaskMans');
     Route::post('tasks/delTaskMan', 'TaskController@delTaskMan')->name('tasks.delTaskMan');
 

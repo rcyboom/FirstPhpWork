@@ -309,6 +309,42 @@ class TaskController extends Controller
     }
 
     /**
+     * @api {post} /api/tasks/addTaskManList 5.批量新增出勤人员
+     * @apiGroup 任务管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 tasks.addTaskMan
+     * 2、必选参数
+     *
+     * 注意参数只有一个数组形式users，以下为数组参数的内容，数组数量必须大于0个
+     * task_id 任务编号   必须大于0，且为真实存在的任务编号
+     * user_id 出勤人员编号 必须大于0，且为存在的人员
+     * post 岗位 string 20
+     * start_time 开始时间 datetime
+     * work_salary 岗位工资 2位小数
+     */
+    public function addTaskManList()
+    {
+        //开始输入校验
+        $validator = Validator::make( Request::all(), [
+            "users" => 'required|array',
+            'users.*.task_id' => 'required|exists:tasks,id',
+            'users.*.user_id' => 'required|exists:users,id',
+            'users.*.post' => 'required',
+            'users.*.start_time' => 'required|date',
+            'users.*.work_salary' => 'required|numeric|min:0',
+        ]);
+        if ($validator->fails()) {
+            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
+        }
+        $users=json_decode(Request::input('users'),true);
+        dd($users);
+        if(DB::table('usertasks')->insert($users)){
+            return $this->myResult(1,'添加成功！',null);
+        }
+        return $this->myResult(0,'操作失败，未知错误！',null);
+    }
+
+    /**
      * @api {post} /api/tasks/delTaskMan 6.删除出勤人员
      * @apiGroup 任务管理
      *@apiHeaderExample 简要说明
