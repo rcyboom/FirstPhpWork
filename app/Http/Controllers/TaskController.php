@@ -567,7 +567,7 @@ class TaskController extends Controller
      */
     public function FreeCars()
     {
-        $rs=DB::select("select id,car_type,car_number,linkman,phone,state,work_price from cars where state=? ".
+        $rs=DB::select("select id,car_type,car_number,linkman,phone,state,work_price as rent_cost from cars where state=? ".
             " and id not in (select car_id from cartasks where end_time is null)",['在位']);
 
         return $this->myResult(1,'信息获取成功！',$rs);
