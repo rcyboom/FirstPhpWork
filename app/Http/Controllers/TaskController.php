@@ -309,7 +309,7 @@ class TaskController extends Controller
     }
 
     /**
-     * @api {post} /api/tasks/addTaskManList 5.批量新增出勤人员
+     * @api {post} /api/tasks/addTaskManList 51.批量新增出勤人员
      * @apiGroup 任务管理
      *@apiHeaderExample 简要说明
      * 1、路由名称 tasks.addTaskMan
@@ -326,7 +326,7 @@ class TaskController extends Controller
     {
         //开始输入校验
         $validator = Validator::make( Request::all(), [
-            "users" => 'required|array',
+            "users" => 'required|array|min:1',
             'users.*.task_id' => 'required|exists:tasks,id',
             'users.*.user_id' => 'required|exists:users,id',
             'users.*.post' => 'required',
@@ -459,6 +459,40 @@ class TaskController extends Controller
 
         if($rs->save()){
             return $this->myResult(1,'更新成功！',$rs);
+        }
+        return $this->myResult(0,'操作失败，未知错误！',null);
+    }
+
+    /**
+     * @api {post} /api/tasks/addTaskCarList 71.批量新增出勤车辆
+     * @apiGroup 任务管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 tasks.addTaskCarList
+     * 2、必选参数
+     *
+     * 注意参数只有一个数组形式cars，以下为数组参数的内容，数组数量必须大于0个
+     * task_id 任务编号   必须大于0，且为真实存在的任务编号
+     * car_id 出勤车辆编号 必须大于0，且为存在的车辆
+     * start_time 开始时间 datetime
+     * rent_cost 车费 2位小数
+     */
+    public function addTaskCarList()
+    {
+        //开始输入校验
+        $validator = Validator::make( Request::all(), [
+            "cars" => 'required|array|min:1',
+            'cars.*.task_id' => 'required|exists:tasks,id',
+            'cars.*.car_id' => 'required|exists:cars,id',
+            'cars.*.start_time' => 'required|date',
+            'cars.*.rent_cost' => 'required|numeric|min:0',
+        ]);
+        if ($validator->fails()) {
+            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
+        }
+        $users=Request::input('cars');
+
+        if(DB::table('cartasks')->insert($users)){
+            return $this->myResult(1,'添加成功！',null);
         }
         return $this->myResult(0,'操作失败，未知错误！',null);
     }
