@@ -323,7 +323,7 @@ class AccountController extends Controller
 
         $rs=array();
         $rs['object']='user';
-        $rs['user']=DB::select('select * from users where id=?',[$userID])[0];
+        $rs['user']=DB::select('select * from users where id=?',[$userID]);
         $rs['tasks']=DB::select('select vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
             'usertasks.*,(work_salary+extra_salary+award_salary) as money from usertasks '.
             'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id=? ',
