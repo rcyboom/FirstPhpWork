@@ -634,7 +634,7 @@ class TaskController extends Controller
      */
     public function number()
     {
-            $cc=DB::table('options')->where('check_time', Carbon::today())->count()+1;
+            $cc=DB::table('tasks')->where('check_time', Carbon::today())->count()+1;
             if($cc<10)
                 $rs='00'.$cc;
             elseif ($cc>=10 and $cc<100)
