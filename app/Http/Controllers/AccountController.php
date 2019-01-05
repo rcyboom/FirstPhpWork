@@ -323,14 +323,14 @@ class AccountController extends Controller
 
         $rs=array();
         $rs['object']='user';
-        $rs['user']=DB::select('select * from users where id=?',[$userID]);
+        $rs['user']=DB::select('select * from users where id=?',[$userID])[0];
         $rs['tasks']=DB::select('select vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
             'usertasks.*,(work_salary+extra_salary+award_salary) as money from usertasks '.
             'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id=? ',
             [$userID,$accountID]);
         $rs['pays']=$tmp = DB::select('select * from userpays where object_id=? and account_id=? and  object_type=?',
             [$userID,$accountID,'员工']);
-        $rs['account']=DB::select('select * from accounts where id=?',[$accountID]);
+        $rs['account']=DB::select('select * from accounts where id=?',[$accountID])[0];
 
         return $this->myResult(1,'获取成功！',$rs);
     }
