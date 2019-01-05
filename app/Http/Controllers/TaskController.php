@@ -83,7 +83,8 @@ class TaskController extends Controller
             'check_time' => 'required|date',
             'customer_id' => 'required|integer|min:0',
             'title' => 'required',
-            'start_time'=>'nullable|date'
+            'start_time'=>'nullable|date',
+            'end_time'=>'nullable|date'
         ]);
 
         if ($validator->fails()) {
@@ -100,6 +101,7 @@ class TaskController extends Controller
         $rs->phone = Request::input('phone');
         $rs->station = Request::input('station');
         $rs->start_time = Request::input('start_time');
+        $rs->end_time = Request::input('end_time');
         $rs->remark = Request::input('remark');
 
         if($rs->save()){
