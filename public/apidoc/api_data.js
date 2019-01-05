@@ -199,6 +199,25 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/api/tasks/number",
+    "title": "97.获取新的工单号",
+    "group": "任务管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 tasks.setOption",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./TaskController.php",
+    "groupTitle": "任务管理",
+    "name": "GetApiTasksNumber"
+  },
+  {
+    "type": "get",
     "url": "/api/tasks/TaskCars",
     "title": "9.获取出勤车辆列表",
     "group": "任务管理",

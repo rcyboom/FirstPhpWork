@@ -77,6 +77,7 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
     Route::post('tasks/delete', 'TaskController@delete')->name('tasks.delete');
 
     Route::get('tasks/FreeCars', 'TaskController@FreeCars')->name('tasks.FreeCars');
+    Route::get('tasks/number', 'TaskController@number')->name('tasks.number');
     Route::post('tasks/addTaskCar', 'TaskController@addTaskCar')->name('tasks.addTaskCar');
     Route::post('tasks/addTaskCarList', 'TaskController@addTaskCarList')->name('tasks.addTaskCarList');
     Route::get('tasks/TaskCars', 'TaskController@TaskCars')->name('tasks.TaskCars');

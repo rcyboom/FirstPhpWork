@@ -9,6 +9,7 @@ use App\Models\Task;
 use App\Models\Usertask;
 use App\Models\Car;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
@@ -623,5 +624,23 @@ class TaskController extends Controller
             return $this->myResult(1, '更新成功！', null);
         } else
             return $this->myResult(0, '键值不能为空！', null);
+    }
+
+    /**
+     * @api {get} /api/tasks/number 97.获取新的工单号
+     * @apiGroup 任务管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 tasks.setOption
+     */
+    public function number()
+    {
+            $cc=DB::table('options')->where('check_time', Carbon::today())->count()+1;
+            if($cc<10)
+                $rs='00'.$cc;
+            elseif ($cc>=10 and $cc<100)
+                $rs='0'.$cc;
+            else
+                $rs=$cc;
+            return $this->myResult(1, '更新成功！', Carbon::today()->toDateString() . $rs );
     }
 }
