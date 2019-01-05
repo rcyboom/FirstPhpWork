@@ -652,7 +652,7 @@ class TaskController extends Controller
         else
             $rs=Carbon::now()->month . $rs;
 
-        $rs=Carbon::now()->year . $rs;
+        $rs='GD'.Carbon::now()->year . $rs;
 
         return $this->myResult(1, '更新成功！',$rs );
     }
