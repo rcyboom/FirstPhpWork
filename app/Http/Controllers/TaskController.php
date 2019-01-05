@@ -641,6 +641,19 @@ class TaskController extends Controller
                 $rs='0'.$cc;
             else
                 $rs=$cc;
-            return $this->myResult(1, '更新成功！', Carbon::now()->year . Carbon::today()->month .Carbon::today()->day . $rs );
+
+        if(Carbon::today()->day<10)
+            $rs='0' .Carbon::now()->day . $rs;
+        else
+            $rs=Carbon::now()->day . $rs;
+
+        if(Carbon::today()->month<10)
+            $rs='0' .Carbon::now()->month . $rs;
+        else
+            $rs=Carbon::now()->month . $rs;
+
+        $rs=Carbon::now()->year . $rs;
+
+        return $this->myResult(1, '更新成功！',$rs );
     }
 }
