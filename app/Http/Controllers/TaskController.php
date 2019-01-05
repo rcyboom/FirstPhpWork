@@ -633,10 +633,20 @@ class TaskController extends Controller
      * @apiGroup 任务管理
      *@apiHeaderExample 简要说明
      * 1、路由名称 tasks.setOption
+     * date 日期格式2018-01-01
      */
     public function number()
     {
-            $cc=DB::table('tasks')->where('check_time', Carbon::today())->count()+1;
+        //开始输入校验
+        $validator = Validator::make( Request::all(), [
+            'date' => 'required|date',
+        ]);
+        if ($validator->fails()) {
+            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
+        }
+
+            $d=new Carbon(Request::input('date'));
+            $cc=DB::table('tasks')->where('check_time', $d)->count()+1;
             if($cc<10)
                 $rs='00'.$cc;
             elseif ($cc>=10 and $cc<100)
@@ -644,17 +654,17 @@ class TaskController extends Controller
             else
                 $rs=$cc;
 
-        if(Carbon::today()->day<10)
-            $rs='0' .Carbon::now()->day . $rs;
+        if($d->day<10)
+            $rs='0' .$d->day . $rs;
         else
-            $rs=Carbon::now()->day . $rs;
+            $rs=$d->day . $rs;
 
-        if(Carbon::today()->month<10)
-            $rs='0' .Carbon::now()->month . $rs;
+        if($d->month<10)
+            $rs='0' .$d->month . $rs;
         else
-            $rs=Carbon::now()->month . $rs;
+            $rs=$d->month . $rs;
 
-        $rs='GD'.Carbon::now()->year . $rs;
+        $rs='GD'.$d->year . $rs;
 
         return $this->myResult(1, '更新成功！',$rs );
     }
