@@ -477,17 +477,23 @@ class AccountController extends Controller
 
         $usr=User::find(Request::input('user_id'));
         if($usr){
+            //DB::connection()->enableQueryLog(); // 开启查询日志
             $account_time=Request::input('account_time');
             $user_task_id=implode(',',Request::input('user_task_id',[]));
+            if($user_task_id=='')
+                $user_task_id=-1;
             $user_pay_id=implode(',',Request::input('user_pay_id',[]));
+            if($user_pay_id=='')
+                $user_pay_id=-1;
             $taskmoney =
-                DB::select('select COALESCE(SUM(work_salary+extra_salary+award_salary),0) as cc from usertasks  where account_id<1 and user_id=? and id IN(?)',
-                    [$usr->id,$user_task_id]);
+                DB::select('select COALESCE(SUM(work_salary+extra_salary+award_salary),0) as cc from usertasks  where account_id<1 and user_id=? and id IN('.$user_task_id.')',
+                    [$usr->id]);
 
+            //$queries = DB::getQueryLog(); // 获取查询日志
 
             $usermoney =
-                DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id<1 and object_id=?  and object_type=? and id IN(?)',
-                    [$usr->id,'员工',$user_pay_id]);
+                DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id<1 and object_id=?  and object_type=? and id IN('.$user_pay_id.')',
+                    [$usr->id,'员工']);
 
             if($taskmoney[0]->cc+$usermoney[0]->cc+$usr->fix_salary<1)
                 return $this->myResult(0,'该员工没有需要结算的记录！',null);
@@ -506,10 +512,10 @@ class AccountController extends Controller
             $acc->remark=Request::input('remark');
             $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc+$usr->fix_salary;
             $acc->save();
-            DB::update('update usertasks set account_id = ? where account_id<1 and user_id=? and id IN(?)',
-                [$acc->id,$usr->id,$user_task_id]);
-            DB::update('update userpays set account_id = ? where account_id<1 and object_id=?  and object_type=? and id IN(?)',
-                [$acc->id,$usr->id,'员工',$user_pay_id]);
+            DB::update('update usertasks set account_id = ? where account_id<1 and user_id=? and id IN('.$user_task_id.')',
+                [$acc->id,$usr->id]);
+            DB::update('update userpays set account_id = ? where account_id<1 and object_id=?  and object_type=? and id IN('.$user_pay_id.')',
+                [$acc->id,$usr->id,'员工']);
             return $this->myResult(1,'结算成功，对应的收支记录为:'.$acc->id,$acc);
         }
         return $this->myResult(0,'未找到对应编号的人员信息！',Request::input('user_id'));
@@ -549,12 +555,16 @@ class AccountController extends Controller
             $account_time=Request::input('account_time');
 
             $car_task_id=implode(',',Request::input('car_task_id',[]));
+            if($car_task_id=='')
+                $car_task_id=-1;
             $car_pay_id=implode(',',Request::input('car_pay_id',[]));
+            if($car_pay_id=='')
+                $car_pay_id=-1;
 
-            $taskmoney = DB::select('select COALESCE(SUM(rent_cost+oil_cost+toll_cost+park_cost+award_salary),0) as cc from cartasks  where account_id <1 and car_id=? and id in (?)',
-                [$car->id,$car_task_id]);
-            $usermoney = DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id <1 and object_id=?  and object_type=? and id in (?)',
-                [$car->id,'车辆',$car_pay_id]);
+            $taskmoney = DB::select('select COALESCE(SUM(rent_cost+oil_cost+toll_cost+park_cost+award_salary),0) as cc from cartasks  where account_id <1 and car_id=? and id in ('.$car_task_id.')',
+                [$car->id]);
+            $usermoney = DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id <1 and object_id=?  and object_type=? and id in ('.$car_pay_id.')',
+                [$car->id,'车辆']);
 
             if($taskmoney[0]->cc+$usermoney[0]->cc <1)
                 return $this->myResult(0,'该车辆没有需要结算的记录！',null);
@@ -572,10 +582,10 @@ class AccountController extends Controller
             $acc->remark=Request::input('remark');
             $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc;
             $acc->save();
-            DB::update('update cartasks set account_id = ? where account_id <1 and car_id=? and id in (?)',
-                [$acc->id,$car->id,$car_task_id]);
-            DB::update('update userpays set account_id = ? where account_id <1 and object_id=?  and object_type=? and id in (?)',
-                [$acc->id,$car->id,'车辆',$car_pay_id]);
+            DB::update('update cartasks set account_id = ? where account_id <1 and car_id=? and id in ('.$car_task_id.')',
+                [$acc->id,$car->id]);
+            DB::update('update userpays set account_id = ? where account_id <1 and object_id=?  and object_type=? and id in ('.$car_pay_id.')',
+                [$acc->id,$car->id,'车辆']);
 
             return $this->myResult(1,'结算成功，对应的收支记录为:'.$acc->id,$acc);
         }
