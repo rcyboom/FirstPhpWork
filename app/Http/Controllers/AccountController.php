@@ -478,10 +478,10 @@ class AccountController extends Controller
             $user_task_id=Request::input('user_task_id',[]);
             $user_pay_id=Request::input('user_pay_id',[]);
             $taskmoney =
-                DB::select('select COALESCE(SUM(work_salary+extra_salary+award_salary),0) as cc from usertasks  where account_id<1 and user_id=? and id in ?',
+                DB::select('select COALESCE(SUM(work_salary+extra_salary+award_salary),0) as cc from usertasks  where account_id<1 and user_id=? and id in (?)',
                     [$usr->id,$user_task_id]);
             $usermoney =
-                DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id<1 and object_id=?  and object_type=? and id in ?',
+                DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id<1 and object_id=?  and object_type=? and id in (?)',
                     [$usr->id,'员工',$user_pay_id]);
 
             $acc=new Account();
@@ -498,9 +498,9 @@ class AccountController extends Controller
             $acc->remark=Request::input('remark');
             $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc;
             $acc->save();
-            DB::update('update usertasks set account_id = ? where account_id<1 and user_id=? and id in ?',
+            DB::update('update usertasks set account_id = ? where account_id<1 and user_id=? and id in (?)',
                 [$acc->id,$usr->id,$user_task_id]);
-            DB::update('update userpays set account_id = ? where account_id<1 and object_id=?  and object_type=? and id in ?',
+            DB::update('update userpays set account_id = ? where account_id<1 and object_id=?  and object_type=? and id in (?)',
                 [$acc->id,$usr->id,'员工',$user_pay_id]);
             return $this->myResult(1,'结算成功，对应的收支记录为:'.$acc->id,$acc);
         }
