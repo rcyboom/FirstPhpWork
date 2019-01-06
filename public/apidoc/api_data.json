@@ -1511,7 +1511,7 @@
   {
     "type": "get",
     "url": "/api/accounts/getAccountUserListById",
-    "title": "81.返回指定结算ID的人员结算的详情列表",
+    "title": "803.返回指定结算ID的人员结算的详情列表",
     "group": "财务管理",
     "description": "<p>路由名称 accounts.getAccountUserListById</p>",
     "parameter": {
@@ -1522,7 +1522,7 @@
             "type": "Integer",
             "optional": false,
             "field": "accountID",
-            "description": "<p>结算编号，如果是还未结算前的详情，直接传递人员ID的【负数】</p>"
+            "description": "<p>结算编号，最小值1，该接口只用于预览和打印</p>"
           }
         ]
       }

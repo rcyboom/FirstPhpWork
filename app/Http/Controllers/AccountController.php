@@ -328,45 +328,42 @@ class AccountController extends Controller
                 'usertasks.*,(work_salary+extra_salary+award_salary) as money from usertasks '.
                 'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id<1 and usertasks.start_time>=? and usertasks.start_time<=? ',
                 [$id,$start_time,$end_time]);
-            return $this->myResult(0,'获取成功！',$rs);
+            return $this->myResult(1,'获取成功！',$rs);
         }else
             return $this->myResult(0,'该员工不存在！',null);
     }
 
     /**
-     * @api {get} /api/accounts/getAccountUserListById 81.返回指定结算ID的人员结算的详情列表
+     * @api {get} /api/accounts/getAccountUserListById 803.返回指定结算ID的人员结算的详情列表
      * @apiGroup 财务管理
      * @apiDescription
      * 路由名称 accounts.getAccountUserListById
-     * @apiParam {Integer} accountID 结算编号，如果是还未结算前的详情，直接传递人员ID的【负数】
+     * @apiParam {Integer} accountID 结算编号，最小值1，该接口只用于预览和打印
      */
     public function getAccountUserListById()
     {
         $validator = Validator::make( Request::all(), [
-            'accountID' => 'required | integer',
+            'accountID' => 'required | integer | min:1',
         ]);
 
         if ($validator->fails()) {
             return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
         };
-        $accountID=Request::input('accountID');
-        if($accountID < 0)
-            $userID=-$accountID;
-        else
-            $userID=DB::select('select object_id from accounts where id=?',[$accountID])[0]->object_id;
 
-        $rs=array();
-        $rs['object']='user';
-        $rs['user']=DB::select('select * from users where id=?',[$userID]);
-        $rs['tasks']=DB::select('select vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
-            'usertasks.*,(work_salary+extra_salary+award_salary) as money from usertasks '.
-            'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id=? ',
-            [$userID,$accountID]);
-        $rs['pays']=$tmp = DB::select('select * from userpays where object_id=? and account_id=? and  object_type=?',
-            [$userID,$accountID,'员工']);
-        $rs['account']=DB::select('select * from accounts where id=?',[$accountID]);
-
-        return $this->myResult(1,'获取成功！',$rs);
+        $account=Account::find(Request::input('accountID'));
+        if($account){
+            $userID=DB::select('select object_id from accounts where id=?',[$account->id])[0]->object_id;
+            $rs=array();
+            $rs['account']=$account;
+            $rs['tasks']=DB::select('select vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
+                'usertasks.*,(work_salary+extra_salary+award_salary) as money from usertasks '.
+                'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id=? ',
+                [$userID,$account->id]);
+            $rs['pays']=$tmp = DB::select('select * from userpays where object_id=? and account_id=? and  object_type=?',
+                [$userID,$account->id,'员工']);
+            return $this->myResult(1,'获取成功！',$rs);
+        }else
+            return $this->myResult(0,'未找到该结算记录！',null);
     }
 
     /**
