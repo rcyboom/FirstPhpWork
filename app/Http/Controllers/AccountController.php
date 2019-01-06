@@ -328,7 +328,7 @@ class AccountController extends Controller
                 'usertasks.*,(work_salary+extra_salary+award_salary) as money from usertasks '.
                 'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id<1 and usertasks.start_time>=? and usertasks.start_time<=? ',
                 [$id,$start_time,$end_time]);
-            return $this->myResult(1,'获取成功！',$rs);
+            return $this->myResult(1,'获取成功！',[$id,$start_time,$end_time]);
         }else
             return $this->myResult(0,'该员工不存在！',null);
     }
