@@ -1425,12 +1425,26 @@ define({ "api": [
   {
     "type": "get",
     "url": "/api/accounts/getAccountCar",
-    "title": "9.返回截至日期前需要结算的车辆列表",
+    "title": "901.返回指定车辆在某个时间段内的待结算明细",
     "group": "财务管理",
-    "description": "<p>路由名称 accounts.getAccountCar</p>",
+    "description": "<p>路由名称 accounts.getAccountCar 返回值为一个对象（车辆信息）两个数组，一个是出勤记录，一个是奖惩激励</p>",
     "parameter": {
       "fields": {
         "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "id",
+            "description": "<p>车辆ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "start_time",
+            "description": "<p>截至日期</p>"
+          },
           {
             "group": "Parameter",
             "type": "String",
@@ -1449,7 +1463,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/api/accounts/getAccountCarListById",
-    "title": "91.返回指定结算ID的车辆结算的详情列表",
+    "title": "902.返回指定结算ID的车辆结算的详情列表",
     "group": "财务管理",
     "description": "<p>路由名称 accounts.getAccountCarListById</p>",
     "parameter": {
@@ -1460,7 +1474,7 @@ define({ "api": [
             "type": "Integer",
             "optional": false,
             "field": "accountID",
-            "description": "<p>结算编号，如果是还未结算的详情，直接传递车辆ID的【负数】</p>"
+            "description": "<p>结算编号</p>"
           }
         ]
       }
@@ -1677,7 +1691,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/api/accounts/accountcar",
-    "title": "92.与车辆结算某个时间点之前的工资",
+    "title": "903.与车辆结算某个时间点之间的工资",
     "group": "财务管理",
     "description": "<p>路由名称 accounts.accountcar</p>",
     "parameter": {
@@ -1692,17 +1706,24 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "String",
+            "type": "Integer",
             "optional": false,
-            "field": "account_time",
-            "description": "<p>结算日期</p>"
+            "field": "car_task_id",
+            "description": "<p>勾选的出勤记录的id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "car_pay_id",
+            "description": "<p>勾选的奖惩记录的id</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "end_time",
-            "description": "<p>截至日期</p>"
+            "field": "account_time",
+            "description": "<p>结算日期</p>"
           },
           {
             "group": "Parameter",
@@ -1802,9 +1823,9 @@ define({ "api": [
   {
     "type": "post",
     "url": "/api/accounts/accountuser",
-    "title": "82.与员工结算某个时间点之前的工资",
+    "title": "804.与员工结算工资",
     "group": "财务管理",
-    "description": "<p>路由名称 accounts.accountuser 注意，此接口只用于与员工结算某个时间点之前的工资，结算后不可删除结算记录，所有参与结算的任务和奖惩记录的结算状态均不可再更改 结算金额自动为该时间点之前的出勤任务及奖惩记录的合计金额，如果以后修改任务情况和奖惩记录后，系统自动修改对应的收支记录</p>",
+    "description": "<p>路由名称 accounts.accountuser</p>",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -1817,17 +1838,24 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "String",
+            "type": "Integer",
             "optional": false,
-            "field": "account_time",
-            "description": "<p>结算日期</p>"
+            "field": "user_task_id",
+            "description": "<p>勾选的出勤记录的id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "user_pay_id",
+            "description": "<p>勾选的奖惩记录的id</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "end_time",
-            "description": "<p>截至日期</p>"
+            "field": "account_time",
+            "description": "<p>结算日期</p>"
           },
           {
             "group": "Parameter",

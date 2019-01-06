@@ -352,7 +352,7 @@ class AccountController extends Controller
 
         $account=Account::find(Request::input('accountID'));
         if($account){
-            $userID=DB::select('select object_id from accounts where id=?',[$account->id])[0]->object_id;
+            $userID=$account->object_id;
             $rs=array();
             $rs['account']=$account;
             $rs['tasks']=DB::select('select vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
@@ -366,16 +366,92 @@ class AccountController extends Controller
             return $this->myResult(0,'未找到该结算记录！',null);
     }
 
+
     /**
-     * @api {post} /api/accounts/accountuser 82.与员工结算某个时间点之前的工资
+     * @api {get} /api/accounts/getAccountCar 901.返回指定车辆在某个时间段内的待结算明细
+     * @apiGroup 财务管理
+     * @apiDescription
+     * 路由名称 accounts.getAccountCar
+     * 返回值为一个对象（车辆信息）两个数组，一个是出勤记录，一个是奖惩激励
+     * @apiParam {Integer} id 车辆ID
+     * @apiParam {String} start_time 截至日期
+     * @apiParam {String} end_time 截至日期
+     */
+    public function getAccountCar()
+    {
+        $validator = Validator::make( Request::all(), [
+            'id' => 'required | integer | min:1',
+            'start_time' => 'required | date',
+            'end_time' => 'required | date',
+        ]);
+        if ($validator->fails()) {
+            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
+        };
+        $id=Request::input('id');
+        $start_time=new Carbon(Request::input('start_time'));
+        $start_time=$start_time->startOfDay();
+        $end_time=new Carbon(Request::input('end_time'));
+        $end_time=$end_time->endOfDay();
+
+        $car=Car::find($id);
+        if($car){
+            $rs['car']=$car;
+            $rs['pays']=DB::select('select * from userpays where account_id<1 and object_id=?  '.'
+            and  object_type=? and time>=? and time<=?',[$id,'车辆',$start_time,$end_time]);
+            $rs['tasks']=DB::select('select vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
+                'cartasks.*,(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as money from cartasks '.
+                'left join vtasks on cartasks.task_id=vtasks.id where cartasks.car_id=? and cartasks.account_id<1 and cartasks.start_time>=? and cartasks.start_time<=?',
+                [$id,$start_time,$end_time]);
+            return $this->myResult(1,'获取成功！',$rs);
+        }else
+            return $this->myResult(0,'该车辆不存在！',null);
+    }
+
+    /**
+     * @api {get} /api/accounts/getAccountCarListById 902.返回指定结算ID的车辆结算的详情列表
+     * @apiGroup 财务管理
+     * @apiDescription
+     * 路由名称 accounts.getAccountCarListById
+     * @apiParam {Integer} accountID 结算编号
+     */
+    public function getAccountCarListById()
+    {
+        $validator = Validator::make( Request::all(), [
+            'accountID' => 'required | integer',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
+        };
+
+        $account=Account::find(Request::input('accountID'));
+        if($account)
+        {
+            $carID=$account->object_id;
+            $rs=array();
+            $rs['account']=$account;
+            $rs['tasks']=DB::select('select vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
+                'cartasks.*,(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as money from cartasks '.
+                'left join vtasks on cartasks.task_id=vtasks.id where cartasks.car_id=? and cartasks.account_id=? ',
+                [$carID,$account->id]);
+            $rs['pays']=DB::select('select * from userpays where object_id=? and account_id=? and  object_type=?',
+                [$carID,$account->id,'车辆']);
+            return $this->myResult(1,'获取成功！',$rs);
+        }
+        else
+            return $this->myResult(0,'未找到该结算记录！',null);
+
+    }
+
+    /**
+     * @api {post} /api/accounts/accountuser 804.与员工结算工资
      * @apiGroup 财务管理
      * @apiDescription
      * 路由名称 accounts.accountuser
-     * 注意，此接口只用于与员工结算某个时间点之前的工资，结算后不可删除结算记录，所有参与结算的任务和奖惩记录的结算状态均不可再更改
-     * 结算金额自动为该时间点之前的出勤任务及奖惩记录的合计金额，如果以后修改任务情况和奖惩记录后，系统自动修改对应的收支记录
      * @apiParam {Integer} user_id 人员ID编号
+     * @apiParam {Integer} user_task_id 勾选的出勤记录的id
+     * @apiParam {Integer} user_pay_id 勾选的奖惩记录的id
      * @apiParam {String} account_time 结算日期
-     * @apiParam {String} end_time 截至日期
      * @apiParam {String} handler 经办人，默认登录用户
      * @apiParam {String} trade_type 交易类型，如：现金、支付宝、微信、银行卡、对公账户等
      * @apiParam {String} [trade_account] 交易账户号
@@ -384,9 +460,10 @@ class AccountController extends Controller
     public function accountuser()
     {
         $validator = Validator::make( Request::all(), [
-            'account_time' => 'required | date',
-            'end_time' => 'required | date',
             'user_id' => 'required | integer | min:1',
+            'user_task_id' => 'required |array',
+            'user_pay_id' => 'required | array',
+            'account_time' => 'required | date',
             'handler' => 'required',
             'trade_type' => 'required',
         ]);
@@ -398,10 +475,12 @@ class AccountController extends Controller
         $usr=User::find(Request::input('user_id'));
         if($usr){
             $account_time=Request::input('account_time');
-            $taskmoney = DB::select('select COALESCE(SUM(work_salary+extra_salary+award_salary),0) as cc from usertasks  where account_id = ?',
-                [-$usr->id]);
-            $usermoney = DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id = ? and object_type=?',
-                [-$usr->id,'员工']);
+            $taskmoney =
+                DB::select('select COALESCE(SUM(work_salary+extra_salary+award_salary),0) as cc from usertasks  where account_id<1 and user_id=? and id in ?',
+                    [$usr->id,Request::input('user_task_id')]);
+            $usermoney =
+                DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id<1 and object_id=?  and object_type=? and id in ?',
+                    [$usr->id,'员工',Request::input('user_pay_id')]);
 
             $acc=new Account();
             $acc->account_time=$account_time;
@@ -412,97 +491,29 @@ class AccountController extends Controller
             $acc->handler=Request::input('handler');
             $acc->trade_type=Request::input('trade_type');
             $acc->trade_account=Request::input('trade_account');
-            $acc->end_time=Request::input('end_time');
-            $acc->fix_salary=Request::input('fix_salary');
+            $acc->end_time=Carbon::now();
+            $acc->fix_salary=$usr->fix_salary;
             $acc->remark=Request::input('remark');
             $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc;
             $acc->save();
-            DB::update('update usertasks set account_id = ? where account_id = ?',[$acc->id,-$usr->id]);
-            DB::update('update userpays set account_id = ? where account_id = ? and object_type=?',[$acc->id,-$usr->id,'员工']);
-
+            DB::update('update usertasks set account_id = ? where account_id<1 and user_id=? and id in ?',
+                [$acc->id,$usr->id,Request::input('user_task_id')]);
+            DB::update('update userpays set account_id = ? where account_id<1 and object_id=?  and object_type=? and id in ?',
+                [$acc->id,$usr->id,'员工',Request::input('user_pay_id')]);
             return $this->myResult(1,'结算成功，对应的收支记录为:'.$acc->id,$acc);
         }
         return $this->myResult(0,'未找到对应编号的人员信息！',Request::input('user_id'));
     }
 
     /**
-     * @api {get} /api/accounts/getAccountCar 9.返回截至日期前需要结算的车辆列表
-     * @apiGroup 财务管理
-     * @apiDescription
-     * 路由名称 accounts.getAccountCar
-     * @apiParam {String} end_time 截至日期
-     */
-    public function getAccountCar()
-    {
-        $validator = Validator::make( Request::all(), [
-            'end_time' => 'required | date',
-        ]);
-        if ($validator->fails()) {
-            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
-        };
-        $end_time=Request::input('end_time');
-        //将待结算任务的结算ID更新为负的carID
-        DB::update('update cartasks set account_id = -car_id where account_id <1 and end_time<=?',[$end_time]);
-        DB::update('update userpays set account_id = -object_id where account_id <1  and object_type=? and created_at<=?',
-            ['车辆',$end_time]);
-
-        $taskmoney = DB::select('select cars.id,cars.car_number,? as end_time,'.
-            'COALESCE(tb.task_money,0) as task_money,COALESCE(tb.task_count,0) as task_count,'.
-            'COALESCE(tc.pay_money,0) as pay_money,COALESCE(tc.pay_count,0) as pay_count,'.
-            'COALESCE(tb.task_money,0)+COALESCE(tc.pay_money,0) as total_money,COALESCE(tb.task_count+tc.pay_count,0) as total_count '.
-            'from cars left join '.
-            '(select car_id,SUM(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as task_money,count(*) as task_count from cartasks  '.
-            'where account_id = -car_id  group by car_id) tb '.
-            'on cars.id=tb.car_id left join '.
-            '(select object_id,SUM(money) as pay_money,count(*) as pay_count from userpays where account_id = -object_id   '.
-            'AND object_type=?  group by object_id) tc on cars.id=tc.object_id',
-            [$end_time,'车辆']);
-        return $this->myResult(1,'获取成功！',$taskmoney);
-    }
-
-    /**
-     * @api {get} /api/accounts/getAccountCarListById 91.返回指定结算ID的车辆结算的详情列表
-     * @apiGroup 财务管理
-     * @apiDescription
-     * 路由名称 accounts.getAccountCarListById
-     * @apiParam {Integer} accountID 结算编号，如果是还未结算的详情，直接传递车辆ID的【负数】
-     */
-    public function getAccountCarListById()
-    {
-        $validator = Validator::make( Request::all(), [
-            'accountID' => 'required | integer',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
-        };
-        $accountID=Request::input('accountID');
-        if($accountID < 0)
-            $carID=-$accountID;
-        else
-            $carID=DB::select('select object_id from accounts where id=?',[$accountID])[0]->object_id;
-        $rs=array();
-        $rs['object']='car';
-        $rs['car']=DB::select('select * from cars where id=?',[$carID]);
-        $rs['tasks']=DB::select('select vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
-            'cartasks.*,(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as money from cartasks '.
-            'left join vtasks on cartasks.task_id=vtasks.id where cartasks.car_id=? and cartasks.account_id=? ',
-            [$carID,$accountID]);
-        $rs['pays']=DB::select('select * from userpays where object_id=? and account_id=? and  object_type=?',
-            [$carID,$accountID,'车辆']);
-        $rs['account']=DB::select('select * from accounts where id=?',[$accountID]);
-
-        return $this->myResult(1,'获取成功！',$rs);
-    }
-
-    /**
-     * @api {post} /api/accounts/accountcar 92.与车辆结算某个时间点之前的工资
+     * @api {post} /api/accounts/accountcar 903.与车辆结算某个时间点之间的工资
      * @apiGroup 财务管理
      * @apiDescription
      * 路由名称 accounts.accountcar
      * @apiParam {Integer} car_id 车辆ID编号
+     * @apiParam {Integer} car_task_id 勾选的出勤记录的id
+     * @apiParam {Integer} car_pay_id 勾选的奖惩记录的id
      * @apiParam {String} account_time 结算日期
-     * @apiParam {String} end_time 截至日期
      * @apiParam {String} handler 经办人，默认登录用户
      * @apiParam {String} trade_type 交易类型，如：现金、支付宝、微信、银行卡、对公账户等
      * @apiParam {String} [trade_account] 交易账户号
@@ -511,8 +522,10 @@ class AccountController extends Controller
     public function accountcar()
     {
         $validator = Validator::make( Request::all(), [
-            'account_time' => 'required | date',
             'car_id' => 'required | integer | min:1',
+            'car_task_id' => 'required | array',
+            'car_pay_id' => 'required | array',
+            'account_time' => 'required | date',
             'handler' => 'required',
             'trade_type' => 'required',
         ]);
@@ -525,10 +538,10 @@ class AccountController extends Controller
         if($car){
             $account_time=Request::input('account_time');
 
-            $taskmoney = DB::select('select COALESCE(SUM(rent_cost+oil_cost+toll_cost+park_cost+award_salary),0) as cc from cartasks  where account_id = ?',
-                [-$car->id]);
-            $usermoney = DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id = ? and object_type=?',
-                [-$car->id,'车辆']);
+            $taskmoney = DB::select('select COALESCE(SUM(rent_cost+oil_cost+toll_cost+park_cost+award_salary),0) as cc from cartasks  where account_id <1 and car_id=? and id in ?',
+                [$car->id,Request::input('car_task_id')]);
+            $usermoney = DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id <1 and object_id=?  and object_type=? and id in ?',
+                [$car->id,'车辆',Request::input('car_pay_id')]);
 
             $acc=new Account();
             $acc->account_time=$account_time;
@@ -539,12 +552,14 @@ class AccountController extends Controller
             $acc->handler=Request::input('handler');
             $acc->trade_type=Request::input('trade_type');
             $acc->trade_account=Request::input('trade_account');
-            $acc->end_time=Request::input('end_time');
+            $acc->end_time=Carbon::now();
             $acc->remark=Request::input('remark');
             $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc;
             $acc->save();
-            DB::update('update cartasks set account_id = ? where account_id = ?',[$acc->id,-$car->id]);
-            DB::update('update userpays set account_id = ? where account_id = ? and object_type=?',[$acc->id,-$car->id,'车辆']);
+            DB::update('update cartasks set account_id = ? where account_id <1 and car_id=? and id in ?',
+                [$acc->id,$car->id,Request::input('car_task_id')]);
+            DB::update('update userpays set account_id = ? where account_id <1 and object_id=?  and object_type=? and id in ?',
+                [$acc->id,$car->id,'车辆',Request::input('car_pay_id')]);
 
             return $this->myResult(1,'结算成功，对应的收支记录为:'.$acc->id,$acc);
         }
