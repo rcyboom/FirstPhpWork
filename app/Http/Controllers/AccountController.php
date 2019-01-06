@@ -475,12 +475,14 @@ class AccountController extends Controller
         $usr=User::find(Request::input('user_id'));
         if($usr){
             $account_time=Request::input('account_time');
+            $user_task_id=Request::input('user_task_id',[]);
+            $user_pay_id=Request::input('user_pay_id',[]);
             $taskmoney =
                 DB::select('select COALESCE(SUM(work_salary+extra_salary+award_salary),0) as cc from usertasks  where account_id<1 and user_id=? and id in ?',
-                    [$usr->id,Request::input('user_task_id')]);
+                    [$usr->id,$user_task_id]);
             $usermoney =
                 DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id<1 and object_id=?  and object_type=? and id in ?',
-                    [$usr->id,'员工',Request::input('user_pay_id')]);
+                    [$usr->id,'员工',$user_pay_id]);
 
             $acc=new Account();
             $acc->account_time=$account_time;
@@ -497,9 +499,9 @@ class AccountController extends Controller
             $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc;
             $acc->save();
             DB::update('update usertasks set account_id = ? where account_id<1 and user_id=? and id in ?',
-                [$acc->id,$usr->id,Request::input('user_task_id')]);
+                [$acc->id,$usr->id,$user_task_id]);
             DB::update('update userpays set account_id = ? where account_id<1 and object_id=?  and object_type=? and id in ?',
-                [$acc->id,$usr->id,'员工',Request::input('user_pay_id')]);
+                [$acc->id,$usr->id,'员工',$user_pay_id]);
             return $this->myResult(1,'结算成功，对应的收支记录为:'.$acc->id,$acc);
         }
         return $this->myResult(0,'未找到对应编号的人员信息！',Request::input('user_id'));
