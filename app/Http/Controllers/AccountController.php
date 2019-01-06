@@ -314,8 +314,8 @@ class AccountController extends Controller
         $id=Request::input('id');
         $start_time=new Carbon(Request::input('start_time'));
         $d1=$start_time->startOfMonth();
-        $start_time=new Carbon(Request::input('start_time'));
-        $d2=$start_time->endOfMonth();
+        $end_time=new Carbon(Request::input('start_time'));
+        $d2=$end_time->endOfMonth();
 
         return $this->listUsers($id,$d1,$d2);
     }
