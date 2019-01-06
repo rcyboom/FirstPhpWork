@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        DB::listen(function($sql, $bindings, $time) {
+        DB::listen(function($sql) {
             dump($sql);
         });
         $this->app->singleton(FakerGenerator::class, function (){
