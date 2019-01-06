@@ -477,15 +477,16 @@ class AccountController extends Controller
 
         $usr=User::find(Request::input('user_id'));
         if($usr){
-            //DB::connection()->enableQueryLog();
-
             $account_time=Request::input('account_time');
             $user_task_id=implode(',',Request::input('user_task_id',[]));
             $user_pay_id=implode(',',Request::input('user_pay_id',[]));
             $taskmoney =
                 DB::select('select COALESCE(SUM(work_salary+extra_salary+award_salary),0) as cc from usertasks  where account_id<1 and user_id=? and id IN(?)',
                     [$usr->id,$user_task_id]);
-            //print_r(DB::getQueryLog());
+
+            return $this->myResult(0,'测试返回！',DB::select('select  * from usertasks  where account_id<1 and user_id=? and id IN(?)',
+                [$usr->id,$user_task_id]));
+
             $usermoney =
                 DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id<1 and object_id=?  and object_type=? and id IN(?)',
                     [$usr->id,'员工',$user_pay_id]);
