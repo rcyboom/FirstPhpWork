@@ -32,13 +32,14 @@ class UserController extends Controller
      * name 值不为空时表示 like方式过滤
      * phone_number 值不为空时表示 like方式过滤
      * state 值不为空时表示 like方式过滤
+     * fixed 整数，1表示固定员工，0为临时工,不传递表示忽略，这样不影响以前的接口
      */
     public function index(Request $request)
     {
         //
         $pageSize = (int)$request->input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:10;
-        $users = User::name()->state()->Phone()->paginate($pageSize);
+        $users = User::name()->state()->Phone()->Fixed()->paginate($pageSize);
         return new UserCollection($users);
     }
 

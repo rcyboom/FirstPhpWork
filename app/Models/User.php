@@ -75,6 +75,19 @@ class User extends Authenticatable
         }
     }
 
+    public function scopeFixed($query)
+    {
+        $fixed = request()->input('fixed');
+        if (isset($fixed)) {
+            if($fixed>0)
+                return $query = $query->where('fix_salary', '>', 0);
+            else
+                return $query = $query->where('fix_salary', '=', 0);
+        } else {
+            return $query;
+        }
+    }
+
     //AVG
     protected $appends = ['levelavg','taskcount'];
 

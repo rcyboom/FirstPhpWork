@@ -106,6 +106,7 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
     Route::post('accounts/accountcar', 'AccountController@accountcar')->name('accounts.accountcar');
     Route::post('accounts/accountuser', 'AccountController@accountuser')->name('accounts.accountuser');
     Route::get('accounts/getAccountUser', 'AccountController@getAccountUser')->name('accounts.getAccountUser');
+    Route::get('accounts/getFixedUser', 'AccountController@getFixedUser')->name('accounts.getFixedUser');
     Route::get('accounts/getAccountCar', 'AccountController@getAccountCar')->name('accounts.getAccountCar');
     Route::get('accounts/getAccountCarListById', 'AccountController@getAccountCarListById')->name('accounts.getAccountCarListById');
     Route::get('accounts/getAccountUserListById', 'AccountController@getAccountUserListById')->name('accounts.getAccountUserListById');

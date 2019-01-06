@@ -265,38 +265,72 @@ class AccountController extends Controller
 
 
      /**
-     * @api {get} /api/accounts/getAccountUser 8.返回截至日期前需要结算的员工列表
+     * @api {get} /api/accounts/getAccountUser 801.临时员工所选时间段内的待结算明细
      * @apiGroup 财务管理
      * @apiDescription
      * 路由名称 accounts.getAccountUser
+     *
+     * 返回值为一个对象（员工信息）两个数组，一个是出勤记录，一个是奖惩激励
+     * @apiParam {Integer} id 员工ID
+     * @apiParam {String} start_time 截至日期
      * @apiParam {String} end_time 截至日期
      */
     public function getAccountUser()
     {
         $validator = Validator::make( Request::all(), [
+            'id' => 'required | integer | min:1',
+            'start_time' => 'required | date',
             'end_time' => 'required | date',
         ]);
         if ($validator->fails()) {
             return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
         };
-        $end_time=Request::input('end_time');
-        //将待结算任务的结算ID更新为负的userID
-        DB::update('update usertasks set account_id = -user_id where account_id <1 and end_time<=?',[$end_time]);
-        DB::update('update userpays set account_id = -object_id where account_id <1  and object_type=? and created_at<=?',
-            ['员工',$end_time]);
+        $id=Request::input('id');
+        $start_time=new Carbon(Request::input('start_time'));
+        $end_time=new Carbon(Request::input('end_time'));
 
-        $taskmoney = DB::select('select users.id,users.fix_salary,users.name,? as end_time,'.
-            'COALESCE(tb.task_money,0) as task_money,COALESCE(tb.task_count,0) as task_count,'.
-            'COALESCE(tc.pay_money,0) as pay_money,COALESCE(tc.pay_count,0) as pay_count,'.
-            '(COALESCE(tb.task_money,0)+COALESCE(tc.pay_money,0)+COALESCE(users.fix_salary,0)) as total_money,COALESCE(tb.task_count+tc.pay_count,0) as total_count '.
-            'from users left join '.
-            '(select user_id,SUM(work_salary+extra_salary+award_salary) as task_money,count(*) as task_count from usertasks  '.
-            'where account_id = -user_id group by user_id) tb '.
-            'on users.id=tb.user_id left join '.
-            '(select object_id,SUM(money) as pay_money,count(*) as pay_count from userpays where account_id = -object_id  '.
-            'AND object_type=? group by object_id) tc on users.id=tc.object_id',
-            [$end_time,'员工']);
-        return $this->myResult(1,'获取成功！',$taskmoney);
+        return $this->listUsers($id,$start_time->startOfDay(),$end_time->endOfDay());
+    }
+
+    /**
+     * @api {get} /api/accounts/getFixedUser 802.固定员工所选时间段内的待结算明细
+     * @apiGroup 财务管理
+     * @apiDescription
+     * 路由名称 accounts.getFixedUser
+     *
+     * 返回值为一个对象（员工信息）两个数组，一个是出勤记录，一个是奖惩激励
+     * @apiParam {Integer} id 员工ID
+     * @apiParam {String} start_time 截至日期
+     */
+    public function getFixedUser()
+    {
+        $validator = Validator::make( Request::all(), [
+            'id' => 'required | integer | min:1',
+            'start_time' => 'required | date'
+        ]);
+        if ($validator->fails()) {
+            return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
+        };
+        $id=Request::input('id');
+        $start_time=new Carbon(Request::input('start_time'));
+
+        return $this->listUsers($id,$start_time->startOfMonth(),$start_time->endOfMonth());
+    }
+
+    private function listUsers($id,$start_time,$end_time)
+    {
+        $user=User::find($id);
+        if($user){
+            $rs['user']=$user;
+            $rs['pays']=DB::select('select * from userpays where account_id<1 and object_id=?  '.'
+            and  object_type=? and time>=? and time<=?',[$id,'员工',$start_time,$end_time]);
+            $rs['tasks']=DB::select('select vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
+                'usertasks.*,(work_salary+extra_salary+award_salary) as money from usertasks '.
+                'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id<1 and start_time>=? and start_time<=? ',
+                [$id,$start_time,$end_time]);
+            return $this->myResult(0,'获取成功！',$rs);
+        }else
+            return $this->myResult(0,'该员工不存在！',null);
     }
 
     /**

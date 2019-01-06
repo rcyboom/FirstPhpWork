@@ -206,7 +206,7 @@
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、路由名称 tasks.setOption",
+          "content": "1、路由名称 tasks.setOption\ndate 日期格式2018-01-01",
           "type": "json"
         }
       ]
@@ -701,7 +701,7 @@
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、默认返回全部数据的分页显示\n2、可选参数：\nname 值不为空时表示 like方式过滤\nphone_number 值不为空时表示 like方式过滤\nstate 值不为空时表示 like方式过滤",
+          "content": "1、默认返回全部数据的分页显示\n2、可选参数：\nname 值不为空时表示 like方式过滤\nphone_number 值不为空时表示 like方式过滤\nstate 值不为空时表示 like方式过滤\nfixed 整数，1表示固定员工，0为临时工,不传递表示忽略，这样不影响以前的接口",
           "type": "json"
         }
       ]
@@ -1473,12 +1473,26 @@
   {
     "type": "get",
     "url": "/api/accounts/getAccountUser",
-    "title": "8.返回截至日期前需要结算的员工列表",
+    "title": "801.临时员工所选时间段内的待结算明细",
     "group": "财务管理",
-    "description": "<p>路由名称 accounts.getAccountUser</p>",
+    "description": "<p>路由名称 accounts.getAccountUser</p> <p>返回值为一个对象（员工信息）两个数组，一个是出勤记录，一个是奖惩激励</p>",
     "parameter": {
       "fields": {
         "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "id",
+            "description": "<p>员工ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "start_time",
+            "description": "<p>截至日期</p>"
+          },
           {
             "group": "Parameter",
             "type": "String",
@@ -1517,6 +1531,37 @@
     "filename": "./AccountController.php",
     "groupTitle": "财务管理",
     "name": "GetApiAccountsGetaccountuserlistbyid"
+  },
+  {
+    "type": "get",
+    "url": "/api/accounts/getFixedUser",
+    "title": "802.固定员工所选时间段内的待结算明细",
+    "group": "财务管理",
+    "description": "<p>路由名称 accounts.getFixedUser</p> <p>返回值为一个对象（员工信息）两个数组，一个是出勤记录，一个是奖惩激励</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "id",
+            "description": "<p>员工ID</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "start_time",
+            "description": "<p>截至日期</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./AccountController.php",
+    "groupTitle": "财务管理",
+    "name": "GetApiAccountsGetfixeduser"
   },
   {
     "type": "get",
