@@ -486,7 +486,7 @@ class AccountController extends Controller
             $usermoney =
                 DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id<1 and object_id=?  and object_type=? and id in (?)',
                     [$usr->id,'员工',$user_pay_id]);
-            return $this->myResult(0,'该员工没有需要结算的记录！',$user_task_id);
+
             if($taskmoney[0]->cc+$usermoney[0]->cc+$usr->fix_salary<1)
                 return $this->myResult(0,'该员工没有需要结算的记录！',null);
 
