@@ -540,10 +540,13 @@ class AccountController extends Controller
         if($car){
             $account_time=Request::input('account_time');
 
-            $taskmoney = DB::select('select COALESCE(SUM(rent_cost+oil_cost+toll_cost+park_cost+award_salary),0) as cc from cartasks  where account_id <1 and car_id=? and id in ?',
-                [$car->id,Request::input('car_task_id')]);
-            $usermoney = DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id <1 and object_id=?  and object_type=? and id in ?',
-                [$car->id,'车辆',Request::input('car_pay_id')]);
+            $car_task_id=implode(',',Request::input('car_task_id',[]));
+            $car_pay_id=implode(',',Request::input('car_pay_id',[]));
+
+            $taskmoney = DB::select('select COALESCE(SUM(rent_cost+oil_cost+toll_cost+park_cost+award_salary),0) as cc from cartasks  where account_id <1 and car_id=? and id in (?)',
+                [$car->id,$car_task_id]);
+            $usermoney = DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id <1 and object_id=?  and object_type=? and id in (?)',
+                [$car->id,'车辆',$car_pay_id]);
 
             $acc=new Account();
             $acc->account_time=$account_time;
@@ -558,10 +561,10 @@ class AccountController extends Controller
             $acc->remark=Request::input('remark');
             $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc;
             $acc->save();
-            DB::update('update cartasks set account_id = ? where account_id <1 and car_id=? and id in ?',
-                [$acc->id,$car->id,Request::input('car_task_id')]);
-            DB::update('update userpays set account_id = ? where account_id <1 and object_id=?  and object_type=? and id in ?',
-                [$acc->id,$car->id,'车辆',Request::input('car_pay_id')]);
+            DB::update('update cartasks set account_id = ? where account_id <1 and car_id=? and id in (?)',
+                [$acc->id,$car->id,$car_task_id]);
+            DB::update('update userpays set account_id = ? where account_id <1 and object_id=?  and object_type=? and id in (?)',
+                [$acc->id,$car->id,'车辆',$car_pay_id]);
 
             return $this->myResult(1,'结算成功，对应的收支记录为:'.$acc->id,$acc);
         }
