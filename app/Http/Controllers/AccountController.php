@@ -485,7 +485,7 @@ class AccountController extends Controller
                     [$usr->id,'员工',$user_pay_id]);
 
             if($taskmoney[0]->cc+$usermoney[0]->cc+$usr->fix_salary<1)
-                return $this->myResult(0,'该车辆没有需要结算的记录！',null);
+                return $this->myResult(0,'该员工没有需要结算的记录！',null);
 
             $acc=new Account();
             $acc->account_time=$account_time;
