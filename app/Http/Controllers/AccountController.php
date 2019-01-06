@@ -461,8 +461,8 @@ class AccountController extends Controller
     {
         $validator = Validator::make( Request::all(), [
             'user_id' => 'required | integer | min:1',
-            'user_task_id' => 'required |array',
-            'user_pay_id' => 'required | array',
+            'user_task_id' => 'required ',
+            'user_pay_id' => 'required ',
             'account_time' => 'required | date',
             'handler' => 'required',
             'trade_type' => 'required',
@@ -523,8 +523,8 @@ class AccountController extends Controller
     {
         $validator = Validator::make( Request::all(), [
             'car_id' => 'required | integer | min:1',
-            'car_task_id' => 'required | array',
-            'car_pay_id' => 'required | array',
+            'car_task_id' => 'required ',
+            'car_pay_id' => 'required ',
             'account_time' => 'required | date',
             'handler' => 'required',
             'trade_type' => 'required',
