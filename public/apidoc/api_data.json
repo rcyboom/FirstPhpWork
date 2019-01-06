@@ -96,13 +96,13 @@
   {
     "type": "get",
     "url": "/api/tasks/FreeCars",
-    "title": "93.获取在位空闲车辆列表",
+    "title": "93.获取在岗空闲车辆列表",
     "group": "任务管理",
     "header": {
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、路由名称 tasks.FreeCars\n2、无需参数，无需分页\n特殊说明：\n1、只返回state状态为在位的车辆\n2、排除出勤任务中end_time为空也就是未收工的车辆",
+          "content": "1、路由名称 tasks.FreeCars\n2、无需参数，无需分页\n特殊说明：\n1、只返回state状态为在岗的车辆\n2、排除出勤任务中end_time为空也就是未收工的车辆",
           "type": "json"
         }
       ]
@@ -115,13 +115,13 @@
   {
     "type": "get",
     "url": "/api/tasks/FreeMans",
-    "title": "92.获取在位空闲人员列表",
+    "title": "92.获取在岗空闲人员列表",
     "group": "任务管理",
     "header": {
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、路由名称 tasks.FreeMans\n2、无需参数，无需分页\n特殊说明：\n1、只返回state状态为在位的人员\n2、排除出勤任务中end_time为空也就是未收工的人员",
+          "content": "1、路由名称 tasks.FreeMans\n2、无需参数，无需分页\n特殊说明：\n1、只返回state状态为在岗的人员\n2、排除出勤任务中end_time为空也就是未收工的人员",
           "type": "json"
         }
       ]
@@ -2032,7 +2032,7 @@
       "examples": [
         {
           "title": "成功返回:",
-          "content": "{\n\"code\": 1,\n\"info\": \"获取信息成功！\",\n\"data\": {\n\"id\": 1,\n\"car_type\": \"SUV\",\n\"car_number\": \"苏A88888\",\n\"state\": \"在位\",\n\"linkman\": \"张三\",\n\"phone\": \"12345678\",\n\"work_price\": 100,\n\"from\": \"员工\",\n\"remark\": \"备注\",\n\"created_at\": \"2018-06-11 23:40:24\",\n\"updated_at\": \"2018-06-11 23:40:25\"\n}\n}",
+          "content": "{\n\"code\": 1,\n\"info\": \"获取信息成功！\",\n\"data\": {\n\"id\": 1,\n\"car_type\": \"SUV\",\n\"car_number\": \"苏A88888\",\n\"state\": \"在岗\",\n\"linkman\": \"张三\",\n\"phone\": \"12345678\",\n\"work_price\": 100,\n\"from\": \"员工\",\n\"remark\": \"备注\",\n\"created_at\": \"2018-06-11 23:40:24\",\n\"updated_at\": \"2018-06-11 23:40:25\"\n}\n}",
           "type": "json"
         }
       ]

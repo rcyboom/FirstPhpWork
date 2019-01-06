@@ -64,7 +64,7 @@ class CarController extends Controller
      * "id": 1,
      * "car_type": "SUV",
      * "car_number": "苏A88888",
-     * "state": "在位",
+     * "state": "在岗",
      * "linkman": "张三",
      * "phone": "12345678",
      * "work_price": 100,
