@@ -484,6 +484,9 @@ class AccountController extends Controller
                 DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id<1 and object_id=?  and object_type=? and id in (?)',
                     [$usr->id,'员工',$user_pay_id]);
 
+            if($taskmoney[0]->cc+$usermoney[0]->cc+$usr->fix_salary<1)
+                return $this->myResult(0,'该车辆没有需要结算的记录！',null);
+
             $acc=new Account();
             $acc->account_time=$account_time;
             $acc->object_type='员工结算';
@@ -496,7 +499,7 @@ class AccountController extends Controller
             $acc->end_time=Carbon::now();
             $acc->fix_salary=$usr->fix_salary;
             $acc->remark=Request::input('remark');
-            $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc;
+            $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc+$usr->fix_salary;
             $acc->save();
             DB::update('update usertasks set account_id = ? where account_id<1 and user_id=? and id in (?)',
                 [$acc->id,$usr->id,$user_task_id]);
@@ -547,6 +550,9 @@ class AccountController extends Controller
                 [$car->id,$car_task_id]);
             $usermoney = DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id <1 and object_id=?  and object_type=? and id in (?)',
                 [$car->id,'车辆',$car_pay_id]);
+
+            if($taskmoney[0]->cc+$usermoney[0]->cc <1)
+                return $this->myResult(0,'该车辆没有需要结算的记录！',null);
 
             $acc=new Account();
             $acc->account_time=$account_time;
