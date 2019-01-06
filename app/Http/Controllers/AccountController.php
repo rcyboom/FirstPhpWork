@@ -313,8 +313,11 @@ class AccountController extends Controller
         };
         $id=Request::input('id');
         $start_time=new Carbon(Request::input('start_time'));
+        $d1=$start_time->startOfMonth();
+        $start_time=new Carbon(Request::input('start_time'));
+        $d2=$start_time->endOfMonth();
 
-        return $this->listUsers($id,$start_time->startOfMonth(),$start_time->endOfMonth());
+        return $this->listUsers($id,$d1,$d2);
     }
 
     private function listUsers($id,$start_time,$end_time)
@@ -328,7 +331,7 @@ class AccountController extends Controller
                 'usertasks.*,(work_salary+extra_salary+award_salary) as money from usertasks '.
                 'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id<1 and usertasks.start_time>=? and usertasks.start_time<=? ',
                 [$id,$start_time,$end_time]);
-            return $this->myResult(1,'获取成功！',[$id,$start_time,$end_time]);
+            return $this->myResult(1,'获取成功！',$rs);
         }else
             return $this->myResult(0,'该员工不存在！',null);
     }
