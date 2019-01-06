@@ -326,7 +326,7 @@ class AccountController extends Controller
             and  object_type=? and time>=? and time<=?',[$id,'员工',$start_time,$end_time]);
             $rs['tasks']=DB::select('select vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
                 'usertasks.*,(work_salary+extra_salary+award_salary) as money from usertasks '.
-                'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id<1 and start_time>=? and start_time<=? ',
+                'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id<1 and usertasks.start_time>=? and usertasks.start_time<=? ',
                 [$id,$start_time,$end_time]);
             return $this->myResult(0,'获取成功！',$rs);
         }else
