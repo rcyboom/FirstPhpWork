@@ -345,11 +345,10 @@ class TaskController extends Controller
         {
             $start=$task->start_time;
             $end=$task->end_time;
-            foreach($users as $value){
-                $value['start_time']=$start;
-                $value['end_time']=$end;
+            foreach($users as $k=>$v){
+                $users[$k]['start_time']=$start;
+                $value[$k]['end_time']=$end;
             }
-            dd($users);
             if(DB::table('usertasks')->insert($users)){
                 return $this->myResult(1,'添加成功！',null);
             }
