@@ -102,6 +102,12 @@ class TaskController extends Controller
         $rs->station = Request::input('station');
         $rs->start_time = Request::input('start_time');
         $rs->end_time = Request::input('end_time');
+        $d1=new Carbon($rs->start_time);
+        $d2=new Carbon($rs->end_time);
+        $diff=$d2->diffInMinutes($d1);
+        $diff=(floor($diff/60))+round($diff%60/60,1);
+        $rs->work_hours = $diff;
+
         $rs->remark = Request::input('remark');
 
         if($rs->save()){
@@ -157,7 +163,13 @@ class TaskController extends Controller
 
         $rs->start_time = Request::input('start_time');
         $rs->end_time = Request::input('end_time');
-        $rs->work_hours = Request::input('work_hours',0);
+
+        $d1=new Carbon($rs->start_time);
+        $d2=new Carbon($rs->end_time);
+        $diff=$d2->diffInMinutes($d1);
+        $diff=(floor($diff/60))+round($diff%60/60,1);
+
+        $rs->work_hours = $diff;
         $rs->equipment_cost = Request::input('equipment_cost',0);
         $rs->other_cost = Request::input('other_cost',0);
         $rs->receivables = Request::input('receivables',0);
