@@ -301,7 +301,7 @@ class TaskController extends Controller
         $d1=new Carbon($rs->start_time);
         $d2=new Carbon($rs->end_time);
         $diff=$d2->diffInMinutes($d1);
-        $diff=(floor($diff/60))+round($diff%60/60,2);
+        $diff=(floor($diff/60))+round($diff%60/60,1);
 
         $rs->post = Request::input('post');
         $rs->work_hours = $diff;
@@ -355,7 +355,7 @@ class TaskController extends Controller
             $d1=new Carbon($start);
             $d2=new Carbon($end);
             $diff=$d2->diffInMinutes($d1);
-            $diff=(floor($diff/60))+round($diff%60/60,2);
+            $diff=(floor($diff/60))+round($diff%60/60,1);
             foreach($users as $k=>$v){
                 $users[$k]['start_time']=$start;
                 $users[$k]['end_time']=$end;
