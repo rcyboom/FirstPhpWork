@@ -349,6 +349,7 @@ class TaskController extends Controller
                 $value['start_time']=$start;
                 $value['end_time']=$end;
             }
+            dd($users);
             if(DB::table('usertasks')->insert($users)){
                 return $this->myResult(1,'添加成功！',null);
             }
