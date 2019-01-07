@@ -34,6 +34,7 @@ class AccountController extends Controller
             if($results[0]->cc<1)
                 DB::insert('insert into tplat (plat, user) values (?, ?)', [$pp,$uu]);
         }
+
         return $this->myResult(1,'',null);
     }
 

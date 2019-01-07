@@ -345,9 +345,14 @@ class TaskController extends Controller
         {
             $start=$task->start_time;
             $end=$task->end_time;
+            $d1=new Carbon($start);
+            $d2=new Carbon($end);
+            $diff=$d2->diffInMinutes($d1);
+            $diff=(floor($diff/60))+round($diff%60/60.2);
             foreach($users as $k=>$v){
                 $users[$k]['start_time']=$start;
-                $value[$k]['end_time']=$end;
+                $users[$k]['end_time']=$end;
+                $users[$k]['work_hours']=$diff;
             }
             if(DB::table('usertasks')->insert($users)){
                 return $this->myResult(1,'添加成功！',null);
