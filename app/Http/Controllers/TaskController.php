@@ -291,13 +291,20 @@ class TaskController extends Controller
         if ($validator->fails()) {
             return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
         }
+
         //更新字段信息
         $rs->task_id = Request::input('task_id');
         $rs->user_id = Request::input('user_id');
         $rs->start_time = Request::input('start_time');
         $rs->end_time = Request::input('end_time',null);
+
+        $d1=new Carbon($rs->start_time);
+        $d2=new Carbon($rs->end_time);
+        $diff=$d2->diffInMinutes($d1);
+        $diff=(floor($diff/60))+round($diff%60/60,2);
+
         $rs->post = Request::input('post');
-        $rs->work_hours = Request::input('work_hours',0);
+        $rs->work_hours = $diff;
         $rs->work_salary = Request::input('work_salary',0);
         $rs->extra_hours = Request::input('extra_hours',0);
         $rs->extra_salary = Request::input('extra_salary',0);
@@ -348,7 +355,7 @@ class TaskController extends Controller
             $d1=new Carbon($start);
             $d2=new Carbon($end);
             $diff=$d2->diffInMinutes($d1);
-            $diff=(floor($diff/60))+round($diff%60/60.2);
+            $diff=(floor($diff/60))+round($diff%60/60,2);
             foreach($users as $k=>$v){
                 $users[$k]['start_time']=$start;
                 $users[$k]['end_time']=$end;
