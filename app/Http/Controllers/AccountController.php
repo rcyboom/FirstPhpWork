@@ -359,7 +359,7 @@ class AccountController extends Controller
             $userID=$account->object_id;
             $rs=array();
             $rs['account']=$account;
-            $rs['tasks']=DB::select('select vtasks.type as type,vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
+            $rs['tasks']=DB::select('select vtasks.linkman as linkman,vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
                 'usertasks.*,(work_salary+extra_salary+award_salary) as money from usertasks '.
                 'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id=? ',
                 [$userID,$account->id]);
@@ -402,7 +402,7 @@ class AccountController extends Controller
             $rs['car']=$car;
             $rs['pays']=DB::select('select * from userpays where account_id<1 and object_id=?  '.'
             and  object_type=? and time>=? and time<=?',[$id,'车辆',$start_time,$end_time]);
-            $rs['tasks']=DB::select('select vtasks.type as type,vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
+            $rs['tasks']=DB::select('select vtasks.linkman as linkman,vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
                 'cartasks.*,(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as money from cartasks '.
                 'left join vtasks on cartasks.task_id=vtasks.id where cartasks.car_id=? and cartasks.account_id<1 and cartasks.start_time>=? and cartasks.start_time<=?',
                 [$id,$start_time,$end_time]);
@@ -434,7 +434,7 @@ class AccountController extends Controller
             $carID=$account->object_id;
             $rs=array();
             $rs['account']=$account;
-            $rs['tasks']=DB::select('select vtasks.type as type,vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
+            $rs['tasks']=DB::select('select vtasks.linkman as linkman,vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
                 'cartasks.*,(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as money from cartasks '.
                 'left join vtasks on cartasks.task_id=vtasks.id where cartasks.car_id=? and cartasks.account_id=? ',
                 [$carID,$account->id]);
