@@ -527,11 +527,26 @@ class TaskController extends Controller
             return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
         }
         $users=Request::input('cars');
-
-        if(DB::table('cartasks')->insert($users)){
-            return $this->myResult(1,'添加成功！',null);
-        }
-        return $this->myResult(0,'操作失败，未知错误！',null);
+        $task=Task::find($users[0]['task_id']);
+        if($task)
+        {
+            $start=$task->start_time;
+            $end=$task->end_time;
+            //$d1=new Carbon($start);
+            //$d2=new Carbon($end);
+            //$diff=$d2->diffInMinutes($d1);
+            //$diff=(floor($diff/60))+round($diff%60/60,1);
+            foreach($users as $k=>$v){
+                $users[$k]['start_time']=$start;
+                $users[$k]['end_time']=$end;
+                //$users[$k]['work_hours']=$diff;
+            }
+            if(DB::table('cartasks')->insert($users)){
+                return $this->myResult(1,'添加成功！',null);
+            }
+            return $this->myResult(0,'操作失败，未知错误！',null);
+        }else
+            return $this->myResult(0,'操作失败，未找到指定的任务记录！',null);
     }
 
     /**
