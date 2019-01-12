@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Account;
 use App\Models\Car;
 use App\Models\Userpay;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Validation\Rule;
 
 class UserPayController extends Controller
 {
@@ -87,7 +87,7 @@ class UserPayController extends Controller
      * 	object_id 正整数，人员或者车辆编号，且必须真实存在
      * 	object_type 可选项：员工、车辆
      * 	time 日期时间型，奖惩时间
-     * 	type 字符串20，奖惩类型，可选项：奖励、惩罚、预支
+     * 	type 字符串20，奖惩类型，可选项：应加、应减，补贴，预支
      * 	money 数字类型，两位小数，奖惩金额
      * 	score 数字类型，两位小数，奖惩评分
      * 	reason 字符串，奖惩原因
@@ -98,7 +98,7 @@ class UserPayController extends Controller
             'object_id' => 'required | integer | min:1',
             'object_type' => 'required |in:员工,车辆',
             'time' => 'required | date',
-            'type' => 'required|in:奖励,惩罚,预支',
+            'type' => 'required',
             'reason' => 'required',
             'money'=>'required | numeric',
             'score'=>'required | numeric',
@@ -107,14 +107,16 @@ class UserPayController extends Controller
         if ($validator->fails()) {
             return $this->myResult(0,'操作失败，参数不符合要求！',$validator->errors()->all());
         }
-
+        $usrName='';
         if(Request::input('object_type')=='员工') {
             $ur = User::find(Request::input('object_id'));
+            $usrName=$ur->name;
             if (!$ur) {
                 return $this->myResult(0, '更新失败，未找到对应的人员编号！', null);
             }
         }else{
             $ur = Car::find(Request::input('object_id'));
+            $usrName=$ur->car_number;
             if (!$ur) {
                 return $this->myResult(0, '更新失败，未找到对应的车辆编号！', null);
             }
@@ -133,10 +135,28 @@ class UserPayController extends Controller
         $rs->object_type = Request::input('object_type');
         $rs->time = Request::input('time');
         $rs->type = Request::input('type');
+        if($rs->type='应减'){
+            $rs->money = - Request::input('money');
+        }
         $rs->money = Request::input('money');
         $rs->score = Request::input('score');
         $rs->reason = Request::input('reason');
         if($rs->save()){
+            if($rs->type='预支'){
+                $acc=new Account();
+                $acc->account_time=$rs->time;
+                $acc->object_type='预支工资';
+                $acc->account_type='-1';
+                $acc->object_id=$rs->object_id;
+                $acc->object_name=$usrName;
+                $acc->handler='自动记录';
+                $acc->trade_type='自动记录';
+                $acc->trade_account='自动记录';
+                $acc->end_time=Carbon::now();
+                $acc->remark=$rs->reason;
+                $acc->money=$rs->money;
+                $acc->save();
+            }
             return $this->myResult(1,'更新成功！',$rs);
         }
         return $this->myResult(0,'操作失败，未知错误！',null);
