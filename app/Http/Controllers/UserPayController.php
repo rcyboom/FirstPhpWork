@@ -143,11 +143,11 @@ class UserPayController extends Controller
         $rs->score = Request::input('score');
         $rs->reason = Request::input('reason');
         if($rs->save()){
-            if($rs->type=='预支'){
+          /*  if($rs->type=='预支'){
                 $acc=new Account();
                 $acc->account_time=$rs->time;
                 $acc->object_type='预支工资';
-                $acc->account_type='-1';
+                $acc->account_type=-1;
                 $acc->object_id=$rs->object_id;
                 $acc->object_name=$usrName;
                 $acc->handler='自动记录';
@@ -157,7 +157,7 @@ class UserPayController extends Controller
                 $acc->remark=$rs->reason;
                 $acc->money=-$rs->money;
                 $acc->save();
-            }
+            }*/
             return $this->myResult(1,'更新成功！',$rs);
         }
         return $this->myResult(0,'操作失败，未知错误！',null);
