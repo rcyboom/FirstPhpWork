@@ -155,6 +155,7 @@ class TaskController extends Controller
             'other_cost'=>'nullable|numeric | min:0',
             'receivables'=>'nullable|numeric | min:0',
             'tax'=>'nullable|numeric | min:0',
+            'title' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -179,6 +180,7 @@ class TaskController extends Controller
         $rs->phone = Request::input('phone');
         $rs->station = Request::input('station');
         $rs->remark = Request::input('remark');
+        $rs->title = Request::input('title');
 
         if($rs->save()){
             if($rs->account_id >0){
