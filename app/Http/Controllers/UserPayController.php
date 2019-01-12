@@ -135,14 +135,15 @@ class UserPayController extends Controller
         $rs->object_type = Request::input('object_type');
         $rs->time = Request::input('time');
         $rs->type = Request::input('type');
-        if($rs->type='应减'){
+        if($rs->type=='应减'){
             $rs->money = - Request::input('money');
+        }else{
+            $rs->money = Request::input('money');
         }
-        $rs->money = Request::input('money');
         $rs->score = Request::input('score');
         $rs->reason = Request::input('reason');
         if($rs->save()){
-            if($rs->type='预支'){
+            if($rs->type=='预支'){
                 $acc=new Account();
                 $acc->account_time=$rs->time;
                 $acc->object_type='预支工资';
@@ -154,7 +155,7 @@ class UserPayController extends Controller
                 $acc->trade_account='自动记录';
                 $acc->end_time=Carbon::now();
                 $acc->remark=$rs->reason;
-                $acc->money=$rs->money;
+                $acc->money=-$rs->money;
                 $acc->save();
             }
             return $this->myResult(1,'更新成功！',$rs);
