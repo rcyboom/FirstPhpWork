@@ -141,7 +141,10 @@ class UserPayController extends Controller
         $rs->reason = Request::input('reason');
         if($rs->save()){
             if($rs->type=='预支'){
-                $acc=new Account();
+                $fix_salary=-$rs->id;
+                $acc=Account::where('fix_salary',$fix_salary)->where('object_id',$rs->object_id)->first();
+                if(!$acc)
+                    $acc=new Account();
                 $acc->account_time=$rs->time;
                 $acc->object_type='预支工资';
                 $acc->account_type=-1;
@@ -153,6 +156,7 @@ class UserPayController extends Controller
                 $acc->end_time=Carbon::now();
                 $acc->remark=$rs->reason;
                 $acc->money=$rs->money;
+                $acc->fix_salary=$fix_salary;
                 $acc->save();
             }
             return $this->myResult(1,'更新成功！',$rs);
