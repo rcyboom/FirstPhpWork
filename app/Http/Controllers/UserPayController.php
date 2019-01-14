@@ -143,8 +143,9 @@ class UserPayController extends Controller
             if($rs->type=='预支'){
                 $fix_salary=-$rs->id;
                 $acc=Account::where('fix_salary',$fix_salary)->where('object_id',$rs->object_id)->first();
-                if(!$acc)
+                if(!$acc){
                     $acc=new Account();
+                }
                 $acc->account_time=$rs->time;
                 $acc->object_type='预支工资';
                 $acc->account_type=-1;
