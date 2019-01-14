@@ -131,7 +131,7 @@ class UserPayController extends Controller
         }else{
             $rs=new Userpay();
         }
-
+        $oldType=$rs->type;
         $rs->object_id = Request::input('object_id');
         $rs->object_type = Request::input('object_type');
         $rs->time = Request::input('time');
@@ -140,6 +140,10 @@ class UserPayController extends Controller
         $rs->score = Request::input('score');
         $rs->reason = Request::input('reason');
         if($rs->save()){
+            if($oldType=='预支' and $rs->type!='预支')
+            {
+                Account::where('fix_salary',-$rs->id)->where('object_id',$rs->object_id)->delete();
+            }
             if($rs->type=='预支'){
                 $fix_salary=-$rs->id;
                 $acc=Account::where('fix_salary',$fix_salary)->where('object_id',$rs->object_id)->first();
