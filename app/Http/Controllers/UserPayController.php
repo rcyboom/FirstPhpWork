@@ -186,6 +186,10 @@ class UserPayController extends Controller
             if($rs->account_id != 0) {
                 return $this->myResult(0, '已经结算的奖惩信息不允许被删除！', $rs);
             }
+            if('预支' == $rs->type)
+            {
+                Account::where('fix_salary',-$rs->id)->where('object_id',$rs->object_id)->delete();
+            }
             $rs->delete();
             return $this->myResult(1,'删除成功！',$id);
         }
