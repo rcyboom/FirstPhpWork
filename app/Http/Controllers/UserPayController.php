@@ -49,7 +49,10 @@ class UserPayController extends Controller
 
         $rs = Userpay::where('id','>',0);
         if($object_name){
-            $usrID =  DB::table('users')->where('name','like', '%'.$object_name.'%')->pluck('id');
+            if($object_type=='员工')
+                $usrID =  DB::table('users')->where('name','like', '%'.$object_name.'%')->pluck('id');
+            else
+                $usrID =  DB::table('cars')->where('car_number','like', '%'.$object_name.'%')->pluck('id');
             $rs = $rs->whereIn('object_id',$usrID);
         }
         if($object_id){
