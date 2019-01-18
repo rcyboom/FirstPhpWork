@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserPayController extends Controller
 {
@@ -159,12 +160,13 @@ class UserPayController extends Controller
                 if(!$acc){
                     $acc=new Account();
                 }
+                $user = Auth::user();
                 $acc->account_time=$rs->time;
                 $acc->object_type='预支工资';
                 $acc->account_type=-1;
                 $acc->object_id=$rs->object_id;
                 $acc->object_name=$usrName;
-                $acc->handler='自动记录';
+                $acc->handler=$user->name;
                 $acc->trade_type='自动记录';
                 $acc->trade_account='自动记录';
                 $acc->end_time=Carbon::now();
