@@ -257,6 +257,7 @@ class AccountController extends Controller
             $acc->money=$task->receivables;
             $acc->save();
             $task->account_id=$acc->id;
+            $task->state='已结算';
             $task->save();
             return $this->myResult(1,'结算成功，对应的收支记录为:'.$acc->id,$acc->id);
         }

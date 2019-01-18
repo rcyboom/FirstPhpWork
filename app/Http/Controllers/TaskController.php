@@ -376,6 +376,10 @@ class TaskController extends Controller
                 $users[$k]['work_hours']=$diff;
             }
             if(DB::table('usertasks')->insert($users)){
+                if($task->state=='已登记'){
+                    $task->state='未结算';
+                    $task->save();
+                }
                 return $this->myResult(1,'添加成功！',null);
             }
             return $this->myResult(0,'操作失败，未知错误！',null);
