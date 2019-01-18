@@ -27,7 +27,7 @@ class UserPayController extends Controller
      * @apiParamExample数据库表结构
      * id 奖惩编号
      * object_id 奖惩对象编号
-     * object_type 奖惩对象类型，范围：车辆、员工
+     * object_name 奖惩对象名称
      * account_id 结算编号，也就是收支记录编号
      * time 奖惩时间
      * type 奖惩类型，奖励、惩罚、预支
@@ -41,14 +41,15 @@ class UserPayController extends Controller
         $pageSize = (int)Request::input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:15;
 
-        $object_type=Request::input('object_type');
+        $object_name=Request::input('object_name');
         $object_id=Request::input('object_id');
         $account_id=Request::input('account_id');
 
         $rs = Userpay::where('id','>',0);
-        if($object_type){
-        $rs = $rs->where('object_type',$object_type);
-    }
+        if($object_name){
+            $usrID = DB::select('select id from users where name LIKE ?',['%'.$object_name.'%']);
+            $rs = $rs->wherein('object_type',$usrID);
+        }
         if($object_id){
             $rs = $rs->where('object_id',$object_id);
         }
