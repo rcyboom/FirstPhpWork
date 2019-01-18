@@ -43,6 +43,7 @@ class UserPayController extends Controller
         $pageSize = isset($pageSize) && $pageSize?$pageSize:15;
 
         $object_name=Request::input('object_name');
+        $object_type=Request::input('object_type');
         $object_id=Request::input('object_id');
         $account_id=Request::input('account_id');
 
@@ -53,6 +54,9 @@ class UserPayController extends Controller
         }
         if($object_id){
             $rs = $rs->where('object_id',$object_id);
+        }
+        if($object_type){
+            $rs = $rs->where('object_type',$object_type);
         }
         if($account_id){
             $rs = $rs->where('account_id',$account_id);
