@@ -55,7 +55,7 @@ class TaskController extends Controller
         $pageSize = (int)Request::input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:15;
 
-        $tasks = Task::Other()->Title()->CustomerName()->orderBy('id', 'desc')->paginate($pageSize);
+        $tasks = Task::Other()->Title()->CustomerName()->orderBy('start_time', 'desc')->paginate($pageSize);
         return new TaskCollection($tasks);
     }
 
@@ -566,7 +566,7 @@ class TaskController extends Controller
     {
         $rs=DB::select('select cartasks.*,cars.car_type,cars.car_number,cars.phone,'.
             '(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as total from cartasks '.
-            'left join cars on cartasks.car_id=cars.id where task_id=?',[Request::input('task_id',0)]);
+            'left join cars on cartasks.car_id=cars.id where task_id=? order by start_time desc',[Request::input('task_id',0)]);
 
         return $this->myResult(1,'信息获取成功！',$rs);
     }
@@ -586,7 +586,7 @@ class TaskController extends Controller
     {
          $rs=DB::select('select usertasks.*,users.name,users.phone_number,'.
             '(usertasks.work_salary+usertasks.extra_salary+usertasks.award_salary) as total from usertasks '.
-            'left join users on usertasks.user_id=users.id where task_id=?',[Request::input('task_id',0)]);
+            'left join users on usertasks.user_id=users.id where task_id=?  order by start_time desc',[Request::input('task_id',0)]);
 
         return $this->myResult(1,'信息获取成功！',$rs);
     }

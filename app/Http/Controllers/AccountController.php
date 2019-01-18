@@ -105,7 +105,7 @@ class AccountController extends Controller
             $rs = $rs->where('remark','like','%'.$remark.'%');
         }
         //返回数据
-        $rs = $rs->orderBy('id', 'desc')->paginate($pageSize);
+        $rs = $rs->orderBy('account_time', 'desc')->paginate($pageSize);
         return $this->myResult(1,'获取信息成功！',$rs);
     }
 
@@ -330,7 +330,7 @@ class AccountController extends Controller
             and  object_type=? and time>=? and time<=?',[$id,'员工',$start_time,$end_time]);
             $rs['tasks']=DB::select('select vtasks.linkman as linkman,vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
                 'usertasks.*,(work_salary+extra_salary+award_salary) as money from usertasks '.
-                'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id<1 and usertasks.start_time>=? and usertasks.start_time<=? ',
+                'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id<1 and usertasks.start_time>=? and usertasks.start_time<=?  order by usertasks.start_time desc',
                 [$id,$start_time,$end_time]);
             return $this->myResult(1,'获取成功！',$rs);
         }else
@@ -361,7 +361,7 @@ class AccountController extends Controller
             $rs['account']=$account;
             $rs['tasks']=DB::select('select vtasks.linkman as linkman,vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
                 'usertasks.*,(work_salary+extra_salary+award_salary) as money from usertasks '.
-                'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id=? ',
+                'left join vtasks on usertasks.task_id=vtasks.id where usertasks.user_id=? and usertasks.account_id=?  order by usertasks.start_time desc',
                 [$userID,$account->id]);
             $rs['pays']=$tmp = DB::select('select * from userpays where object_id=? and account_id=? and  object_type=?',
                 [$userID,$account->id,'员工']);
@@ -404,7 +404,7 @@ class AccountController extends Controller
             and  object_type=? and time>=? and time<=?',[$id,'车辆',$start_time,$end_time]);
             $rs['tasks']=DB::select('select vtasks.linkman as linkman,vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
                 'cartasks.*,(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as money from cartasks '.
-                'left join vtasks on cartasks.task_id=vtasks.id where cartasks.car_id=? and cartasks.account_id<1 and cartasks.start_time>=? and cartasks.start_time<=?',
+                'left join vtasks on cartasks.task_id=vtasks.id where cartasks.car_id=? and cartasks.account_id<1 and cartasks.start_time>=? and cartasks.start_time<=?  order by cartasks.start_time desc',
                 [$id,$start_time,$end_time]);
             return $this->myResult(1,'获取成功！',$rs);
         }else
@@ -436,7 +436,7 @@ class AccountController extends Controller
             $rs['account']=$account;
             $rs['tasks']=DB::select('select vtasks.linkman as linkman,vtasks.title as tasktitle,vtasks.state as taskstate,vtasks.station as taskstation,vtasks.name as customername,'.
                 'cartasks.*,(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as money from cartasks '.
-                'left join vtasks on cartasks.task_id=vtasks.id where cartasks.car_id=? and cartasks.account_id=? ',
+                'left join vtasks on cartasks.task_id=vtasks.id where cartasks.car_id=? and cartasks.account_id=?  order by cartasks.start_time desc',
                 [$carID,$account->id]);
             $rs['pays']=DB::select('select * from userpays where object_id=? and account_id=? and  object_type=?',
                 [$carID,$account->id,'车辆']);
