@@ -48,8 +48,9 @@ class UserPayController extends Controller
 
         $rs = Userpay::where('id','>',0);
         if($object_name){
-            $usrID = DB::select('select id from users where name LIKE ?',['%'.$object_name.'%']);
-            $rs = $rs->wherein('object_type',$usrID);
+            //$usrID = DB::select('select id from users where name LIKE ?',['%'.$object_name.'%']);
+
+            $rs = $rs->where('obj_name','like',['%'.$object_name.'%']);
         }
         if($object_id){
             $rs = $rs->where('object_id',$object_id);
