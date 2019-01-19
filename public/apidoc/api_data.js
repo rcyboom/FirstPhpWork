@@ -701,7 +701,7 @@ define({ "api": [
       "examples": [
         {
           "title": "简要说明",
-          "content": "1、路由名称 report.task\n2、可选参数\npageSize 分页数量，默认为15\ncustomer_id 客户ID,默认为空表示全部,这里是下拉列表（调用以前的接口获取列表），允许输入一个字进行自动完成提示，但是必须选择所选项目\nstate    任务状态，已登记、未结算、已结算 3个选项，默认为空表示全部\nstart_time 开始时间  前段请默认为年初1月1号\nend_time   截至时间  前段请默认为当前时间，注意格式，显示到天即可",
+          "content": "1、路由名称 report.task\n2、可选参数\npageSize 分页数量，默认为30\ncustomer_id 客户ID,默认为空表示全部,这里是下拉列表（调用以前的接口获取列表），允许输入一个字进行自动完成提示，但是必须选择所选项目\nstate    任务状态，已登记、未结算、已结算 3个选项，默认为空表示全部\nstart_time 开始时间  前段请默认为年初1月1号\nend_time   截至时间  前段请默认为当前时间，注意格式，显示到天即可",
           "type": "json"
         }
       ]
@@ -729,6 +729,25 @@ define({ "api": [
     "filename": "./ReportController.php",
     "groupTitle": "报表管理",
     "name": "GetApiReportUser"
+  },
+  {
+    "type": "get",
+    "url": "/api/report/userlist",
+    "title": "3.人员出勤统计",
+    "group": "报表管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 report.userlist\n2、可选参数 分页\npageSize 分页参数，默认为30\nstart_time 开始时间  前段请默认为年初1月1号\nend_time   截至时间  前段请默认为当前时间，注意格式，显示到天即可\nid 用户ID，默认为空表示全部,这里是下拉列表（调用以前的接口获取列表），允许输入一个字进行自动完成提示，但是必须选择所选项目",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./ReportController.php",
+    "groupTitle": "报表管理",
+    "name": "GetApiReportUserlist"
   },
   {
     "type": "delete",
