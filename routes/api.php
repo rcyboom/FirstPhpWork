@@ -110,7 +110,10 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
     Route::get('accounts/getAccountCar', 'AccountController@getAccountCar')->name('accounts.getAccountCar');
     Route::get('accounts/getAccountCarListById', 'AccountController@getAccountCarListById')->name('accounts.getAccountCarListById');
     Route::get('accounts/getAccountUserListById', 'AccountController@getAccountUserListById')->name('accounts.getAccountUserListById');
-
+    //报表管理
+    Route::get('report/task', 'ReportController@task')->name('report.task');
+    Route::get('report/user', 'ReportController@user')->name('report.user');
+    Route::get('report/car', 'ReportController@car')->name('report.car');
 });
 // 员工路由
 /*Route::middleware('auth:api')->group(function() {
