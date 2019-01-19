@@ -114,6 +114,7 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
     Route::get('report/task', 'ReportController@task')->name('report.task');
     Route::get('report/user', 'ReportController@user')->name('report.user');
     Route::get('report/car', 'ReportController@car')->name('report.car');
+    Route::get('report/userlist', 'ReportController@userlist')->name('report.userlist');
 });
 // 员工路由
 /*Route::middleware('auth:api')->group(function() {

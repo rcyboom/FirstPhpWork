@@ -24,7 +24,7 @@ class ReportController extends Controller
      *@apiHeaderExample 简要说明
      * 1、路由名称 report.task
      * 2、可选参数
-     * pageSize 分页数量，默认为15
+     * pageSize 分页数量，默认为30
      * customer_id 客户ID,默认为空表示全部,这里是下拉列表（调用以前的接口获取列表），允许输入一个字进行自动完成提示，但是必须选择所选项目
      * state    任务状态，已登记、未结算、已结算 3个选项，默认为空表示全部
      * start_time 开始时间  前段请默认为年初1月1号
@@ -33,7 +33,7 @@ class ReportController extends Controller
     public function task()
     {
         $pageSize = (int)Request::input('pageSize');
-        $pageSize = isset($pageSize) && $pageSize?$pageSize:15;
+        $pageSize = isset($pageSize) && $pageSize?$pageSize:30;
 
         $customer_id=Request::input('customer_id');
         $state=Request::input('state');
@@ -77,9 +77,6 @@ class ReportController extends Controller
      */
     public function user()
     {
-        $pageSize = (int)Request::input('pageSize');
-        $pageSize = isset($pageSize) && $pageSize?$pageSize:15;
-
         $start_time= new Carbon(Request::input('start_time'));
         $start_time=$start_time->startOfDay();
         $end_time= new Carbon(Request::input('end_time'));
@@ -117,9 +114,6 @@ and account_time>=? and account_time<=? group by object_id) c on n.id=c.object_i
      */
     public function car()
     {
-        $pageSize = (int)Request::input('pageSize');
-        $pageSize = isset($pageSize) && $pageSize?$pageSize:15;
-
         $start_time= new Carbon(Request::input('start_time'));
         $start_time=$start_time->startOfDay();
         $end_time= new Carbon(Request::input('end_time'));
@@ -138,4 +132,38 @@ and account_time>=? and account_time<=? group by object_id) c on cars.id=c.objec
         return $this->myResult(1,'获取成功！',$tasks);
     }
 
+    /**
+     * @api {get} /api/report/userlist 3.人员出勤统计
+     * @apiGroup 报表管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 report.userlist
+     * 2、可选参数 分页
+     * pageSize 分页参数，默认为30
+     * start_time 开始时间  前段请默认为年初1月1号
+     * end_time   截至时间  前段请默认为当前时间，注意格式，显示到天即可
+     * id 用户ID，默认为空表示全部,这里是下拉列表（调用以前的接口获取列表），允许输入一个字进行自动完成提示，但是必须选择所选项目
+     */
+    public function userlist()
+    {
+        $pageSize = (int)Request::input('pageSize');
+        $pageSize = isset($pageSize) && $pageSize?$pageSize:30;
+        $uid=Request::input('id');
+        $start_time= new Carbon(Request::input('start_time'));
+        $start_time=$start_time->startOfDay();
+        $end_time= new Carbon(Request::input('end_time'));
+        $end_time=$end_time->endOfDay();
+        if($uid)
+            $prm='and usertasks.user_id='.$uid;
+        else
+            $prm='';
+        $tasks=DB::select(
+            "select users.level,users.name,vtasks.type,vtasks.title,vtasks.name as custom,vtasks.station,vtasks.state,post,usertasks.start_time,usertasks.work_hours,
+usertasks.work_salary,usertasks.extra_salary,usertasks.award_salary,
+(usertasks.work_salary+usertasks.extra_salary+usertasks.award_salary) as salary,usertasks.score,usertasks.account_id,usertasks.remark 
+ from usertasks left join vtasks on usertasks.task_id=vtasks.id left join users on  usertasks.user_id=users.id where usertasks.start_time>=? 
+ and usertasks.start_time<=? $prm order BY start_time",
+            [$start_time,$end_time]);
+
+        return $this->myResult(1,'获取成功！',$tasks);
+    }
 }
