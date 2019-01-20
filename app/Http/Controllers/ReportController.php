@@ -91,16 +91,26 @@ class ReportController extends Controller
 
         $tasks=DB::select(
         "select level,name,duty,state,fix_salary,work_time,taskcount,levelavg,taskmoney,worksalary,
-extrasalary,awardsalary,total_salary from (select id,level,name,duty,state,fix_salary,work_time from users $prm)n 
+extrasalary,awardsalary,accountmoney from (select id,level,name,duty,state,fix_salary,work_time from users $prm)n 
 left join (select  user_id,count(*) as taskcount,avg(score) as levelavg,
 sum(work_salary+extra_salary+award_salary) as taskmoney,sum(work_salary) as worksalary,
 sum(extra_salary) as extrasalary,sum(award_salary) as awardsalary 
 from usertasks where start_time>=? and start_time<=? group by user_id) a on n.id=a.user_id 
-left join (select object_id,sum(money) as total_salary from accounts where object_type='员工结算' 
+left join (select object_id,sum(money) as accountmoney from accounts where object_type='员工结算' 
 and account_time>=? and account_time<=? group by object_id) c on n.id=c.object_id order by taskcount desc",
             [$start_time,$end_time,$start_time,$end_time]);
 
-        return $this->myResult(1,'获取成功！',$tasks);
+        $sum=DB::select(
+            "select sum(work_hours) as work_hours,sum(taskcount) as taskcount,sum(taskmoney) as taskmoney,sum(worksalary) as worksalary,
+sum(extrasalary) as extrasalary,sum(awardsalary) as awardsalary,sum(accountmoney) as accountmoney from (select id from users $prm)n 
+left join (select  user_id,count(*) as taskcount,sum(work_salary+extra_salary+award_salary) as taskmoney,sum(work_salary) as worksalary,
+sum(extra_salary) as extrasalary,sum(award_salary) as awardsalary,sum(work_hours) as work_hours 
+from usertasks where start_time>=? and start_time<=? group by user_id) a on n.id=a.user_id 
+left join (select object_id,sum(money) as accountmoney from accounts where object_type='员工结算' 
+and account_time>=? and account_time<=? group by object_id) c on n.id=c.object_id order by taskcount desc",
+            [$start_time,$end_time,$start_time,$end_time]);
+
+        return $this->myResult(1,'获取成功！',['tasks'=>$tasks,'sum'=>$sum]);
     }
 
     /**
@@ -121,19 +131,29 @@ and account_time>=? and account_time<=? group by object_id) c on n.id=c.object_i
 
 
         $tasks=DB::select(
-            "select car_type,car_number,work_price,taskcount,levelavg,taskmoney,rentcost,oilcost,tollcost,parkcost,awardsalary,total_salary from cars 
+            "select car_type,car_number,work_price,taskcount,levelavg,taskmoney,rentcost,oilcost,tollcost,parkcost,awardsalary,accountmoney from cars 
 left join (select  car_id,count(*) as taskcount,avg(score) as levelavg,sum(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as taskmoney, 
 sum(rent_cost) as rentcost,sum(oil_cost) as oilcost,sum(toll_cost) as tollcost,sum(park_cost) as parkcost,sum(award_salary) as awardsalary 
 from cartasks where start_time>=? and start_time<=? group by car_id) a on cars.id=a.car_id 
-left join (select object_id,sum(money) as total_salary from accounts where object_type='车辆结算' 
+left join (select object_id,sum(money) as accountmoney from accounts where object_type='车辆结算' 
 and account_time>=? and account_time<=? group by object_id) c on cars.id=c.object_id order by taskcount desc",
             [$start_time,$end_time,$start_time,$end_time]);
 
-        return $this->myResult(1,'获取成功！',$tasks);
+        $sum=DB::select(
+            "select sum(taskcount)as taskcount,sum(taskmoney)as taskmoney,sum(rentcost) as rentcost,sum(oilcost) as oilcost,
+sum(tollcost) as tollcost,sum(parkcost) as parkcost,sum(awardsalary) as awardsalary,sum(accountmoney) as accountmoney from cars 
+left join (select  car_id,count(*) as taskcount,sum(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as taskmoney, 
+sum(rent_cost) as rentcost,sum(oil_cost) as oilcost,sum(toll_cost) as tollcost,sum(park_cost) as parkcost,sum(award_salary) as awardsalary 
+from cartasks where start_time>=? and start_time<=? group by car_id) a on cars.id=a.car_id 
+left join (select object_id,sum(money) as accountmoney from accounts where object_type='车辆结算' 
+and account_time>=? and account_time<=? group by object_id) c on cars.id=c.object_id order by taskcount desc",
+            [$start_time,$end_time,$start_time,$end_time]);
+
+        return $this->myResult(1,'获取成功！',['tasks'=>$tasks,'sum'=>$sum]);
     }
 
     /**
-     * @api {get} /api/report/userlist 3.人员出勤统计
+     * @api {get} /api/report/userlist 4.人员出勤统计
      * @apiGroup 报表管理
      *@apiHeaderExample 简要说明
      * 1、路由名称 report.userlist
@@ -152,18 +172,106 @@ and account_time>=? and account_time<=? group by object_id) c on cars.id=c.objec
         $start_time=$start_time->startOfDay();
         $end_time= new Carbon(Request::input('end_time'));
         $end_time=$end_time->endOfDay();
-        if($uid)
-            $prm='and usertasks.user_id='.$uid;
-        else
-            $prm='';
-        $tasks=DB::select(
-            "select users.level,users.name,vtasks.type,vtasks.title,vtasks.name as custom,vtasks.station,vtasks.state,post,usertasks.start_time,usertasks.work_hours,
-usertasks.work_salary,usertasks.extra_salary,usertasks.award_salary,
-(usertasks.work_salary+usertasks.extra_salary+usertasks.award_salary) as salary,usertasks.score,usertasks.account_id,usertasks.remark 
- from usertasks left join vtasks on usertasks.task_id=vtasks.id left join users on  usertasks.user_id=users.id where usertasks.start_time>=? 
- and usertasks.start_time<=? $prm order BY start_time",
-            [$start_time,$end_time]);
 
-        return $this->myResult(1,'获取成功！',$tasks);
+        $tasks=DB::Table('rusertask')
+            ->where('start_time','>=',$start_time)
+            ->where('start_time','<=',$end_time);
+        if($uid)
+            $tasks=$tasks->where('user_id',$uid);
+        $tasks=$tasks->orderby('user_id')->paginate($pageSize);
+
+        $sum=DB::table('rusertask')
+            ->select(DB::raw('count(*) as count,sum(work_hours) as workhours,sum(work_salary) as worksalary,'
+                .'sum(extra_salary) as extrasalary,sum(award_salary) as awardsalary,sum(salary) as salary'))
+            ->where('start_time','>=',$start_time)
+            ->where('start_time','<=',$end_time);
+        if($uid)
+            $sum=$sum->where('user_id',$uid);
+        $sum=$sum->get();
+
+
+        return $this->myResult(1,'获取成功！',['tasks'=>$tasks,'sum'=>$sum]);
+    }
+
+    /**
+     * @api {get} /api/report/carlist 5.车辆出勤统计
+     * @apiGroup 报表管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 report.carlist
+     * 2、可选参数 分页
+     * pageSize 分页参数，默认为30
+     * start_time 开始时间  前段请默认为年初1月1号
+     * end_time   截至时间  前段请默认为当前时间，注意格式，显示到天即可
+     * id 车辆ID，默认为空表示全部,这里是下拉列表（调用以前的接口获取列表），允许输入一个字进行自动完成提示，但是必须选择所选项目
+     */
+    public function carlist()
+    {
+        $pageSize = (int)Request::input('pageSize');
+        $pageSize = isset($pageSize) && $pageSize?$pageSize:30;
+        $uid=Request::input('id');
+        $start_time= new Carbon(Request::input('start_time'));
+        $start_time=$start_time->startOfDay();
+        $end_time= new Carbon(Request::input('end_time'));
+        $end_time=$end_time->endOfDay();
+
+        $tasks=DB::Table('rcartask')
+            ->where('start_time','>=',$start_time)
+            ->where('start_time','<=',$end_time);
+        if($uid)
+            $tasks=$tasks->where('car_id',$uid);
+        $tasks=$tasks->orderby('car_id')->paginate($pageSize);
+
+        $sum=DB::table('rcartask')
+            ->select(DB::raw('count(*) as count,sum(rent_cost) as rentcost,sum(oil_cost) as oilcost,
+            sum(toll_cost) as tollcost,sum(park_cost) as parkcost,sum(award_salary) as awardsalary,sum(salary) as salary'))
+            ->where('start_time','>=',$start_time)
+            ->where('start_time','<=',$end_time);
+        if($uid)
+            $sum=$sum->where('car_id',$uid);
+        $sum=$sum->get();
+
+        return $this->myResult(1,'获取成功！',['tasks'=>$tasks,'sum'=>$sum]);
+    }
+
+    /**
+     * @api {get} /api/report/accountlist 6.收支统计
+     * @apiGroup 报表管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 report.accountlist
+     * 2、可选参数 分页
+     * pageSize 分页参数，默认为30
+     * start_time 开始时间  前段请默认为年初1月1号
+     * end_time   截至时间  前段请默认为当前时间，注意格式，显示到天即可
+     * account_type 收支类型，默认空表示全部，可选项 1表示收入 -1表示支出
+     * object_type 收支对象类型，我写个接口返回所有可选类型，然后允许输入自动匹配但是必须是选择项里面的一条或者为空表示全部
+     * 注意，如果是员工结算，需要可以弹出那个PDF页面明细
+     */
+    public function accountlist()
+    {
+        $pageSize = (int)Request::input('pageSize');
+        $pageSize = isset($pageSize) && $pageSize?$pageSize:30;
+        $uid=Request::input('id');
+        $start_time= new Carbon(Request::input('start_time'));
+        $start_time=$start_time->startOfDay();
+        $end_time= new Carbon(Request::input('end_time'));
+        $end_time=$end_time->endOfDay();
+
+        $tasks=DB::Table('rcartask')
+            ->where('start_time','>=',$start_time)
+            ->where('start_time','<=',$end_time);
+        if($uid)
+            $tasks=$tasks->where('car_id',$uid);
+        $tasks=$tasks->orderby('car_id')->paginate($pageSize);
+
+        $sum=DB::table('rcartask')
+            ->select(DB::raw('count(*) as count,sum(rent_cost) as rentcost,sum(oil_cost) as oilcost,
+            sum(toll_cost) as tollcost,sum(park_cost) as parkcost,sum(award_salary) as awardsalary,sum(salary) as salary'))
+            ->where('start_time','>=',$start_time)
+            ->where('start_time','<=',$end_time);
+        if($uid)
+            $sum=$sum->where('car_id',$uid);
+        $sum=$sum->get();
+
+        return $this->myResult(1,'获取成功！',['tasks'=>$tasks,'sum'=>$sum]);
     }
 }
