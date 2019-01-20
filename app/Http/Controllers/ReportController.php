@@ -277,6 +277,7 @@ and account_time>=? and account_time<=? group by object_id) c on cars.id=c.objec
 
 
         $tasks=DB::Table('accounts')
+            ->select('id','account_type','account_time','object_type','object_name','money','trade_type','trade_account','handler','remark')
             ->where('account_time','>=',$start_time)
             ->where('account_time','<=',$end_time);
         if($account_type)
