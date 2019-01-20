@@ -19,7 +19,7 @@ class ReportController extends Controller
     use Result;
 
     /**
-     * @api {get} /api/report/task 1.工单查询列表
+     * @api {get} /api/report/task 1.客户工单统计
      * @apiGroup 报表管理
      *@apiHeaderExample 简要说明
      * 1、路由名称 report.task
@@ -62,11 +62,11 @@ class ReportController extends Controller
         if($state)
             $total=$total->where('state',$state);
         $total=$total->get();
-        return $this->myResult(1,'获取成功！',['tasks'=>$tasks,'sum'=>$total[0]]);
+        return $this->myResult(1,'获取成功！',['sum'=>$total,'tasks'=>$tasks]);
     }
 
     /**
-     * @api {get} /api/report/user 2.员工出勤及工资发放分析
+     * @api {get} /api/report/user 2.员工出勤及工资发放统计
      * @apiGroup 报表管理
      *@apiHeaderExample 简要说明
      * 1、路由名称 report.user
@@ -110,11 +110,11 @@ left join (select object_id,sum(money) as accountmoney from accounts where objec
 and account_time>=? and account_time<=? group by object_id) c on n.id=c.object_id order by taskcount desc",
             [$start_time,$end_time,$start_time,$end_time]);
 
-        return $this->myResult(1,'获取成功！',['tasks'=>$tasks,'sum'=>$sum]);
+        return $this->myResult(1,'获取成功！',['sum'=>$sum,'tasks'=>$tasks]);
     }
 
     /**
-     * @api {get} /api/report/car 3.车辆出勤及工资发放分析
+     * @api {get} /api/report/car 3.车辆出勤及工资发放统计
      * @apiGroup 报表管理
      *@apiHeaderExample 简要说明
      * 1、路由名称 report.car
@@ -149,7 +149,7 @@ left join (select object_id,sum(money) as accountmoney from accounts where objec
 and account_time>=? and account_time<=? group by object_id) c on cars.id=c.object_id order by taskcount desc",
             [$start_time,$end_time,$start_time,$end_time]);
 
-        return $this->myResult(1,'获取成功！',['tasks'=>$tasks,'sum'=>$sum]);
+        return $this->myResult(1,'获取成功！',['sum'=>$sum,'tasks'=>$tasks]);
     }
 
     /**
@@ -187,10 +187,10 @@ and account_time>=? and account_time<=? group by object_id) c on cars.id=c.objec
             ->where('start_time','<=',$end_time);
         if($uid)
             $sum=$sum->where('user_id',$uid);
-        $sum=$sum->get();
+        $sum=$sum->first();
 
 
-        return $this->myResult(1,'获取成功！',['tasks'=>$tasks,'sum'=>$sum]);
+        return $this->myResult(1,'获取成功！',['sum'=>$sum,'tasks'=>$tasks]);
     }
 
     /**
@@ -228,13 +228,26 @@ and account_time>=? and account_time<=? group by object_id) c on cars.id=c.objec
             ->where('start_time','<=',$end_time);
         if($uid)
             $sum=$sum->where('car_id',$uid);
-        $sum=$sum->get();
+        $sum=$sum->first();
 
-        return $this->myResult(1,'获取成功！',['tasks'=>$tasks,'sum'=>$sum]);
+        return $this->myResult(1,'获取成功！',['sum'=>$sum,'tasks'=>$tasks]);
     }
 
     /**
-     * @api {get} /api/report/accountlist 6.收支统计
+     * @api {get} /api/report/objecttype 60.获取可选的收支对象类型
+     * @apiGroup 报表管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 report.objecttype
+     * 2、不要任何参数，用于接口6使用
+     */
+    public function objecttype()
+    {
+        $sum=DB::table('accounts')->select('object_type')->distinct()->pluck('object_type');
+        return $this->myResult(1,'获取成功！',$sum);
+    }
+
+    /**
+     * @api {get} /api/report/accountlist 6.财务收支统计
      * @apiGroup 报表管理
      *@apiHeaderExample 简要说明
      * 1、路由名称 report.accountlist
@@ -243,35 +256,54 @@ and account_time>=? and account_time<=? group by object_id) c on cars.id=c.objec
      * start_time 开始时间  前段请默认为年初1月1号
      * end_time   截至时间  前段请默认为当前时间，注意格式，显示到天即可
      * account_type 收支类型，默认空表示全部，可选项 1表示收入 -1表示支出
-     * object_type 收支对象类型，我写个接口返回所有可选类型，然后允许输入自动匹配但是必须是选择项里面的一条或者为空表示全部
+     * trade_type 账户类型，这个应该是从你那个配置选项获取下拉框，默认空表示全部
+     * object_type 收支对象类型，接口61返回所有可选类型，然后允许输入自动匹配但是必须是选择项里面的一条或者为空表示全部
+     * object_name 对象名称，手动输入字符串，默认空，模糊匹配
      * 注意，如果是员工结算，需要可以弹出那个PDF页面明细
      */
     public function accountlist()
     {
         $pageSize = (int)Request::input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:30;
-        $uid=Request::input('id');
         $start_time= new Carbon(Request::input('start_time'));
         $start_time=$start_time->startOfDay();
         $end_time= new Carbon(Request::input('end_time'));
         $end_time=$end_time->endOfDay();
 
-        $tasks=DB::Table('rcartask')
-            ->where('start_time','>=',$start_time)
-            ->where('start_time','<=',$end_time);
-        if($uid)
-            $tasks=$tasks->where('car_id',$uid);
-        $tasks=$tasks->orderby('car_id')->paginate($pageSize);
+        $account_type=Request::input('account_type');
+        $trade_type=Request::input('trade_type');
+        $object_type=Request::input('object_type');
+        $object_name=Request::input('object_name');
 
-        $sum=DB::table('rcartask')
-            ->select(DB::raw('count(*) as count,sum(rent_cost) as rentcost,sum(oil_cost) as oilcost,
-            sum(toll_cost) as tollcost,sum(park_cost) as parkcost,sum(award_salary) as awardsalary,sum(salary) as salary'))
-            ->where('start_time','>=',$start_time)
-            ->where('start_time','<=',$end_time);
-        if($uid)
-            $sum=$sum->where('car_id',$uid);
-        $sum=$sum->get();
 
-        return $this->myResult(1,'获取成功！',['tasks'=>$tasks,'sum'=>$sum]);
+        $tasks=DB::Table('accounts')
+            ->where('account_time','>=',$start_time)
+            ->where('account_time','<=',$end_time);
+        if($account_type)
+            $tasks=$tasks->where('account_type',$account_type);
+        if($trade_type)
+            $tasks=$tasks->where('trade_type',$trade_type);
+        if($object_type)
+            $tasks=$tasks->where('object_type',$object_type);
+        if($object_name)
+            $tasks=$tasks->where('object_name','like','%'.$object_name.'%');
+
+        $tasks=$tasks->orderby('account_time')->paginate($pageSize);
+
+        $sum=DB::table('accounts')
+            ->select(DB::raw('count(*) as count,sum(money) as money'))
+            ->where('account_time','>=',$start_time)
+            ->where('account_time','<=',$end_time);
+        if($account_type)
+            $sum=$sum->where('account_type',$account_type);
+        if($trade_type)
+            $sum=$sum->where('trade_type',$trade_type);
+        if($object_type)
+            $sum=$sum->where('object_type',$object_type);
+        if($object_name)
+            $sum=$sum->where('object_name','like','%'.$object_name.'%');
+        $sum=$sum->first();
+
+        return $this->myResult(1,'获取成功！',['sum'=>$sum,'tasks'=>$tasks]);
     }
 }
