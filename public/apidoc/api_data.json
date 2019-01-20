@@ -675,8 +675,27 @@
   },
   {
     "type": "get",
+    "url": "/api/report/accountlist",
+    "title": "6.财务收支统计",
+    "group": "报表管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 report.accountlist\n2、可选参数 分页\npageSize 分页参数，默认为30\nstart_time 开始时间  前段请默认为年初1月1号\nend_time   截至时间  前段请默认为当前时间，注意格式，显示到天即可\naccount_type 收支类型，默认空表示全部，可选项 1表示收入 -1表示支出\ntrade_type 账户类型，这个应该是从你那个配置选项获取下拉框，默认空表示全部\nobject_type 收支对象类型，接口61返回所有可选类型，然后允许输入自动匹配但是必须是选择项里面的一条或者为空表示全部\nobject_name 对象名称，手动输入字符串，默认空，模糊匹配\n注意，如果是员工结算，需要可以弹出那个PDF页面明细",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./ReportController.php",
+    "groupTitle": "报表管理",
+    "name": "GetApiReportAccountlist"
+  },
+  {
+    "type": "get",
     "url": "/api/report/car",
-    "title": "3.车辆出勤及工资发放分析",
+    "title": "3.车辆出勤及工资发放统计",
     "group": "报表管理",
     "header": {
       "examples": [
@@ -694,8 +713,46 @@
   },
   {
     "type": "get",
+    "url": "/api/report/carlist",
+    "title": "5.车辆出勤统计",
+    "group": "报表管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 report.carlist\n2、可选参数 分页\npageSize 分页参数，默认为30\nstart_time 开始时间  前段请默认为年初1月1号\nend_time   截至时间  前段请默认为当前时间，注意格式，显示到天即可\nid 车辆ID，默认为空表示全部,这里是下拉列表（调用以前的接口获取列表），允许输入一个字进行自动完成提示，但是必须选择所选项目",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./ReportController.php",
+    "groupTitle": "报表管理",
+    "name": "GetApiReportCarlist"
+  },
+  {
+    "type": "get",
+    "url": "/api/report/objecttype",
+    "title": "60.获取可选的收支对象类型",
+    "group": "报表管理",
+    "header": {
+      "examples": [
+        {
+          "title": "简要说明",
+          "content": "1、路由名称 report.objecttype\n2、不要任何参数，用于接口6使用",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "./ReportController.php",
+    "groupTitle": "报表管理",
+    "name": "GetApiReportObjecttype"
+  },
+  {
+    "type": "get",
     "url": "/api/report/task",
-    "title": "1.工单查询列表",
+    "title": "1.客户工单统计",
     "group": "报表管理",
     "header": {
       "examples": [
@@ -714,7 +771,7 @@
   {
     "type": "get",
     "url": "/api/report/user",
-    "title": "2.员工出勤及工资发放分析",
+    "title": "2.员工出勤及工资发放统计",
     "group": "报表管理",
     "header": {
       "examples": [
@@ -733,7 +790,7 @@
   {
     "type": "get",
     "url": "/api/report/userlist",
-    "title": "3.人员出勤统计",
+    "title": "4.人员出勤统计",
     "group": "报表管理",
     "header": {
       "examples": [
