@@ -2,15 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\TaskCollection;
-use App\Models\Account;
-use App\Models\Cartask;
-use App\Models\Task;
-use App\Models\Usertask;
-use App\Models\Car;
-use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
