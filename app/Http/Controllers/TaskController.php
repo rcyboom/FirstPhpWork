@@ -137,7 +137,7 @@ class TaskController extends Controller
          * station 工作地点 字符串
          * remark 任务备注 字符串
          * 4、特别说明：
-         * 这些字段不可修改：check_time 登记时间,customer_id客户ID,title任务标题
+         * 这些字段不可修改：check_time 登记时间,title任务标题
          */
     public function update()
     {
@@ -156,6 +156,7 @@ class TaskController extends Controller
             'receivables'=>'nullable|numeric | min:0',
             'tax'=>'nullable|numeric | min:0',
             'title' => 'required',
+            'customer_id' => 'required | integer | min:1',
         ]);
 
         if ($validator->fails()) {
@@ -181,6 +182,7 @@ class TaskController extends Controller
         $rs->station = Request::input('station');
         $rs->remark = Request::input('remark');
         $rs->title = Request::input('title');
+        $rs->customer_id = Request::input('customer_id');
 
         if($rs->save()){
             if($rs->account_id >0){
