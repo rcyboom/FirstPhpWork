@@ -35,7 +35,7 @@ class Task  extends Model
         $name = request()->input('customer_name');
         if ($name !=null) {
             $customer_id=Customer::where('name', 'like', '%'.$name.'%')->select('id');
-            return $query = $query->whereIn('customer_id', $customer_id);
+            return $query = $query->whereIn('customer_id', $customer_id)->orwhere('linkman', 'like', '%'.$name.'%');
         } else {
             return $query;
         }
