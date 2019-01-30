@@ -283,20 +283,18 @@ and account_time>=? and account_time<=? group by object_id) c on cars.id=c.objec
 
         $tasks=$tasks->orderby('account_time')->paginate($pageSize);
 
-        $sum=DB::table('accounts')
-            ->select(DB::raw('count(*) as count,sum(money) as money'))
-            ->where('account_time','>=',$start_time)
-            ->where('account_time','<=',$end_time);
-        if($account_type)
-            $sum=$sum->where('account_type',$account_type);
-        if($trade_type)
-            $sum=$sum->where('trade_type',$trade_type);
-        if($object_type)
-            $sum=$sum->where('object_type',$object_type);
-        if($object_name)
-            $sum=$sum->where('object_name','like','%'.$object_name.'%');
-        $sum=$sum->first();
-
+        $sum=DB::select("
+        select *,预支工资+员工结算+客户结算+车辆结算+公司运营费+其他收入-设备费用-税费 as 总利润 
+from (SELECT  SUM(CASE object_type WHEN '客户结算' THEN money ELSE 0 END ) 客户结算,
+  SUM(CASE object_type WHEN '其他收入' THEN money ELSE 0 END ) 其他收入,
+  SUM(CASE object_type WHEN '预支工资' THEN money ELSE 0 END ) 预支工资,
+  SUM(CASE object_type WHEN '员工结算' THEN money ELSE 0 END ) 员工结算,
+  SUM(CASE object_type WHEN '车辆结算' THEN money ELSE 0 END ) 车辆结算,
+  SUM(CASE object_type WHEN '公司运营费' THEN money ELSE 0 END ) 公司运营费 
+FROM accounts WHERE account_time>=? and account_time<=?) a,
+(SELECT sum(equipment_cost) as 设备费用,sum(tax) as 税费 
+ from tasks where start_time>=? and start_time<=?) b",[$start_time,$end_time,$start_time,$end_time]);
+        $sum=$sum[0];
         return $this->myResult(1,'获取成功！',['sum'=>$sum,'tasks'=>$tasks]);
     }
 }

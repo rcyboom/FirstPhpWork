@@ -357,6 +357,7 @@ class AccountController extends Controller
 
         $account=Account::find(Request::input('accountID'));
         if($account){
+            $account->money=-$account->money;
             $userID=$account->object_id;
             $rs=array();
             $rs['account']=$account;
@@ -432,6 +433,7 @@ class AccountController extends Controller
         $account=Account::find(Request::input('accountID'));
         if($account)
         {
+            $account->money=-$account->money;
             $carID=$account->object_id;
             $rs=array();
             $rs['account']=$account;
@@ -512,7 +514,7 @@ class AccountController extends Controller
             $acc->end_time=Carbon::now();
             $acc->fix_salary=$usr->fix_salary;
             $acc->remark=Request::input('remark');
-            $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc+$usr->fix_salary;
+            $acc->money= -$taskmoney[0]->cc -$usermoney[0]->cc -$usr->fix_salary;
             $acc->save();
             DB::update('update usertasks set account_id = ? where account_id<1 and user_id=? and id IN('.$user_task_id.')',
                 [$acc->id,$usr->id]);
@@ -582,7 +584,7 @@ class AccountController extends Controller
             $acc->trade_account=Request::input('trade_account');
             $acc->end_time=Carbon::now();
             $acc->remark=Request::input('remark');
-            $acc->money=$taskmoney[0]->cc+$usermoney[0]->cc;
+            $acc->money=-$taskmoney[0]->cc -$usermoney[0]->cc;
             $acc->save();
             DB::update('update cartasks set account_id = ? where account_id <1 and car_id=? and id in ('.$car_task_id.')',
                 [$acc->id,$car->id]);
