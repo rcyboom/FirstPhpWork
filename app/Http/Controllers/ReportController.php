@@ -71,9 +71,9 @@ class ReportController extends Controller
     public function user()
     {
         $start_time= new Carbon(Request::input('start_time'));
-        $start_time=$start_time->startOfDay();
+        $start_time=$start_time->startOfMonth();
         $end_time= new Carbon(Request::input('end_time'));
-        $end_time=$end_time->endOfDay();
+        $end_time=$end_time->endOfMonth();
         $yf=$end_time->month - $start_time->month +1;
         $type=Request::input('type',0);
         if($type>0)
@@ -145,9 +145,9 @@ on n.id=d.object_id order by taskcount desc",
     public function car()
     {
         $start_time= new Carbon(Request::input('start_time'));
-        $start_time=$start_time->startOfDay();
+        $start_time=$start_time->startOfMonth();
         $end_time= new Carbon(Request::input('end_time'));
-        $end_time=$end_time->endOfDay();
+        $end_time=$end_time->endOfMonth();
 
 
         $tasks=DB::select(
