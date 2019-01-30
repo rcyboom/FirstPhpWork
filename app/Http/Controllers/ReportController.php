@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
+use Psy\Tests\Input\CodeArgumentTest;
 
 class ReportController extends Controller
 {
@@ -73,6 +74,7 @@ class ReportController extends Controller
         $start_time=$start_time->startOfDay();
         $end_time= new Carbon(Request::input('end_time'));
         $end_time=$end_time->endOfDay();
+        $yf=$end_time->month - $start_time->month +1;
         $type=Request::input('type',0);
         if($type>0)
             $prm='where fix_salary>0';
@@ -82,25 +84,51 @@ class ReportController extends Controller
             $prm='';
 
         $tasks=DB::select(
-        "select level,name,duty,state,fix_salary,work_time,taskcount,levelavg,taskmoney,worksalary,
-extrasalary,awardsalary,accountmoney from (select id,level,name,duty,state,fix_salary,work_time from users $prm)n 
+        "select level,name,duty,fix_salary*? as 基本工资,taskcount,workhours,levelavg,taskmoney as 任务工资,worksalary,
+extrasalary,awardsalary,应加,应减,预支,补助,罚款,奖励,ifnull(加减,0) 加减合计,
+(ifnull(taskmoney,0)+ifnull(加减,0)+fix_salary*?) as 应发金额,
+accountmoney as 已发金额,(ifnull(taskmoney,0)+ifnull(加减,0)+fix_salary*?+ifnull(accountmoney,0)) as 未发金额 
+from (select id,level,name,duty,fix_salary from users $prm)n 
 left join (select  user_id,count(*) as taskcount,avg(score) as levelavg,
 sum(work_salary+extra_salary+award_salary) as taskmoney,sum(work_salary) as worksalary,
-sum(extra_salary) as extrasalary,sum(award_salary) as awardsalary 
+sum(extra_salary) as extrasalary,sum(award_salary) as awardsalary,sum(work_hours) as workhours  
 from usertasks where start_time>=? and start_time<=? group by user_id) a on n.id=a.user_id 
 left join (select object_id,sum(money) as accountmoney from accounts where object_type='员工结算' 
-and account_time>=? and account_time<=? group by object_id) c on n.id=c.object_id order by taskcount desc",
-            [$start_time,$end_time,$start_time,$end_time]);
+and account_time>=? and account_time<=? group by object_id) c on n.id=c.object_id 
+left join (SELECT object_id,
+  SUM(CASE type WHEN '应加' THEN money ELSE 0 END ) 应加,
+  SUM(CASE type WHEN '应减' THEN money ELSE 0 END ) 应减,
+  SUM(CASE type WHEN '预支' THEN money ELSE 0 END ) 预支,
+  SUM(CASE type WHEN '补助' THEN money ELSE 0 END ) 补助,
+  SUM(CASE type WHEN '罚款' THEN money ELSE 0 END ) 罚款,
+  SUM(CASE type WHEN '奖励' THEN money ELSE 0 END ) 奖励,
+  SUM(money) 加减 from userpays where object_type='员工' and time>=? and time<=? group by object_id) d 
+on n.id=d.object_id order by taskcount desc",
+            [$yf,$yf,$yf,$start_time,$end_time,$start_time,$end_time,$start_time,$end_time]);
 
         $sum=DB::select(
-            "select sum(work_hours) as work_hours,sum(taskcount) as taskcount,sum(taskmoney) as taskmoney,sum(worksalary) as worksalary,
-sum(extrasalary) as extrasalary,sum(awardsalary) as awardsalary,sum(accountmoney) as accountmoney from (select id from users $prm)n 
-left join (select  user_id,count(*) as taskcount,sum(work_salary+extra_salary+award_salary) as taskmoney,sum(work_salary) as worksalary,
-sum(extra_salary) as extrasalary,sum(award_salary) as awardsalary,sum(work_hours) as work_hours 
+            "select sum(fix_salary*?) as 基本工资,sum(taskcount) as 任务次数,sum(workhours) as 总工时,
+sum(taskmoney) as 任务金额,sum(应加) as 应加,sum(应减) as 应减,sum(预支) as 预支,sum(补助) as 补助,sum(罚款) as 罚款,
+sum(奖励) as 奖励,sum(加减) 加减合计,
+sum(ifnull(taskmoney,0)+ifnull(加减,0)+fix_salary*?) as 应发金额,
+sum(accountmoney) as 已发金额,sum(ifnull(taskmoney,0)+ifnull(加减,0)+fix_salary*?+ifnull(accountmoney,0)) as 未发金额 
+from (select id,fix_salary from users $prm)n 
+left join (select  user_id,count(*) as taskcount,
+sum(work_salary+extra_salary+award_salary) as taskmoney,sum(work_salary) as worksalary,
+sum(extra_salary) as extrasalary,sum(award_salary) as awardsalary,sum(work_hours) as workhours  
 from usertasks where start_time>=? and start_time<=? group by user_id) a on n.id=a.user_id 
 left join (select object_id,sum(money) as accountmoney from accounts where object_type='员工结算' 
-and account_time>=? and account_time<=? group by object_id) c on n.id=c.object_id order by taskcount desc",
-            [$start_time,$end_time,$start_time,$end_time]);
+and account_time>=? and account_time<=? group by object_id) c on n.id=c.object_id 
+left join (SELECT object_id,
+  SUM(CASE type WHEN '应加' THEN money ELSE 0 END ) 应加,
+  SUM(CASE type WHEN '应减' THEN money ELSE 0 END ) 应减,
+  SUM(CASE type WHEN '预支' THEN money ELSE 0 END ) 预支,
+  SUM(CASE type WHEN '补助' THEN money ELSE 0 END ) 补助,
+  SUM(CASE type WHEN '罚款' THEN money ELSE 0 END ) 罚款,
+  SUM(CASE type WHEN '奖励' THEN money ELSE 0 END ) 奖励,
+  SUM(money) 加减 from userpays where object_type='员工' and time>=? and time<=? group by object_id) d 
+on n.id=d.object_id order by taskcount desc",
+            [$yf,$yf,$yf,$start_time,$end_time,$start_time,$end_time,$start_time,$end_time]);
 
         return $this->myResult(1,'获取成功！',['sum'=>$sum,'tasks'=>$tasks]);
     }
@@ -123,23 +151,54 @@ and account_time>=? and account_time<=? group by object_id) c on n.id=c.object_i
 
 
         $tasks=DB::select(
-            "select car_type,car_number,work_price,taskcount,levelavg,taskmoney,rentcost,oilcost,tollcost,parkcost,awardsalary,accountmoney from cars 
-left join (select  car_id,count(*) as taskcount,avg(score) as levelavg,sum(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as taskmoney, 
-sum(rent_cost) as rentcost,sum(oil_cost) as oilcost,sum(toll_cost) as tollcost,sum(park_cost) as parkcost,sum(award_salary) as awardsalary 
+            "select car_type,car_number,work_price,taskcount,levelavg,taskmoney,rentcost,oilcost,
+tollcost,parkcost,awardsalary,ifnull(加减,0) 加减金额,
+(ifnull(taskmoney,0)+ifnull(加减,0)) as 应发金额,accountmoney as 已发金额,
+(ifnull(taskmoney,0)+ifnull(加减,0)+ifnull(accountmoney,0)) as 未发金额  from cars 
+left join (select  car_id,count(*) as taskcount,avg(score) as levelavg,
+sum(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as taskmoney, 
+sum(rent_cost) as rentcost,sum(oil_cost) as oilcost,sum(toll_cost) as tollcost,
+sum(park_cost) as parkcost,sum(award_salary) as awardsalary 
 from cartasks where start_time>=? and start_time<=? group by car_id) a on cars.id=a.car_id 
 left join (select object_id,sum(money) as accountmoney from accounts where object_type='车辆结算' 
-and account_time>=? and account_time<=? group by object_id) c on cars.id=c.object_id order by taskcount desc",
-            [$start_time,$end_time,$start_time,$end_time]);
+and account_time>=? and account_time<=? group by object_id) c on cars.id=c.object_id 
+left join (SELECT object_id,
+  SUM(CASE type WHEN '应加' THEN money ELSE 0 END ) 应加,
+  SUM(CASE type WHEN '应减' THEN money ELSE 0 END ) 应减,
+  SUM(CASE type WHEN '预支' THEN money ELSE 0 END ) 预支,
+  SUM(CASE type WHEN '补助' THEN money ELSE 0 END ) 补助,
+  SUM(CASE type WHEN '罚款' THEN money ELSE 0 END ) 罚款,
+  SUM(CASE type WHEN '奖励' THEN money ELSE 0 END ) 奖励,
+  SUM(money) 加减 from userpays 
+where object_type='车辆' and time>=? and time<=? group by object_id) d 
+on cars.id=d.object_id 
+order by taskcount desc",
+            [$start_time,$end_time,$start_time,$end_time,$start_time,$end_time]);
 
         $sum=DB::select(
-            "select sum(taskcount)as taskcount,sum(taskmoney)as taskmoney,sum(rentcost) as rentcost,sum(oilcost) as oilcost,
-sum(tollcost) as tollcost,sum(parkcost) as parkcost,sum(awardsalary) as awardsalary,sum(accountmoney) as accountmoney from cars 
-left join (select  car_id,count(*) as taskcount,sum(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as taskmoney, 
-sum(rent_cost) as rentcost,sum(oil_cost) as oilcost,sum(toll_cost) as tollcost,sum(park_cost) as parkcost,sum(award_salary) as awardsalary 
+            "select sum(taskcount) as 出勤次数,sum(taskmoney) as 出勤费用,sum(rentcost) as 车费 ,sum(oilcost) as 油费,
+sum(tollcost) as 过路费,sum(parkcost) as 停车费,sum(awardsalary) as 绩效金额,sum(加减) AS 加减金额,
+sum(ifnull(taskmoney,0)+ifnull(加减,0)) as 应发金额,sum(accountmoney) as 已发金额,
+sum(ifnull(taskmoney,0)+ifnull(加减,0)+ifnull(accountmoney,0)) as 未发金额  from cars 
+left join (select  car_id,count(*) as taskcount,avg(score) as levelavg,
+sum(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as taskmoney, 
+sum(rent_cost) as rentcost,sum(oil_cost) as oilcost,sum(toll_cost) as tollcost,
+sum(park_cost) as parkcost,sum(award_salary) as awardsalary 
 from cartasks where start_time>=? and start_time<=? group by car_id) a on cars.id=a.car_id 
 left join (select object_id,sum(money) as accountmoney from accounts where object_type='车辆结算' 
-and account_time>=? and account_time<=? group by object_id) c on cars.id=c.object_id order by taskcount desc",
-            [$start_time,$end_time,$start_time,$end_time]);
+and account_time>=? and account_time<=? group by object_id) c on cars.id=c.object_id 
+left join (SELECT object_id,
+  SUM(CASE type WHEN '应加' THEN money ELSE 0 END ) 应加,
+  SUM(CASE type WHEN '应减' THEN money ELSE 0 END ) 应减,
+  SUM(CASE type WHEN '预支' THEN money ELSE 0 END ) 预支,
+  SUM(CASE type WHEN '补助' THEN money ELSE 0 END ) 补助,
+  SUM(CASE type WHEN '罚款' THEN money ELSE 0 END ) 罚款,
+  SUM(CASE type WHEN '奖励' THEN money ELSE 0 END ) 奖励,
+  SUM(money) 加减 from userpays 
+where object_type='车辆' and time>=? and time<=? group by object_id) d 
+on cars.id=d.object_id 
+order by taskcount desc",
+            [$start_time,$end_time,$start_time,$end_time,$start_time,$end_time]);
 
         return $this->myResult(1,'获取成功！',['sum'=>$sum,'tasks'=>$tasks]);
     }
