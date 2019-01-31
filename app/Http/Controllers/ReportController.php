@@ -233,7 +233,7 @@ order by taskcount desc",
             $tasks=$tasks->where('user_id',$uid);
         if($is_account==1)
             $tasks=$tasks->where('account_id','>',0);
-        elseif ($is_account==0)
+        else if ($is_account==-1)
             $tasks=$tasks->where('account_id','=',0);
         $tasks=$tasks->orderby('user_id')->paginate($pageSize);
 
@@ -246,7 +246,7 @@ order by taskcount desc",
             $sum=$sum->where('user_id',$uid);
         if($is_account==1)
             $sum=$sum->where('account_id','>',0);
-        elseif ($is_account==0)
+        else if ($is_account==-1)
             $sum=$sum->where('account_id','=',0);
         $sum=$sum->first();
 
@@ -283,7 +283,7 @@ order by taskcount desc",
             $tasks=$tasks->where('car_id',$uid);
         if($is_account==1)
             $tasks=$tasks->where('account_id','>',0);
-        elseif ($is_account==0)
+        else if ($is_account==-1)
             $tasks=$tasks->where('account_id','=',0);
         $tasks=$tasks->orderby('car_id')->paginate($pageSize);
 
@@ -296,7 +296,7 @@ order by taskcount desc",
             $sum=$sum->where('car_id',$uid);
         if($is_account==1)
             $sum=$sum->where('account_id','>',0);
-        elseif ($is_account==0)
+        else if ($is_account==-1)
             $sum=$sum->where('account_id','=',0);
         $sum=$sum->first();
 
