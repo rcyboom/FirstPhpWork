@@ -224,11 +224,17 @@ order by taskcount desc",
         $end_time= new Carbon(Request::input('end_time'));
         $end_time=$end_time->endOfDay();
 
+        $is_account=Request::input('is_account');
+
         $tasks=DB::Table('rusertask')
             ->where('start_time','>=',$start_time)
             ->where('start_time','<=',$end_time);
         if($uid)
             $tasks=$tasks->where('user_id',$uid);
+        if($is_account==1)
+            $tasks=$tasks->where('account_id','>',0);
+        elseif ($is_account==0)
+            $tasks=$tasks->where('account_id','=',0);
         $tasks=$tasks->orderby('user_id')->paginate($pageSize);
 
         $sum=DB::table('rusertask')
@@ -238,6 +244,10 @@ order by taskcount desc",
             ->where('start_time','<=',$end_time);
         if($uid)
             $sum=$sum->where('user_id',$uid);
+        if($is_account==1)
+            $sum=$sum->where('account_id','>',0);
+        elseif ($is_account==0)
+            $sum=$sum->where('account_id','=',0);
         $sum=$sum->first();
 
 
@@ -264,12 +274,17 @@ order by taskcount desc",
         $start_time=$start_time->startOfDay();
         $end_time= new Carbon(Request::input('end_time'));
         $end_time=$end_time->endOfDay();
+        $is_account=Request::input('is_account');
 
         $tasks=DB::Table('rcartask')
             ->where('start_time','>=',$start_time)
             ->where('start_time','<=',$end_time);
         if($uid)
             $tasks=$tasks->where('car_id',$uid);
+        if($is_account==1)
+            $tasks=$tasks->where('account_id','>',0);
+        elseif ($is_account==0)
+            $tasks=$tasks->where('account_id','=',0);
         $tasks=$tasks->orderby('car_id')->paginate($pageSize);
 
         $sum=DB::table('rcartask')
@@ -279,6 +294,10 @@ order by taskcount desc",
             ->where('start_time','<=',$end_time);
         if($uid)
             $sum=$sum->where('car_id',$uid);
+        if($is_account==1)
+            $sum=$sum->where('account_id','>',0);
+        elseif ($is_account==0)
+            $sum=$sum->where('account_id','=',0);
         $sum=$sum->first();
 
         return $this->myResult(1,'获取成功！',['sum'=>$sum,'tasks'=>$tasks]);
