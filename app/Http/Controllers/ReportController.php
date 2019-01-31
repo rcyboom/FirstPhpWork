@@ -349,7 +349,8 @@ from (SELECT  SUM(CASE object_type WHEN '客户结算' THEN money ELSE 0 END ) �
   SUM(CASE object_type WHEN '预支工资' THEN money ELSE 0 END ) 预支工资,
   SUM(CASE object_type WHEN '员工结算' THEN money ELSE 0 END ) 员工结算,
   SUM(CASE object_type WHEN '车辆结算' THEN money ELSE 0 END ) 车辆结算,
-  SUM(CASE object_type WHEN '公司运营费' THEN money ELSE 0 END ) 公司运营费 
+  SUM(CASE object_type WHEN '公司运营费' THEN money ELSE 0 END ) 公司运营费,
+  SUM(money) money
 FROM accounts WHERE account_time>=? and account_time<=?) a,
 (SELECT sum(equipment_cost) as 设备费用,sum(tax) as 税费 
  from tasks where start_time>=? and start_time<=?) b",[$start_time,$end_time,$start_time,$end_time]);
