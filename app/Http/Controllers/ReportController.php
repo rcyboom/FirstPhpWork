@@ -74,7 +74,7 @@ class ReportController extends Controller
         $start_time=$start_time->startOfMonth();
         $end_time= new Carbon(Request::input('end_time'));
         $end_time=$end_time->endOfMonth();
-        $yf=$end_time->month - $start_time->month +1;
+        $yf=$end_time->month - $start_time->month +1+12*($end_time->year-$start_time->year);
         $type=Request::input('type',0);
         if($type>0)
             $prm='where fix_salary>0';
@@ -111,7 +111,7 @@ on n.id=d.object_id order by taskcount desc",
 sum(taskmoney) as 任务金额,sum(应加) as 应加,sum(应减) as 应减,sum(预支) as 预支,sum(补助) as 补助,sum(罚款) as 罚款,
 sum(奖励) as 奖励,sum(加减) 加减合计,
 sum(ifnull(taskmoney,0)+ifnull(加减,0)+fix_salary*?) as 应发金额,
-sum(accountmoney) as 已发金额,sum(ifnull(taskmoney,0)+ifnull(加减,0)+fix_salary*?+ifnull(accountmoney,0)) as 未发金额 
+sum(accountmoney) as 已发金额,sum(ifnull(taskmoney,0)+ifnull(加减,0)+fix_salary*?+ifnull(accountmoney,0)) as 未发金额,? as 间隔  
 from (select id,fix_salary from users $prm)n 
 left join (select  user_id,count(*) as taskcount,
 sum(work_salary+extra_salary+award_salary) as taskmoney,sum(work_salary) as worksalary,
@@ -128,7 +128,7 @@ left join (SELECT object_id,
   SUM(CASE type WHEN '奖励' THEN money ELSE 0 END ) 奖励,
   SUM(money) 加减 from userpays where object_type='员工' and time>=? and time<=? group by object_id) d 
 on n.id=d.object_id order by taskcount desc",
-            [$yf,$yf,$yf,$start_time,$end_time,$start_time,$end_time,$start_time,$end_time]);
+            [$yf,$yf,$yf,$yf,$start_time,$end_time,$start_time,$end_time,$start_time,$end_time]);
 
         return $this->myResult(1,'获取成功！',['sum'=>$sum,'tasks'=>$tasks]);
     }
