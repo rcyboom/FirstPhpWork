@@ -739,6 +739,6 @@ class TaskController extends Controller
         $rs=DB::select('select ((select IFNULL(sum(work_salary+extra_salary+award_salary),0) from usertasks where task_id=? )+
 (select IFNULL(sum(rent_cost+oil_cost+toll_cost+park_cost+award_salary),0) from cartasks where task_id=?)) as gdcb',[$d,$d]);
 
-        return $this->myResult(1, '获取成功！',$rs );
+        return $this->myResult(1, '获取成功！',$rs[0] );
     }
 }
