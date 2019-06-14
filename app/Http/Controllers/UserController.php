@@ -39,7 +39,7 @@ class UserController extends Controller
         //
         $pageSize = (int)$request->input('pageSize');
         $pageSize = isset($pageSize) && $pageSize?$pageSize:10;
-        $users = User::name()->state()->Phone()->Fixed()->paginate($pageSize);
+        $users = User::name()->state()->Phone()->Fixed()->orderby("od")->paginate($pageSize);
         return new UserCollection($users);
     }
 
@@ -85,7 +85,7 @@ class UserController extends Controller
         $data = $request->only(['name', 'role', 'password','password_confirmation', 'email', 'avatar',
             'phone_number' ,'sex' ,'state' ,'birthday' ,'work_time' ,'card_type' ,'card_number' ,'duty' ,
             'level' ,'from' ,'fix_salary' ,'work_salary' ,'extra_salary' ,'family_address' ,
-            'personal_address' ,'remark' ]);
+            'personal_address' ,'remark','od' ]);
         $rules = [
             'name'=>'required|unique:users',
             'role' =>'nullable',
@@ -181,7 +181,7 @@ class UserController extends Controller
         $data = $request->only(['name', 'role', 'avatar','email',
             'phone_number' ,'sex' ,'state' ,'birthday' ,'work_time' ,'card_type' ,'card_number' ,'duty' ,
             'level' ,'from' ,'fix_salary' ,'work_salary' ,'extra_salary' ,'family_address' ,
-            'personal_address' ,'remark' ]);
+            'personal_address' ,'remark','od' ]);
         $rules = [
             'name'=>'required|unique:users,name,'.$id,
             'email' => 'required|unique:users,email,'.$id,
