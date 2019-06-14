@@ -725,4 +725,20 @@ class TaskController extends Controller
 
         return $this->myResult(1, '更新成功！',$rs );
     }
+
+    /**
+     * @api {get} /api/tasks/gdcb 97.获取工单成本
+     * @apiGroup 任务管理
+     *@apiHeaderExample 简要说明
+     * 1、路由名称 tasks.setOption
+     *  id 工单ID
+     */
+    public function gdcb()
+    {
+        $d=Request::input('id',0);
+        $rs=DB::select('select ((select sum(work_salary+extra_salary+award_salary) as rg from usertasks where task_id=? )+
+(select sum(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as cf from cartasks where task_id=?)) as gdcb',[$d,$d]);
+
+        return $this->myResult(1, '获取成功！',$rs );
+    }
 }

@@ -499,8 +499,8 @@ class AccountController extends Controller
                 DB::select('select COALESCE(SUM(money),0) as cc from userpays where account_id<1 and object_id=?  and object_type=? and id IN('.$user_pay_id.')',
                     [$usr->id,'员工']);
 
-            if($taskmoney[0]->cc+$usermoney[0]->cc+$usr->fix_salary<1)
-                return $this->myResult(0,'该员工没有需要结算的记录！',null);
+            if($taskmoney[0]->cc+$usermoney[0]->cc+$usr->fix_salary<0)
+                return $this->myResult(0,'该员工可发金额小于0不允许结算！',null);
 
             $acc=new Account();
             $acc->account_time=$account_time;

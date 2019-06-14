@@ -82,6 +82,7 @@ Route::middleware('auth:api','checkAdmin')->group(function() {
     Route::post('tasks/addTaskCarList', 'TaskController@addTaskCarList')->name('tasks.addTaskCarList');
     Route::get('tasks/TaskCars', 'TaskController@TaskCars')->name('tasks.TaskCars');
     Route::post('tasks/delTaskCar', 'TaskController@delTaskCar')->name('tasks.delTaskCar');
+    Route::post('tasks/gdcb', 'TaskController@gdcb')->name('tasks.gdcb');
 
     Route::get('tasks/FreeMans', 'TaskController@FreeMans')->name('tasks.FreeMans');
     Route::post('tasks/addTaskMan', 'TaskController@addTaskMan')->name('tasks.addTaskMan');
