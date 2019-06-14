@@ -736,8 +736,8 @@ class TaskController extends Controller
     public function gdcb()
     {
         $d=Request::input('id',0);
-        $rs=DB::select('select ((select sum(work_salary+extra_salary+award_salary) as rg from usertasks where task_id=? )+
-(select sum(rent_cost+oil_cost+toll_cost+park_cost+award_salary) as cf from cartasks where task_id=?)) as gdcb',[$d,$d]);
+        $rs=DB::select('select ((select IFNULL(sum(work_salary+extra_salary+award_salary),0) from usertasks where task_id=? )+
+(select IFNULL(sum(rent_cost+oil_cost+toll_cost+park_cost+award_salary),0) from cartasks where task_id=?)) as gdcb',[$d,$d]);
 
         return $this->myResult(1, '获取成功！',$rs );
     }
