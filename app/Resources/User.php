@@ -38,6 +38,7 @@ class User extends Resource
             'remark' => $this->remark,
             'levelavg' => $this->levelavg,
             'taskcount' => $this->taskcount,
+            'od'=>$this->od
         ];
     }
 

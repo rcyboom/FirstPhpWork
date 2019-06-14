@@ -21,7 +21,7 @@ class User extends Authenticatable
         'phone_number','sex', 'state',
         'birthday','work_time','card_type',
         'card_number','duty','level',
-        'from','fix_salary','work_salary',
+        'from','fix_salary','work_salary','od',
         'extra_salary','family_address','personal_address',
         'remark'
     ];
