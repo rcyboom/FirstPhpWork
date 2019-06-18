@@ -102,6 +102,7 @@ class TaskController extends Controller
         $rs->station = Request::input('station');
         $rs->start_time = Request::input('start_time');
         $rs->end_time = Request::input('end_time');
+        $rs->dj=Request::input('dj',0);
         $d1=new Carbon($rs->start_time);
         $d2=new Carbon($rs->end_time);
         $diff=$d2->diffInMinutes($d1);
@@ -176,6 +177,7 @@ class TaskController extends Controller
         $rs->other_cost = Request::input('other_cost',0);
         $rs->receivables = Request::input('receivables',0);
         $rs->tax = Request::input('tax',0);
+        $rs->dj = Request::input('dj',0);
         $rs->type = Request::input('type');
         $rs->linkman = Request::input('linkman');
         $rs->phone = Request::input('phone');
