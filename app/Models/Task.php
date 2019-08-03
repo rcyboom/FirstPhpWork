@@ -35,7 +35,7 @@ class Task  extends Model
         $name = request()->input('customer_name');
         if ($name !=null) {
             $customer_id=Customer::where('name', 'like', '%'.$name.'%')->select('id');
-            return $query = $query->whereIn('customer_id', $customer_id)->orwhere('linkman', 'like', '%'.$name.'%');
+            return $query = $query->whereIn('customer_id', $customer_id);
         } else {
             return $query;
         }
@@ -47,6 +47,17 @@ class Task  extends Model
         $title = request()->input('title');
         if ($title!=null) {
             return $query = $query->where('title', 'like', '%'.$title.'%');
+        } else {
+            return $query;
+        }
+    }
+
+    public function scopeLinkman($query)
+    {
+        //title 过滤
+        $title = request()->input('linkman');
+        if ($title!=null) {
+            return $query = $query->where('linkman', 'like', '%'.$title.'%');
         } else {
             return $query;
         }
