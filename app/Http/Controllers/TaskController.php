@@ -612,7 +612,7 @@ class TaskController extends Controller
     public function FreeMans()
     {
         $rs=DB::select('select id,name,phone_number,duty,state,work_salary,level from users where state=? AND id not in '.
-                '(select user_id from usertasks where end_time is null order by od)',["在岗"]);
+                '(select user_id from usertasks where end_time is null) order by od',["在岗"]);
 
         return $this->myResult(1,'信息获取成功！',$rs);
     }
