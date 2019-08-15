@@ -707,8 +707,6 @@ class TaskController extends Controller
             $d=new Carbon(Request::input('date'));
             $cc=DB::table('tasks')->where('check_time', $d)->count()+1;
             if($cc<10)
-                $rs='00'.$cc;
-            elseif ($cc>=10 and $cc<100)
                 $rs='0'.$cc;
             else
                 $rs=$cc;
@@ -723,7 +721,7 @@ class TaskController extends Controller
         else
             $rs=$d->month . $rs;
 
-        $rs='GD'.$d->year . $rs;
+        $rs='G'. substr($d->year,2) . $rs;
 
         return $this->myResult(1, '更新成功！',$rs );
     }
